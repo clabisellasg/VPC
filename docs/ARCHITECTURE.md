@@ -2,9 +2,24 @@
 
 ## Scope
 
-This document defines the conceptual Version 1 architecture. It deliberately
-does not select unapproved Flutter packages or prescribe an exact source-folder
-layout. Implementation begins in later milestones.
+This document defines the conceptual Version 1 architecture and the limited
+foundation established in Milestone 1. It deliberately does not prescribe a
+final feature-folder layout. Domain, persistence, backend, synchronization,
+authentication, and tournament implementation begins only in later milestones.
+
+## Milestone 1 implemented foundation
+
+- `ProviderScope` wraps the application at the composition root. Riverpod is
+  the approved state-management and dependency-injection foundation.
+- `MaterialApp.router` hosts a single `/` route through GoRouter. Unknown routes
+  render a visible, safe not-found page.
+- The presentation contains only a restrained bootstrap page. It does not
+  include feature navigation or application workflows.
+- Compile-time `APP_ENV` selection distinguishes `development`, `test`, and
+  `production` without storing URLs, credentials, or backend configuration.
+- Riverpod coordinates future state and dependency composition; it does not
+  replace the future repository boundary, Android SQLite persistence, atomic
+  local transaction/outbox design, or synchronization coordinator.
 
 ## Layers and responsibilities
 

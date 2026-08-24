@@ -2,10 +2,50 @@
 
 ## Current status
 
-Milestone 0 contains documentation only. **No application tests, test harness,
-Flutter project, database, or executable application code exist yet.** The
-following strategy defines intended evidence for later milestones; it does not
-claim that any of these suites already run.
+Milestone 0 established the intended strategy. Milestone 1 now contains a
+Flutter test harness and five focused bootstrap/environment tests. No database,
+backend, authentication, domain, tournament, persistence, or synchronization
+test exists because those implementations remain outside the active milestone.
+
+## Milestone 1 automated coverage
+
+- `test/app_test.dart` builds the app under `ProviderScope`, verifies the `/`
+  bootstrap route, display name, status, environment label, and absence of the
+  generated counter demo. It also verifies visible handling for an unknown
+  route.
+- `test/core/config/app_environment_test.dart` verifies the default
+  `development` environment, all three supported mappings, and rejection of an
+  unsupported value.
+- Tests require no network, database, Supabase project, authenticated account,
+  or tournament fixture.
+
+## Milestone 1 local validation
+
+The following commands passed locally with Flutter `3.47.1` stable and Dart
+`3.13.1`:
+
+```text
+dart format --output=none --set-exit-if-changed .
+flutter analyze
+flutter test
+flutter build web
+flutter build apk --debug
+```
+
+The Web build produced `build/web`, and the Android build produced
+`build/app/outputs/flutter-apk/app-debug.apk`. Flutter Doctor continued to show
+Android license status as unknown because of a compatibility mismatch with the
+new Android CLI, but the debug APK build passed without a license error.
+
+The Web build emitted a non-fatal optional Cupertino-icons font diagnostic; no
+Cupertino icon package is used or approved in Milestone 1. The Android build
+emitted a non-fatal SDK XML-version warning. The first Android build also
+exposed an excessive generated Gradle heap request and a missing required NDK;
+project-local Gradle memory limits were reduced and official NDK
+`28.2.13676358` was installed before the successful retry.
+
+The GitHub Actions workflow has not run remotely because this branch was not
+pushed as part of Milestone 1. Local validation is the current evidence.
 
 ## Test layers
 

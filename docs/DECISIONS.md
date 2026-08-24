@@ -26,6 +26,14 @@ explicit planner/architect approval, with the approval and date recorded.
 | V1-016 | Prominently support a one-court Now Playing and Up Next workflow. | ACCEPTED |
 | V1-017 | Version 1 uses Git/GitHub and free-tier infrastructure only. | ACCEPTED |
 | V1-018 | Version 1 excludes payment integrations, native iPhone distribution/offline support, AI features, communication/social features, complex rankings, badges, opponent head-to-head statistics, push notifications, and extra tournament formats. | ACCEPTED |
+| V1-019 | The permanent display name is Volta Paddle Club. | ACCEPTED |
+| V1-020 | The Flutter/Dart package name is `vpc`. | ACCEPTED |
+| V1-021 | The Android namespace and application ID are `com.voltapaddleclub.vpc`. | ACCEPTED |
+| V1-022 | Android and Web are the only generated Flutter platforms in Version 1; iPhone access uses Flutter Web/PWA. | ACCEPTED |
+| V1-023 | Riverpod is the state-management and dependency-injection foundation; it does not replace the repository/outbox synchronization architecture. | ACCEPTED |
+| V1-024 | GoRouter is the declarative routing foundation for Android and Web. | ACCEPTED |
+| V1-025 | Runtime environment selection uses compile-time `--dart-define=APP_ENV=<value>`, supporting `development`, `test`, and `production` with `development` as the default. | ACCEPTED |
+| V1-026 | The Milestone 1 SDK baseline is Flutter `3.47.1` stable with Dart `3.13.1`. | ACCEPTED |
 
 ## Open decisions
 

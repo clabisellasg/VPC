@@ -1,13 +1,14 @@
-# Community Pickleball Management System
+# Volta Paddle Club
 
-The Community Pickleball Management System is a cost-free application for
-running casual and formal pickleball events in a local, single-court community.
-It will manage reusable community players, participation, check-in, payment
-status, temporary teams, approved tournament formats, the court queue, history,
-and statistics.
+Volta Paddle Club is the Community Pickleball Management System: a cost-free
+application for running casual and formal pickleball events in a local,
+single-court community. It will eventually manage reusable community players,
+participation, check-in, payment status, temporary teams, approved tournament
+formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 0 — Project Governance and Architecture Baseline
-(`IN PROGRESS`). No application has been bootstrapped or implemented.
+**Current status:** Milestone 1 — Flutter Project Bootstrap (`COMPLETED`). The
+repository contains a minimal Android/Web bootstrap only; no tournament,
+persistence, backend, synchronization, or authentication feature is implemented.
 
 ## Version 1 technology stack
 
@@ -41,7 +42,56 @@ scope, replace the stack, or begin a later milestone.
 - [Testing strategy](docs/TESTING.md)
 - [Synchronization design](docs/SYNC.md)
 - [Operations outline](docs/OPERATIONS.md)
+- [Milestone 1 implementation record](docs/milestones/M01_FLUTTER_BOOTSTRAP.md)
 
-Milestone 1 must not begin automatically. Setup and build commands will be
-documented only after the Flutter project exists and those commands have been
-validated.
+## Development setup
+
+The validated baseline uses Flutter `3.47.1` stable and Dart `3.13.1`. Android
+development requires Android SDK Platform and Build Tools `36.0.0`, Android NDK
+`28.2.13676358`, and Java 17. Web development requires a supported browser such
+as Chrome.
+
+Resolve the locked dependencies:
+
+```powershell
+flutter pub get
+```
+
+Run on a connected Android device or emulator:
+
+```powershell
+flutter devices
+flutter run -d <device-id>
+```
+
+Run on Chrome:
+
+```powershell
+flutter run -d chrome
+```
+
+The compile-time environment defaults to `development`. Select an explicit
+supported value with `--dart-define`:
+
+```powershell
+flutter run -d chrome --dart-define=APP_ENV=test
+flutter build web --dart-define=APP_ENV=production
+```
+
+Supported values are `development`, `test`, and `production`; any other value
+is rejected during application startup.
+
+## Quality and builds
+
+```powershell
+dart format --output=none --set-exit-if-changed .
+flutter analyze
+flutter test
+flutter build web
+flutter build apk --debug
+```
+
+The Web output is written to `build/web`. The Android debug APK is written to
+`build/app/outputs/flutter-apk/app-debug.apk`. These are local build artifacts,
+not deployments or releases. Milestone 2 must not begin without explicit
+authorization.

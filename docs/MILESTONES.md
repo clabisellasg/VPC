@@ -29,14 +29,14 @@ authorized proceeding.
 - **Purpose:** Establish documentation, architecture, decisions, scope,
   milestone rules, and Git workflow.
 - **Dependencies:** None.
-- **Status:** IN PROGRESS.
+- **Status:** COMPLETED.
 
 ### M1 — Flutter Project Bootstrap
 
 - **Purpose:** Create Android/web Flutter foundations, app shell, linting, test
   harness, and build verification.
 - **Dependencies:** M0.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED.
 
 ### M2 — Domain and Persistence Contracts
 

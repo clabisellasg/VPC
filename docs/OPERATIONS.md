@@ -4,9 +4,10 @@
 
 All procedures in this document are **PRELIMINARY / FUTURE**. They are
 operational acceptance targets for later milestones, not validated runbooks.
-No application, backend, APK, PWA deployment, backup, restore, or pilot exists
-in Milestone 0. Commands and provider-specific steps must be added only after
-their implementation is selected and tested.
+Milestone 1 validates only a local bootstrap Web build and Android debug APK;
+no backend, release APK, PWA deployment, backup, restore, or pilot exists.
+Provider-specific steps must be added only after their implementation is
+selected and tested.
 
 ## Pre-tournament readiness — PRELIMINARY / FUTURE
 
@@ -74,12 +75,16 @@ their implementation is selected and tested.
 
 ## APK distribution — PRELIMINARY / FUTURE
 
+Milestone 1 can produce `build/app/outputs/flutter-apk/app-debug.apk` for local
+development validation. That debug artifact is not signed or approved for
+community distribution and is not a release.
+
 - Produce the Android Flutter-generated APK from a documented, reproducible,
   release-tagged source revision.
 - Record signing ownership, artifact checksum, version, supported upgrade path,
   and trusted community distribution channel.
 - Test clean install and upgrade on representative Android devices.
-- Do not describe an unverified APK as a release or publish it from Milestone 0.
+- Do not describe a debug or otherwise unverified APK as a release.
 
 ## PWA deployment — PRELIMINARY / FUTURE
 
