@@ -2,11 +2,48 @@
 
 ## Current status
 
-Milestone 0 established the intended strategy, and Milestone 1 introduced the
-Flutter test harness and bootstrap/environment tests. Milestone 2 adds focused
-pure-domain and repository-contract suites. Database, backend, authentication,
-tournament-engine, persistence, and synchronization tests remain absent because
-those implementations are outside Milestone 2.
+Milestone 0 established the intended strategy, Milestone 1 introduced the
+Flutter bootstrap harness, and Milestone 2 added pure-domain/contract suites.
+Milestone 3 adds Supabase configuration tests, version-controlled pgTAP policy
+tests, hosted catalog assertions, and publishable-key RLS smoke checks.
+Authentication flows, repository adapters, SQLite, tournament-engine, and
+synchronization tests remain outside M3.
+
+## Milestone 3 coverage and execution
+
+- Six focused Flutter tests cover absent, complete, partial, and invalid
+  Supabase configuration, value-redacting failures, skipped initialization, and
+  exactly-once initialization through a test double. They make no network call.
+- `supabase/tests/database/cloud_foundation_test.sql` contains 35 pgTAP
+  assertions for required tables, foreign keys/checks, RLS, no client hard
+  delete, guest read/write behavior, payment/profile/role privacy, organizer
+  writes, and prevention of role self-escalation.
+- The pgTAP suite was not executed. Docker is installed but its engine is not
+  running, and Supabase CLI `2.115.0` still invokes a Docker-based runner for
+  `supabase test db --linked`. The command failed before SQL execution.
+- A hosted assertion migration successfully verified all 14 required tables,
+  RLS on each, 40 expected policies, public/private grants, absence of client
+  DELETE grants, safe organizer-helper configuration, public player/Auth
+  separation, and 11 Realtime publication entries.
+- Publishable-key REST checks returned `200` for all public-table reads, `401`
+  for payment/profile/role reads, and `401` for an anonymous player insert. No
+  test data was created.
+- Linked migration histories agree and `supabase db lint --linked` reports no
+  schema error. The dashboard Security Advisor was unavailable without a
+  separately authenticated browser session; no advisor result is claimed.
+- Full authenticated organizer end-to-end testing is deferred until M7 creates
+  an approved authentication flow. Policy definitions and pgTAP coverage exist
+  now.
+- `flutter pub get`, Dart formatting verification, `flutter analyze`, and all
+  47 Flutter tests passed. `flutter build web` produced `build/web`, and
+  `flutter build apk --debug` produced
+  `build/app/outputs/flutter-apk/app-debug.apk`.
+- The first Android build attempt exhausted native memory after stale 2 GB
+  Kotlin/JVM daemons accumulated. Stopping those daemons and limiting the
+  validation run to one in-process compiler worker allowed the decisive build
+  to pass. The accepted Gradle configuration was restored afterward. The only
+  remaining Android output was the known non-fatal SDK XML-version warning; no
+  license error occurred.
 
 ## Milestone 2 automated coverage
 

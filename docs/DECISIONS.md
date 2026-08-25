@@ -41,6 +41,12 @@ explicit planner/architect approval, with the approval and date recorded.
 | V1-031 | The domain boundary is pure Dart and has no Flutter, routing, state-management, storage-provider, network, or platform dependency. | ACCEPTED |
 | V1-032 | Repository interfaces are provider-neutral ports and expose typed domain records, queries, results, and failures rather than provider or platform types. | ACCEPTED |
 | V1-033 | Derived player statistics are not stored as manually maintained counters; finalized match records remain their practical source of truth. | ACCEPTED |
+| V1-034 | Use the existing Supabase `vpc` project in Northeast Asia (Tokyo), region code `ap-northeast-1`; do not recreate or migrate it for Version 1. | ACCEPTED |
+| V1-035 | Supabase schema, grants, RLS, database helpers, and Realtime publication changes are managed by reviewed official-CLI migrations committed under `supabase/`. | ACCEPTED |
+| V1-036 | Auth users, private profiles, and normalized role rows remain separate from guest-readable permanent player records; an active `organizer` role row grants organizer permission. | ACCEPTED |
+| V1-037 | Flutter Supabase client configuration uses paired compile-time `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` values; both absent is valid and partial configuration is rejected. | ACCEPTED |
+| V1-038 | Only public community/tournament tables enter the Realtime publication; profiles, roles, and payments remain excluded, and Realtime stays a refetch signal. | ACCEPTED |
+| V1-039 | A Supabase service-role or secret key must never be embedded in Flutter, committed, logged, or used for client operations. | ACCEPTED |
 
 ## Open decisions
 

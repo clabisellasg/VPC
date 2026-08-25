@@ -2,9 +2,15 @@
 
 ## Current status
 
-**Designed only; not implemented in Milestone 0.** This document defines the
-required conceptual behavior without choosing packages, schemas, endpoint
-shapes, or an exact conflict-resolution policy.
+**Designed only; not implemented through Milestone 3.** This document defines
+the required conceptual behavior without choosing SQLite packages, outbox/sync
+schemas, endpoint shapes, or an exact conflict-resolution policy.
+
+Milestone 3 supplies only the hosted business-record schema, optimistic version
+fields, tombstones, RLS, and Realtime publication. It creates no outbox,
+operation receipt, checkpoint, failed-operation, or conflict table and no
+synchronization coordinator. Realtime remains a refetch signal; its publication
+configuration is not synchronization implementation.
 
 ## Local-first writes and outbox
 

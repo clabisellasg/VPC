@@ -50,7 +50,7 @@ authorized proceeding.
 - **Purpose:** Add migrations, cloud schema, Auth foundation, RLS, and database
   security tests.
 - **Dependencies:** M2.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED.
 
 ### M4 — Android SQLite Foundation
 

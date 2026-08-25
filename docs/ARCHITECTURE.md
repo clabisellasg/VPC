@@ -3,10 +3,10 @@
 ## Scope
 
 This document defines the conceptual Version 1 architecture and the foundations
-established through Milestone 2. It deliberately does not prescribe a final
-feature-folder layout. Persistence implementations, backend, synchronization,
-authentication, and tournament-engine implementation begin only in later
-milestones.
+established through Milestone 3. It deliberately does not prescribe a final
+feature-folder layout. Android persistence, synchronization, authentication
+flows, repository adapters, and tournament-engine implementation begin only in
+later milestones.
 
 ## Milestone 1 implemented foundation
 
@@ -36,6 +36,28 @@ milestones.
   neither adapter exists in Milestone 2 or is visible to the domain.
 - The M1 presentation remains a bootstrap only and is not wired to domain data
   or repository providers.
+
+## Milestone 3 implemented cloud boundary
+
+- Version-controlled Supabase migrations define the initial PostgreSQL schema,
+  foreign keys, constraints, indexes, RLS policies, grants, and Realtime
+  publication membership in the existing Tokyo project.
+- Public permanent-player and tournament records contain no Supabase Auth user
+  ID. Profiles and normalized role rows remain private identity data.
+- A private, safe-search-path `SECURITY DEFINER` helper answers whether the
+  current Auth user has an active organizer permission. It creates no organizer
+  automatically and cannot be used by clients to grant roles.
+- Anonymous and authenticated clients can read non-deleted public records.
+  Official writes require authenticated organizer permission; payments are
+  organizer-only and account rows are owner-private.
+- Flutter reads `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` through
+  compile-time Dart defines. Both absent means an intentionally unconfigured
+  client; partial configuration is rejected without echoing values.
+- `supabase_flutter` initialization is isolated behind a small initializer and
+  nullable Riverpod client provider. The M1 bootstrap does not access the
+  network or display backend data.
+- The service-role or Supabase secret key is never a Flutter dependency or
+  runtime configuration value.
 
 ## Layers and responsibilities
 
@@ -91,6 +113,10 @@ PostgreSQL stores shared records; Supabase Authentication establishes identity;
 row-level security (RLS) enforces access; database functions provide critical
 transactional and idempotent cloud operations; and Realtime announces relevant
 changes.
+
+Milestone 3 implements the initial schema/security/publication foundation only.
+Provider-specific repository adapters and application use cases remain outside
+the cloud boundary.
 
 ### Flutter Web/PWA online path
 

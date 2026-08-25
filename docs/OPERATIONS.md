@@ -2,12 +2,28 @@
 
 ## Status and use
 
-All procedures in this document are **PRELIMINARY / FUTURE**. They are
-operational acceptance targets for later milestones, not validated runbooks.
-Milestone 1 validates only a local bootstrap Web build and Android debug APK;
-no backend, release APK, PWA deployment, backup, restore, or pilot exists.
-Provider-specific steps must be added only after their implementation is
-selected and tested.
+Tournament, release, recovery, and deployment procedures in this document are
+still **PRELIMINARY / FUTURE**. Milestone 3 validates the initial hosted
+Supabase migration/security foundation only; it does not validate a tournament
+runbook, release APK, PWA deployment, backup, restore, or pilot.
+
+## Supabase migration maintenance — M3 VALIDATED FOUNDATION
+
+- Use the official Supabase CLI and authenticate interactively with
+  `supabase login`; never paste or commit the access token.
+- Link only the existing `vpc` project and confirm `ap-northeast-1` (Tokyo) in
+  `supabase projects list --output json` before mutation.
+- Review committed migrations, then run `supabase migration list --linked` and
+  `supabase db push --linked --dry-run --skip-vault` before a real push.
+- Apply with `supabase db push --linked --skip-vault`, reconcile migration
+  history, and run `supabase db lint --linked`.
+- Use only the publishable key for client smoke checks. Never use the
+  service-role/secret key in Flutter or client validation.
+- The M3 pgTAP suite requires a functioning Docker-backed runner. Retain it even
+  when Docker is unavailable; do not report it as passed without execution.
+- No production seed data or automatic organizer assignment is part of the
+  migration workflow. Organizer-role administration remains a privileged
+  future runbook.
 
 ## Pre-tournament readiness — PRELIMINARY / FUTURE
 

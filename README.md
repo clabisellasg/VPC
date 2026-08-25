@@ -6,10 +6,9 @@ single-court community. It will eventually manage reusable community players,
 participation, check-in, payment status, temporary teams, approved tournament
 formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 2 — Domain and Persistence Contracts
-(`COMPLETED`). The repository contains the accepted Android/Web bootstrap and
-pure-Dart domain/persistence contracts; no storage or backend implementation is
-present.
+**Current status:** Milestone 3 — Supabase Cloud Foundation (`COMPLETED`).
+The accepted Android/Web bootstrap and pure-Dart domain contracts remain in
+place, and the initial Supabase schema and security boundary are validated.
 
 ## Version 1 technology stack
 
@@ -45,6 +44,7 @@ scope, replace the stack, or begin a later milestone.
 - [Operations outline](docs/OPERATIONS.md)
 - [Milestone 1 implementation record](docs/milestones/M01_FLUTTER_BOOTSTRAP.md)
 - [Milestone 2 implementation record](docs/milestones/M02_DOMAIN_PERSISTENCE_CONTRACTS.md)
+- [Milestone 3 implementation record](docs/milestones/M03_SUPABASE_CLOUD_FOUNDATION.md)
 
 ## Development setup
 
@@ -83,6 +83,18 @@ flutter build web --dart-define=APP_ENV=production
 Supported values are `development`, `test`, and `production`; any other value
 is rejected during application startup.
 
+Supabase is optional for ordinary tests and builds. For a configured online
+run, supply both client values from outside the repository:
+
+```powershell
+flutter run -d chrome `
+  "--dart-define=SUPABASE_URL=$env:VPC_SUPABASE_URL" `
+  "--dart-define=SUPABASE_PUBLISHABLE_KEY=$env:VPC_SUPABASE_PUBLISHABLE_KEY"
+```
+
+Providing only one value is rejected. Do not commit `.env` files or use a
+service-role/secret key in Flutter.
+
 ## Quality and builds
 
 ```powershell
@@ -99,7 +111,17 @@ Run only the pure-domain Milestone 2 suites with:
 flutter test test/domain
 ```
 
+The version-controlled cloud foundation is under `supabase/`. After personally
+authenticating the official CLI, verify the target before any hosted migration:
+
+```powershell
+supabase projects list --output json
+supabase migration list --linked
+supabase db push --linked --dry-run --skip-vault
+supabase db lint --linked
+```
+
 The Web output is written to `build/web`. The Android debug APK is written to
 `build/app/outputs/flutter-apk/app-debug.apk`. These are local build artifacts,
-not deployments or releases. Milestone 3 must not begin without explicit
+not deployments or releases. Milestone 4 must not begin without explicit
 authorization.

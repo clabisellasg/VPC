@@ -2,9 +2,11 @@
 
 ## Scope and conventions
 
-This is a high-level model, not a final schema. It contains no SQL, migration,
-storage-specific type, or final column definition. PostgreSQL and Android
-SQLite representations will be designed in their appropriate milestones.
+This document began as the high-level model. Milestone 3 now adds the initial
+PostgreSQL realization through reviewed SQL migrations under `supabase/`.
+Android SQLite remains undesigned and unimplemented. The hosted schema is an
+evolvable Version 1 baseline rather than permission to implement later feature
+work early.
 
 Milestone 2 maps this conceptual model to pure-Dart records and typed IDs under
 `lib/src/domain`. Those records are provider-neutral contracts, not database
@@ -151,3 +153,47 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for ownership boundaries and
 `PlayerRepository`, `EventRepository`, and `MatchRepository` are persistence
 ports only. No SQL, migration, provider mapping, outbox, checkpoint, conflict
 record, or production repository implementation is created in Milestone 2.
+
+## Milestone 3 PostgreSQL realization
+
+The hosted `public` schema implements 14 required tables:
+
+| Boundary | Tables | Exposure |
+| --- | --- | --- |
+| Account identity and permission | `user_profiles`, `user_roles` | Authenticated owner/role-holder only; never anonymous. |
+| Permanent community identity | `players` | Non-deleted rows are public; contains no Auth user ID. |
+| Events and participation | `events`, `event_divisions`, `event_participants`, `division_participants` | Non-deleted rows are public. |
+| Payment status | `participant_payments` | Organizer-only; stores `paid`/`unpaid`, not a transaction. |
+| Temporary teams | `teams`, `team_members` | Non-deleted rows are public and division-scoped. |
+| Tournament records | `matches`, `match_dependencies`, `court_queue_entries`, `division_placements` | Non-deleted rows are public; structural only. |
+
+Domain entity IDs use client-supplied UUID primary keys. Mutable records carry
+UTC-compatible `timestamptz` creation/update timestamps, nonnegative optimistic
+versions, and nullable deletion tombstones. Foreign keys use restrictive
+historical deletion except private Auth-owned profile/role rows, which follow
+the Auth user lifecycle. Client roles receive no SQL `DELETE` privilege.
+
+Check constraints use the exact M2 strings for event type/status, tournament
+format, check-in, payment, team-formation method, match status, dependency
+outcome, and destination slot. Money remains integer minor units with a
+three-letter currency. Match scores are only structurally nonnegative; no
+unapproved pickleball scoring rule is encoded.
+
+Database triggers enforce adjacent event/match status changes and reject
+cross-event or cross-division references for participants, scoped payments,
+match teams/dependencies, queue entries, and placements. They do not generate a
+tournament, advance a bracket, calculate standings, schedule a court, or
+synchronize clients.
+
+All exposed tables have RLS. A private `SECURITY DEFINER` function with an empty
+search path checks normalized active organizer roles. Public client reads,
+organizer official writes, private profile/role access, and organizer-only
+payments are implemented as explicit grants and policies. No registration
+trigger creates an organizer, and no client can modify `user_roles`.
+
+The public display tables are included idempotently in the
+`supabase_realtime` publication. Identity and payment tables are excluded.
+
+The migrations intentionally create no player claim, skill rating, outbox,
+checkpoint, failed-operation, conflict, or synchronization table. Those remain
+deferred to their approved milestones and open decisions.
