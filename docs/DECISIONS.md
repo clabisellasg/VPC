@@ -34,6 +34,13 @@ explicit planner/architect approval, with the approval and date recorded.
 | V1-024 | GoRouter is the declarative routing foundation for Android and Web. | ACCEPTED |
 | V1-025 | Runtime environment selection uses compile-time `--dart-define=APP_ENV=<value>`, supporting `development`, `test`, and `production` with `development` as the default. | ACCEPTED |
 | V1-026 | The Milestone 1 SDK baseline is Flutter `3.47.1` stable with Dart `3.13.1`. | ACCEPTED |
+| V1-027 | Domain entity identifiers are nominal types backed by validated lowercase canonical UUID strings; ID generation is outside Milestone 2. | ACCEPTED |
+| V1-028 | Money is represented by nonnegative integer minor units and a three-letter ISO-style currency code, defaulting to PHP where needed; domain money never uses `double`. | ACCEPTED |
+| V1-029 | Domain record timestamps are caller-supplied UTC values, record versions are nonnegative, and optional deletion is represented by a UTC tombstone. | ACCEPTED |
+| V1-030 | Domain entities are immutable and expose no externally mutable entity collections. | ACCEPTED |
+| V1-031 | The domain boundary is pure Dart and has no Flutter, routing, state-management, storage-provider, network, or platform dependency. | ACCEPTED |
+| V1-032 | Repository interfaces are provider-neutral ports and expose typed domain records, queries, results, and failures rather than provider or platform types. | ACCEPTED |
+| V1-033 | Derived player statistics are not stored as manually maintained counters; finalized match records remain their practical source of truth. | ACCEPTED |
 
 ## Open decisions
 

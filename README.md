@@ -6,9 +6,10 @@ single-court community. It will eventually manage reusable community players,
 participation, check-in, payment status, temporary teams, approved tournament
 formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 1 — Flutter Project Bootstrap (`COMPLETED`). The
-repository contains a minimal Android/Web bootstrap only; no tournament,
-persistence, backend, synchronization, or authentication feature is implemented.
+**Current status:** Milestone 2 — Domain and Persistence Contracts
+(`COMPLETED`). The repository contains the accepted Android/Web bootstrap and
+pure-Dart domain/persistence contracts; no storage or backend implementation is
+present.
 
 ## Version 1 technology stack
 
@@ -43,6 +44,7 @@ scope, replace the stack, or begin a later milestone.
 - [Synchronization design](docs/SYNC.md)
 - [Operations outline](docs/OPERATIONS.md)
 - [Milestone 1 implementation record](docs/milestones/M01_FLUTTER_BOOTSTRAP.md)
+- [Milestone 2 implementation record](docs/milestones/M02_DOMAIN_PERSISTENCE_CONTRACTS.md)
 
 ## Development setup
 
@@ -91,7 +93,13 @@ flutter build web
 flutter build apk --debug
 ```
 
+Run only the pure-domain Milestone 2 suites with:
+
+```powershell
+flutter test test/domain
+```
+
 The Web output is written to `build/web`. The Android debug APK is written to
 `build/app/outputs/flutter-apk/app-debug.apk`. These are local build artifacts,
-not deployments or releases. Milestone 2 must not begin without explicit
+not deployments or releases. Milestone 3 must not begin without explicit
 authorization.

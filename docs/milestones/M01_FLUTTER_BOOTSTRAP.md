@@ -163,4 +163,5 @@ push the branch.
 
 Supabase, SQLite, authentication, domain entities, repositories, player/event
 features, tournament algorithms, statistics, persistence, synchronization,
-and deployment remain unimplemented. Milestone 2 remains `NOT STARTED`.
+and deployment remained unimplemented at M1 acceptance. Milestone 2 was
+`NOT STARTED` at that acceptance point.

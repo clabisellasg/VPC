@@ -2,10 +2,61 @@
 
 ## Current status
 
-Milestone 0 established the intended strategy. Milestone 1 now contains a
-Flutter test harness and five focused bootstrap/environment tests. No database,
-backend, authentication, domain, tournament, persistence, or synchronization
-test exists because those implementations remain outside the active milestone.
+Milestone 0 established the intended strategy, and Milestone 1 introduced the
+Flutter test harness and bootstrap/environment tests. Milestone 2 adds focused
+pure-domain and repository-contract suites. Database, backend, authentication,
+tournament-engine, persistence, and synchronization tests remain absent because
+those implementations are outside Milestone 2.
+
+## Milestone 2 automated coverage
+
+- Typed IDs: canonical UUID validation, blank/malformed rejection, nominal
+  equality, value equality, and all required ID types.
+- Money and metadata: zero/positive minor units, currency normalization and
+  validation, equality, UTC timestamps, chronology, nonnegative versions, and
+  tombstones.
+- Events and participation: exact approved enums, every adjacent lifecycle
+  transition, invalid transition classes, configurable division names, typed
+  player participation, and optional payment division scope.
+- Players and teams: permanent identity, optional account link, immutable
+  `PlayerId` membership, empty/duplicate rejection, and non-fixed team size.
+- Matches, court, and results: structural statuses/transitions/scores,
+  completed-state consistency, dependency routing values, queue ordering, and
+  positive finalized placement.
+- Repositories: test-only fakes implement all three provider-neutral ports, and
+  success/failure results carry domain values or typed failures.
+- Existing M1 widget and environment tests remain unchanged and continue to
+  protect the bootstrap presentation.
+
+The domain import boundary is also checked with a repository search prohibiting
+Flutter, Riverpod, GoRouter, Supabase, SQLite/Drift, `dart:io`, and `dart:html`
+imports under `lib/src/domain`.
+
+## Milestone 2 local validation
+
+The following commands passed locally with Flutter `3.47.1` stable and Dart
+`3.13.1`:
+
+```text
+dart format --output=none --set-exit-if-changed .
+flutter analyze
+flutter test
+flutter build web
+flutter build apk --debug
+git diff --check
+git diff --cached --check
+```
+
+All 41 tests passed: the five unchanged M1 bootstrap/environment tests and 36
+M2 domain/contract tests. The Web build produced `build/web`; the decisive
+Android build produced `build/app/outputs/flutter-apk/app-debug.apk` without a
+license error. The prohibited-import search returned no match, relative
+Markdown links resolved, and dependency manifests remained unchanged.
+
+The Web build repeated the non-fatal optional Cupertino-icons font diagnostic
+documented in M1. Android repeated the non-fatal SDK XML-version compatibility
+warning documented in M1. Neither warning affected an artifact. GitHub Actions
+has not run remotely because M2 is not pushed as part of this milestone.
 
 ## Milestone 1 automated coverage
 

@@ -6,6 +6,11 @@ This is a high-level model, not a final schema. It contains no SQL, migration,
 storage-specific type, or final column definition. PostgreSQL and Android
 SQLite representations will be designed in their appropriate milestones.
 
+Milestone 2 maps this conceptual model to pure-Dart records and typed IDs under
+`lib/src/domain`. Those records are provider-neutral contracts, not database
+rows. Names and relationships below do not prescribe tables, columns, indexes,
+foreign keys, PostgreSQL types, SQLite types, or serialization formats.
+
 Shared records use client-generated UUIDs so Android can create identities
 offline without a server round trip. Synchronizable records conceptually carry
 an optimistic version, creation/update timestamps, and origin/operation
@@ -124,3 +129,25 @@ the exact persistence design is deferred.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for ownership boundaries and
 [SYNC.md](SYNC.md) for conceptual reconciliation behavior.
+
+## Milestone 2 domain mapping
+
+| Conceptual data | Pure-Dart representation | Boundary note |
+| --- | --- | --- |
+| Optional auth-account link | `AccountId?` on `PermanentPlayer` | Claim workflow, user profiles, roles, and authentication remain unimplemented. |
+| Players | `PermanentPlayer` / `PlayerId` | Contains no stored wins, losses, titles, win rate, appearances, or partner statistics. |
+| Events | `Event` / `EventId` | Validates only the approved adjacent lifecycle and UTC scheduled time. |
+| Event divisions | `EventDivision` / `DivisionId` | Division name stays configurable; format uses only the four approved values. |
+| Event participants | `EventParticipant` / `EventParticipantId` | References `PlayerId` rather than duplicating player identity. |
+| Division participants | `DivisionParticipant` / `DivisionParticipantId` | Structural support does not decide whether multi-division entry is permitted. |
+| Paid/Unpaid records | `ParticipantPayment` / `ParticipantPaymentId` | Optional division scope preserves `OPEN-008`; there is no payment transaction. |
+| Temporary teams/members | `TemporaryTeam` / `TeamId` / immutable `PlayerId` list | Division-scoped; no fixed size or generation algorithm. |
+| Matches | `Match` / `MatchId` | Structural status, sides, scores, and winner only; no generation, score rules, or progression. |
+| Match dependencies | `MatchDependency` | Describes winner/loser routing to a destination side but does not execute it. |
+| Court queue entries | `CourtQueueEntry` / `CourtQueueEntryId` | Zero-based structural order for the one court; no scheduling logic. |
+| Finalized placements | `DivisionPlacement` / `DivisionPlacementId` | Requires a positive finish and performs no calculation. |
+| Shared record metadata | `RecordMetadata` | Caller-supplied UTC times, nonnegative version, optional tombstone; no sync behavior. |
+
+`PlayerRepository`, `EventRepository`, and `MatchRepository` are persistence
+ports only. No SQL, migration, provider mapping, outbox, checkpoint, conflict
+record, or production repository implementation is created in Milestone 2.

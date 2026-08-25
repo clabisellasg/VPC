@@ -43,7 +43,7 @@ authorized proceeding.
 - **Purpose:** Define entities, IDs, state machines, repository contracts, and
   platform-independent boundaries.
 - **Dependencies:** M1.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED.
 
 ### M3 — Supabase Database, Auth, and Security Foundation
 

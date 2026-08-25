@@ -2,10 +2,11 @@
 
 ## Scope
 
-This document defines the conceptual Version 1 architecture and the limited
-foundation established in Milestone 1. It deliberately does not prescribe a
-final feature-folder layout. Domain, persistence, backend, synchronization,
-authentication, and tournament implementation begins only in later milestones.
+This document defines the conceptual Version 1 architecture and the foundations
+established through Milestone 2. It deliberately does not prescribe a final
+feature-folder layout. Persistence implementations, backend, synchronization,
+authentication, and tournament-engine implementation begin only in later
+milestones.
 
 ## Milestone 1 implemented foundation
 
@@ -20,6 +21,21 @@ authentication, and tournament implementation begins only in later milestones.
 - Riverpod coordinates future state and dependency composition; it does not
   replace the future repository boundary, Android SQLite persistence, atomic
   local transaction/outbox design, or synchronization coordinator.
+
+## Milestone 2 implemented boundary
+
+- `lib/src/domain` is a pure-Dart inward boundary. It imports no Flutter,
+  Riverpod, GoRouter, storage provider, networking, or platform library.
+- Immutable domain records own validation and adjacent state-transition rules.
+  Caller-supplied UTC metadata keeps behavior deterministic.
+- Typed UUID-backed IDs prevent cross-entity identity substitution, and Money
+  uses integer minor units.
+- Player, event, and match repository interfaces are ports expressed only in
+  typed domain records, queries, failures/results, `Future`, and `Stream`.
+- Future Android SQLite and Supabase implementations will be outward adapters;
+  neither adapter exists in Milestone 2 or is visible to the domain.
+- The M1 presentation remains a bootstrap only and is not wired to domain data
+  or repository providers.
 
 ## Layers and responsibilities
 
@@ -51,7 +67,9 @@ network work.
 
 Defines storage-neutral contracts used by application use cases. Local and
 remote implementations translate between persistence representations and
-domain concepts without leaking infrastructure details into the domain.
+domain concepts without leaking infrastructure details into the domain. The
+dependency direction is adapter → repository port/domain; domain code never
+imports an adapter. Milestone 2 defines only the ports.
 
 ### Android SQLite local data source
 
