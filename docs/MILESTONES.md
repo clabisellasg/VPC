@@ -57,7 +57,7 @@ authorized proceeding.
 - **Purpose:** Add local schema, migrations, repositories, outbox, and local
   transaction patterns.
 - **Dependencies:** M2.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED.
 
 ### M5 — Synchronization Vertical Slice
 

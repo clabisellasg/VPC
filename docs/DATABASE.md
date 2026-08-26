@@ -2,11 +2,10 @@
 
 ## Scope and conventions
 
-This document began as the high-level model. Milestone 3 now adds the initial
-PostgreSQL realization through reviewed SQL migrations under `supabase/`.
-Android SQLite remains undesigned and unimplemented. The hosted schema is an
-evolvable Version 1 baseline rather than permission to implement later feature
-work early.
+This document began as the high-level model. Milestone 3 adds the initial
+PostgreSQL realization under `supabase/`, and Milestone 4 adds Android SQLite
+schema version 1 through Drift. Both are evolvable Version 1 baselines rather
+than permission to implement later feature work early.
 
 Milestone 2 maps this conceptual model to pure-Dart records and typed IDs under
 `lib/src/domain`. Those records are provider-neutral contracts, not database
@@ -197,3 +196,34 @@ The public display tables are included idempotently in the
 The migrations intentionally create no player claim, skill rating, outbox,
 checkpoint, failed-operation, conflict, or synchronization table. Those remain
 deferred to their approved milestones and open decisions.
+
+## Milestone 4 Android SQLite realization
+
+Drift schema version 1 mirrors the twelve operational M3 tables and intentionally
+omits `user_profiles` and `user_roles`. Table and column vocabulary follows M3,
+while generated row classes remain infrastructure types rather than domain
+entities.
+
+| M2/M3 concept | Local Drift table | Mapping note |
+| --- | --- | --- |
+| Permanent players | `players` | UUID text is revalidated as `PlayerId`; no Auth/account column is stored. |
+| Events | `events` | Money uses paired integer minor units/currency; timestamps normalize to UTC. |
+| Divisions and participation | `event_divisions`, `event_participants`, `division_participants` | Restrictive foreign keys and active partial uniqueness match cloud relationships. |
+| Payment status | `participant_payments` | Optional division scope remains structural and unresolved; no transaction details. |
+| Temporary teams | `teams`, `team_members` | Division-scoped; members reference permanent player IDs and no team size is fixed. |
+| Tournament records | `matches`, `match_dependencies` | Structural state and dependency routing only; no generation or advancement. |
+| One-court/final records | `court_queue_entries`, `division_placements` | Structural order and placement only. |
+
+SQLite stores synchronizable UUIDs as 36-character text because it has no native
+UUID type. Domain constructors enforce canonical form when rows cross the
+repository boundary. Drift stores `DateTime` values as ISO-8601 text to preserve
+sub-second precision; PostgreSQL uses `timestamptz`. Both map without domain
+information loss to UTC `DateTime`.
+
+Foreign keys, validation checks, active partial unique indexes, adjacent
+event/match transition triggers, and cross-event/division triggers align the
+local structural protections with M3. The committed version-one snapshot is
+`drift_schemas/app_database_v1.json`. There is no fake pre-version-one migration.
+
+No local sync/outbox fields or tables exist in M4. Those conceptual records in
+the synchronization section remain future M5 work.

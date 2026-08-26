@@ -6,9 +6,9 @@ single-court community. It will eventually manage reusable community players,
 participation, check-in, payment status, temporary teams, approved tournament
 formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 3 — Supabase Cloud Foundation (`COMPLETED`).
-The accepted Android/Web bootstrap and pure-Dart domain contracts remain in
-place, and the initial Supabase schema and security boundary are validated.
+**Current status:** Milestone 4 — Android SQLite Persistence Foundation
+(`COMPLETED`). The accepted M0–M3 baseline remains intact, and Android-only
+local persistence is validated.
 
 ## Version 1 technology stack
 
@@ -45,6 +45,7 @@ scope, replace the stack, or begin a later milestone.
 - [Milestone 1 implementation record](docs/milestones/M01_FLUTTER_BOOTSTRAP.md)
 - [Milestone 2 implementation record](docs/milestones/M02_DOMAIN_PERSISTENCE_CONTRACTS.md)
 - [Milestone 3 implementation record](docs/milestones/M03_SUPABASE_CLOUD_FOUNDATION.md)
+- [Milestone 4 implementation record](docs/milestones/M04_ANDROID_SQLITE_PERSISTENCE.md)
 
 ## Development setup
 
@@ -111,6 +112,14 @@ Run only the pure-domain Milestone 2 suites with:
 flutter test test/domain
 ```
 
+Regenerate and verify the Android SQLite schema artifacts with:
+
+```powershell
+dart run build_runner build --delete-conflicting-outputs
+dart run drift_dev schema dump lib/src/infrastructure/persistence/local/app_database.dart drift_schemas/app_database_v1.json
+flutter test test/infrastructure/persistence/local
+```
+
 The version-controlled cloud foundation is under `supabase/`. After personally
 authenticating the official CLI, verify the target before any hosted migration:
 
@@ -123,5 +132,5 @@ supabase db lint --linked
 
 The Web output is written to `build/web`. The Android debug APK is written to
 `build/app/outputs/flutter-apk/app-debug.apk`. These are local build artifacts,
-not deployments or releases. Milestone 4 must not begin without explicit
+not deployments or releases. Milestone 5 must not begin without explicit
 authorization.

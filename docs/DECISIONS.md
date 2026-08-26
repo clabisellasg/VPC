@@ -47,6 +47,11 @@ explicit planner/architect approval, with the approval and date recorded.
 | V1-037 | Flutter Supabase client configuration uses paired compile-time `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` values; both absent is valid and partial configuration is rejected. | ACCEPTED |
 | V1-038 | Only public community/tournament tables enter the Realtime publication; profiles, roles, and payments remain excluded, and Realtime stays a refetch signal. | ACCEPTED |
 | V1-039 | A Supabase service-role or secret key must never be embedded in Flutter, committed, logged, or used for client operations. | ACCEPTED |
+| V1-040 | Drift is the typed Android SQLite access layer; the M4 baseline resolves `drift 2.34.3`, `drift_flutter 0.3.1`, `path_provider 2.1.6`, `drift_dev 2.34.5`, and `build_runner 2.16.0`. | ACCEPTED |
+| V1-041 | Production local persistence exists only on Android, stores `vpc.sqlite` in the application-support directory, and runs through Drift's background shared isolate; Web and other native platforms do not open it. | ACCEPTED |
+| V1-042 | Local schema version 1 uses ISO-8601 text for UTC timestamps to preserve sub-second precision and text UUID columns revalidated by M2 nominal ID constructors. | ACCEPTED |
+| V1-043 | Drift generated Dart and the version-one JSON schema snapshot are committed and checked for freshness; no fictional pre-version-one migration is created. | ACCEPTED |
+| V1-044 | Production Drift adapters implement the unchanged M2 player, event, and match ports, exclude tombstones from ordinary reads, use optimistic versions, and translate expected constraints into typed failures. | ACCEPTED |
 
 ## Open decisions
 

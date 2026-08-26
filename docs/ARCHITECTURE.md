@@ -3,10 +3,9 @@
 ## Scope
 
 This document defines the conceptual Version 1 architecture and the foundations
-established through Milestone 3. It deliberately does not prescribe a final
-feature-folder layout. Android persistence, synchronization, authentication
-flows, repository adapters, and tournament-engine implementation begin only in
-later milestones.
+established through Milestone 4. It deliberately does not prescribe a final
+feature-folder layout. Synchronization, authentication flows, remote repository
+adapters, and tournament-engine implementation begin only in later milestones.
 
 ## Milestone 1 implemented foundation
 
@@ -59,6 +58,25 @@ later milestones.
 - The service-role or Supabase secret key is never a Flutter dependency or
   runtime configuration value.
 
+## Milestone 4 implemented Android local boundary
+
+- Drift provides typed SQLite access for the twelve operational M2/M3 tables;
+  it is an access layer, not a replacement database.
+- Android stores `vpc.sqlite` in its application-support directory and executes
+  database work through Drift's background isolate. Foreign keys are enabled.
+- Version-one schema checks, partial unique indexes, restrictive foreign keys,
+  and transition/scope triggers protect local structural consistency.
+- ISO-8601 text preserves UTC timestamp sub-second precision. UUID text is
+  revalidated through nominal M2 ID constructors at repository mapping time.
+- Production Drift adapters implement the existing player, event, and match
+  repository ports without importing Drift into the domain.
+- Riverpod owns the database lifecycle and closes it on disposal. Android gets
+  real adapters; Web and unsupported native platforms get no local database.
+- The bootstrap remains visually unchanged and does not read or display local
+  records.
+- There is no outbox, synchronization coordinator, Supabase fallback, or
+  Realtime subscription in the local adapter.
+
 ## Layers and responsibilities
 
 ### Shared Flutter presentation layer
@@ -95,9 +113,10 @@ imports an adapter. Milestone 2 defines only the ports.
 
 ### Android SQLite local data source
 
-Stores the Android working set and is the immediate source of truth for
-important offline-capable organizer operations. A local mutation and its
-outbox operation are committed atomically in the same SQLite transaction.
+Milestone 4 stores the Android working set and supplies transactional local
+repository adapters. The future requirement for a local mutation and its
+outbox operation to commit atomically remains an M5 synchronization concern;
+M4 deliberately has no outbox.
 
 ### Android synchronization coordinator
 

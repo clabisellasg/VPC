@@ -1,0 +1,2322 @@
+{
+  "_meta": {
+    "description": "This file contains a serialized version of schema entities for drift.",
+    "version": "1.3.0"
+  },
+  "options": {
+    "store_date_time_values_as_text": true
+  },
+  "entities": [
+    {
+      "id": 0,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "players",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "version",
+            "getter_name": "version",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (version >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "dateTime",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
+          },
+          {
+            "name": "display_name",
+            "getter_name": "displayName",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (trim(display_name) <> '')",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
+        ],
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 1,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "events",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "version",
+            "getter_name": "version",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (version >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "dateTime",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
+          },
+          {
+            "name": "name",
+            "getter_name": "name",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (trim(name) <> '')",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "scheduled_at",
+            "getter_name": "scheduledAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "event_type",
+            "getter_name": "eventType",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (event_type IN ('casual', 'formal'))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "status",
+            "getter_name": "status",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (status IN ('upcoming', 'registration', 'inProgress', 'completed', 'archived'))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "entry_fee_minor_units",
+            "getter_name": "entryFeeMinorUnits",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "entry_fee_currency",
+            "getter_name": "entryFeeCurrency",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "court_label",
+            "getter_name": "courtLabel",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (trim(court_label) <> '')",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK ((entry_fee_minor_units IS NULL AND entry_fee_currency IS NULL) OR (entry_fee_minor_units >= 0 AND entry_fee_currency GLOB '[A-Z][A-Z][A-Z]'))",
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
+        ],
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "references": [
+        1
+      ],
+      "type": "table",
+      "data": {
+        "name": "event_divisions",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "version",
+            "getter_name": "version",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (version >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "dateTime",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
+          },
+          {
+            "name": "event_id",
+            "getter_name": "eventId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES events (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES events (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "events",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "name",
+            "getter_name": "name",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (trim(name) <> '')",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "tournament_format",
+            "getter_name": "tournamentFormat",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (tournament_format IN ('singleElimination', 'doubleElimination', 'singleRoundRobin', 'doubleRoundRobin'))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
+        ],
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "references": [
+        1,
+        0
+      ],
+      "type": "table",
+      "data": {
+        "name": "event_participants",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "version",
+            "getter_name": "version",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (version >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "dateTime",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
+          },
+          {
+            "name": "event_id",
+            "getter_name": "eventId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES events (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES events (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "events",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "player_id",
+            "getter_name": "playerId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES players (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES players (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "players",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "check_in_status",
+            "getter_name": "checkInStatus",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (check_in_status IN ('notPresent', 'checkedIn'))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
+        ],
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "references": [
+        2,
+        3
+      ],
+      "type": "table",
+      "data": {
+        "name": "division_participants",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "version",
+            "getter_name": "version",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (version >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "dateTime",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
+          },
+          {
+            "name": "division_id",
+            "getter_name": "divisionId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "event_divisions",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "event_participant_id",
+            "getter_name": "eventParticipantId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_participants (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_participants (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "event_participants",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
+        ],
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "references": [
+        3,
+        2
+      ],
+      "type": "table",
+      "data": {
+        "name": "participant_payments",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "version",
+            "getter_name": "version",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (version >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "dateTime",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
+          },
+          {
+            "name": "event_participant_id",
+            "getter_name": "eventParticipantId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_participants (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_participants (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "event_participants",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "division_id",
+            "getter_name": "divisionId",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "event_divisions",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "status",
+            "getter_name": "status",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (status IN ('unpaid', 'paid'))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
+        ],
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "references": [
+        2
+      ],
+      "type": "table",
+      "data": {
+        "name": "teams",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "version",
+            "getter_name": "version",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (version >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "dateTime",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
+          },
+          {
+            "name": "division_id",
+            "getter_name": "divisionId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "event_divisions",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "formation_method",
+            "getter_name": "formationMethod",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (formation_method IN ('manual', 'random', 'balanced'))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "display_label",
+            "getter_name": "displayLabel",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK (display_label IS NULL OR trim(display_label) <> '')",
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
+        ],
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "references": [
+        6,
+        0
+      ],
+      "type": "table",
+      "data": {
+        "name": "team_members",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "version",
+            "getter_name": "version",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (version >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "dateTime",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "team_id",
+            "getter_name": "teamId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES teams (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES teams (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "teams",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "player_id",
+            "getter_name": "playerId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES players (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES players (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "players",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
+        ],
+        "explicit_pk": [
+          "team_id",
+          "player_id"
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "references": [
+        2,
+        6
+      ],
+      "type": "table",
+      "data": {
+        "name": "matches",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "version",
+            "getter_name": "version",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (version >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "dateTime",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
+          },
+          {
+            "name": "division_id",
+            "getter_name": "divisionId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "event_divisions",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "side_one_team_id",
+            "getter_name": "sideOneTeamId",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES teams (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES teams (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "teams",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "side_two_team_id",
+            "getter_name": "sideTwoTeamId",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES teams (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES teams (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "teams",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "status",
+            "getter_name": "status",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (status IN ('scheduled', 'queued', 'inProgress', 'completed'))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "side_one_score",
+            "getter_name": "sideOneScore",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "side_two_score",
+            "getter_name": "sideTwoScore",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "winner_team_id",
+            "getter_name": "winnerTeamId",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES teams (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES teams (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "teams",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "round_number",
+            "getter_name": "roundNumber",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "sequence_number",
+            "getter_name": "sequenceNumber",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK (side_one_team_id IS NULL OR side_two_team_id IS NULL OR side_one_team_id <> side_two_team_id)",
+          "CHECK (side_one_score IS NULL OR side_one_score >= 0)",
+          "CHECK (side_two_score IS NULL OR side_two_score >= 0)",
+          "CHECK (round_number IS NULL OR round_number > 0)",
+          "CHECK (sequence_number IS NULL OR sequence_number > 0)",
+          "CHECK ((status = 'completed' AND side_one_team_id IS NOT NULL AND side_two_team_id IS NOT NULL AND side_one_score IS NOT NULL AND side_two_score IS NOT NULL AND winner_team_id IS NOT NULL AND winner_team_id IN (side_one_team_id, side_two_team_id)) OR (status <> 'completed' AND winner_team_id IS NULL))",
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
+        ],
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "references": [
+        8
+      ],
+      "type": "table",
+      "data": {
+        "name": "match_dependencies",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "version",
+            "getter_name": "version",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (version >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "dateTime",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "source_match_id",
+            "getter_name": "sourceMatchId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES matches (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES matches (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "matches",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "source_outcome",
+            "getter_name": "sourceOutcome",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (source_outcome IN ('winner', 'loser'))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "destination_match_id",
+            "getter_name": "destinationMatchId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES matches (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES matches (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "matches",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "destination_slot",
+            "getter_name": "destinationSlot",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (destination_slot IN ('sideOne', 'sideTwo'))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK (source_match_id <> destination_match_id)",
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
+        ],
+        "explicit_pk": [
+          "source_match_id",
+          "source_outcome",
+          "destination_match_id",
+          "destination_slot"
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "references": [
+        1,
+        2,
+        8
+      ],
+      "type": "table",
+      "data": {
+        "name": "court_queue_entries",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "version",
+            "getter_name": "version",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (version >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "dateTime",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
+          },
+          {
+            "name": "event_id",
+            "getter_name": "eventId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES events (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES events (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "events",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "division_id",
+            "getter_name": "divisionId",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "event_divisions",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "match_id",
+            "getter_name": "matchId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES matches (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES matches (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "matches",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "queue_position",
+            "getter_name": "queuePosition",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (queue_position >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
+        ],
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "references": [
+        2,
+        6
+      ],
+      "type": "table",
+      "data": {
+        "name": "division_placements",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "version",
+            "getter_name": "version",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (version >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "deleted_at",
+            "getter_name": "deletedAt",
+            "moor_type": "dateTime",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
+          },
+          {
+            "name": "division_id",
+            "getter_name": "divisionId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "event_divisions",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "team_id",
+            "getter_name": "teamId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES teams (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES teams (id) ON DELETE RESTRICT"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "teams",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "restrict"
+                }
+              }
+            ]
+          },
+          {
+            "name": "position",
+            "getter_name": "position",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (position > 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
+        ],
+        "explicit_pk": [
+          "id"
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "references": [
+        0
+      ],
+      "type": "index",
+      "data": {
+        "on": 0,
+        "name": "players_display_name_idx",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "display_name",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "references": [
+        1
+      ],
+      "type": "index",
+      "data": {
+        "on": 1,
+        "name": "events_status_scheduled_at_idx",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "status",
+            "order_by": null
+          },
+          {
+            "column": "scheduled_at",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 14,
+      "references": [
+        2
+      ],
+      "type": "index",
+      "data": {
+        "on": 2,
+        "name": "event_divisions_event_id_idx",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "event_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 15,
+      "references": [
+        2
+      ],
+      "type": "index",
+      "data": {
+        "on": 2,
+        "name": "event_divisions_active_name_idx",
+        "sql": "CREATE UNIQUE INDEX event_divisions_active_name_idx ON event_divisions (event_id, lower(name)) WHERE deleted_at IS NULL",
+        "unique": true,
+        "columns": []
+      }
+    },
+    {
+      "id": 16,
+      "references": [
+        3
+      ],
+      "type": "index",
+      "data": {
+        "on": 3,
+        "name": "event_participants_player_id_idx",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "player_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "references": [
+        3
+      ],
+      "type": "index",
+      "data": {
+        "on": 3,
+        "name": "event_participants_active_player_idx",
+        "sql": "CREATE UNIQUE INDEX event_participants_active_player_idx ON event_participants (event_id, player_id) WHERE deleted_at IS NULL",
+        "unique": true,
+        "columns": []
+      }
+    },
+    {
+      "id": 18,
+      "references": [
+        4
+      ],
+      "type": "index",
+      "data": {
+        "on": 4,
+        "name": "division_participants_event_participant_idx",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "event_participant_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 19,
+      "references": [
+        4
+      ],
+      "type": "index",
+      "data": {
+        "on": 4,
+        "name": "division_participants_active_entry_idx",
+        "sql": "CREATE UNIQUE INDEX division_participants_active_entry_idx ON division_participants (division_id, event_participant_id) WHERE deleted_at IS NULL",
+        "unique": true,
+        "columns": []
+      }
+    },
+    {
+      "id": 20,
+      "references": [
+        5
+      ],
+      "type": "index",
+      "data": {
+        "on": 5,
+        "name": "participant_payments_active_event_scope_idx",
+        "sql": "CREATE UNIQUE INDEX participant_payments_active_event_scope_idx ON participant_payments (event_participant_id) WHERE division_id IS NULL AND deleted_at IS NULL",
+        "unique": true,
+        "columns": []
+      }
+    },
+    {
+      "id": 21,
+      "references": [
+        5
+      ],
+      "type": "index",
+      "data": {
+        "on": 5,
+        "name": "participant_payments_active_division_scope_idx",
+        "sql": "CREATE UNIQUE INDEX participant_payments_active_division_scope_idx ON participant_payments (event_participant_id, division_id) WHERE division_id IS NOT NULL AND deleted_at IS NULL",
+        "unique": true,
+        "columns": []
+      }
+    },
+    {
+      "id": 22,
+      "references": [
+        6
+      ],
+      "type": "index",
+      "data": {
+        "on": 6,
+        "name": "teams_division_id_idx",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "division_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 23,
+      "references": [
+        7
+      ],
+      "type": "index",
+      "data": {
+        "on": 7,
+        "name": "team_members_player_id_idx",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "player_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 24,
+      "references": [
+        8
+      ],
+      "type": "index",
+      "data": {
+        "on": 8,
+        "name": "matches_division_status_idx",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "division_id",
+            "order_by": null
+          },
+          {
+            "column": "status",
+            "order_by": null
+          },
+          {
+            "column": "sequence_number",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 25,
+      "references": [
+        9
+      ],
+      "type": "index",
+      "data": {
+        "on": 9,
+        "name": "match_dependencies_destination_idx",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "destination_match_id",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 26,
+      "references": [
+        9
+      ],
+      "type": "index",
+      "data": {
+        "on": 9,
+        "name": "match_dependencies_active_destination_slot_idx",
+        "sql": "CREATE UNIQUE INDEX match_dependencies_active_destination_slot_idx ON match_dependencies (destination_match_id, destination_slot) WHERE deleted_at IS NULL",
+        "unique": true,
+        "columns": []
+      }
+    },
+    {
+      "id": 27,
+      "references": [
+        10
+      ],
+      "type": "index",
+      "data": {
+        "on": 10,
+        "name": "court_queue_entries_active_position_idx",
+        "sql": "CREATE UNIQUE INDEX court_queue_entries_active_position_idx ON court_queue_entries (event_id, queue_position) WHERE deleted_at IS NULL",
+        "unique": true,
+        "columns": []
+      }
+    },
+    {
+      "id": 28,
+      "references": [
+        10
+      ],
+      "type": "index",
+      "data": {
+        "on": 10,
+        "name": "court_queue_entries_active_match_idx",
+        "sql": "CREATE UNIQUE INDEX court_queue_entries_active_match_idx ON court_queue_entries (match_id) WHERE deleted_at IS NULL",
+        "unique": true,
+        "columns": []
+      }
+    },
+    {
+      "id": 29,
+      "references": [
+        11
+      ],
+      "type": "index",
+      "data": {
+        "on": 11,
+        "name": "division_placements_active_position_idx",
+        "sql": "CREATE UNIQUE INDEX division_placements_active_position_idx ON division_placements (division_id, position) WHERE deleted_at IS NULL",
+        "unique": true,
+        "columns": []
+      }
+    },
+    {
+      "id": 30,
+      "references": [
+        11
+      ],
+      "type": "index",
+      "data": {
+        "on": 11,
+        "name": "division_placements_active_team_idx",
+        "sql": "CREATE UNIQUE INDEX division_placements_active_team_idx ON division_placements (division_id, team_id) WHERE deleted_at IS NULL",
+        "unique": true,
+        "columns": []
+      }
+    }
+  ],
+  "fixed_sql": [
+    {
+      "name": "players",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"players\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"display_name\" TEXT NOT NULL CHECK (trim(display_name) <> ''), PRIMARY KEY (\"id\"), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
+        }
+      ]
+    },
+    {
+      "name": "events",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"events\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"name\" TEXT NOT NULL CHECK (trim(name) <> ''), \"scheduled_at\" TEXT NOT NULL, \"event_type\" TEXT NOT NULL CHECK (event_type IN ('casual', 'formal')), \"status\" TEXT NOT NULL CHECK (status IN ('upcoming', 'registration', 'inProgress', 'completed', 'archived')), \"entry_fee_minor_units\" INTEGER NULL, \"entry_fee_currency\" TEXT NULL, \"court_label\" TEXT NOT NULL CHECK (trim(court_label) <> ''), PRIMARY KEY (\"id\"), CHECK ((entry_fee_minor_units IS NULL AND entry_fee_currency IS NULL) OR (entry_fee_minor_units >= 0 AND entry_fee_currency GLOB '[A-Z][A-Z][A-Z]')), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
+        }
+      ]
+    },
+    {
+      "name": "event_divisions",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"event_divisions\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"event_id\" TEXT NOT NULL REFERENCES events (id) ON DELETE RESTRICT, \"name\" TEXT NOT NULL CHECK (trim(name) <> ''), \"tournament_format\" TEXT NOT NULL CHECK (tournament_format IN ('singleElimination', 'doubleElimination', 'singleRoundRobin', 'doubleRoundRobin')), PRIMARY KEY (\"id\"), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
+        }
+      ]
+    },
+    {
+      "name": "event_participants",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"event_participants\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"event_id\" TEXT NOT NULL REFERENCES events (id) ON DELETE RESTRICT, \"player_id\" TEXT NOT NULL REFERENCES players (id) ON DELETE RESTRICT, \"check_in_status\" TEXT NOT NULL CHECK (check_in_status IN ('notPresent', 'checkedIn')), PRIMARY KEY (\"id\"), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
+        }
+      ]
+    },
+    {
+      "name": "division_participants",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"division_participants\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"event_participant_id\" TEXT NOT NULL REFERENCES event_participants (id) ON DELETE RESTRICT, PRIMARY KEY (\"id\"), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
+        }
+      ]
+    },
+    {
+      "name": "participant_payments",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"participant_payments\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"event_participant_id\" TEXT NOT NULL REFERENCES event_participants (id) ON DELETE RESTRICT, \"division_id\" TEXT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"status\" TEXT NOT NULL CHECK (status IN ('unpaid', 'paid')), PRIMARY KEY (\"id\"), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
+        }
+      ]
+    },
+    {
+      "name": "teams",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"teams\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"formation_method\" TEXT NOT NULL CHECK (formation_method IN ('manual', 'random', 'balanced')), \"display_label\" TEXT NULL, PRIMARY KEY (\"id\"), CHECK (display_label IS NULL OR trim(display_label) <> ''), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
+        }
+      ]
+    },
+    {
+      "name": "team_members",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"team_members\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"team_id\" TEXT NOT NULL REFERENCES teams (id) ON DELETE RESTRICT, \"player_id\" TEXT NOT NULL REFERENCES players (id) ON DELETE RESTRICT, PRIMARY KEY (\"team_id\", \"player_id\"), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
+        }
+      ]
+    },
+    {
+      "name": "matches",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"matches\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"side_one_team_id\" TEXT NULL REFERENCES teams (id) ON DELETE RESTRICT, \"side_two_team_id\" TEXT NULL REFERENCES teams (id) ON DELETE RESTRICT, \"status\" TEXT NOT NULL CHECK (status IN ('scheduled', 'queued', 'inProgress', 'completed')), \"side_one_score\" INTEGER NULL, \"side_two_score\" INTEGER NULL, \"winner_team_id\" TEXT NULL REFERENCES teams (id) ON DELETE RESTRICT, \"round_number\" INTEGER NULL, \"sequence_number\" INTEGER NULL, PRIMARY KEY (\"id\"), CHECK (side_one_team_id IS NULL OR side_two_team_id IS NULL OR side_one_team_id <> side_two_team_id), CHECK (side_one_score IS NULL OR side_one_score >= 0), CHECK (side_two_score IS NULL OR side_two_score >= 0), CHECK (round_number IS NULL OR round_number > 0), CHECK (sequence_number IS NULL OR sequence_number > 0), CHECK ((status = 'completed' AND side_one_team_id IS NOT NULL AND side_two_team_id IS NOT NULL AND side_one_score IS NOT NULL AND side_two_score IS NOT NULL AND winner_team_id IS NOT NULL AND winner_team_id IN (side_one_team_id, side_two_team_id)) OR (status <> 'completed' AND winner_team_id IS NULL)), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
+        }
+      ]
+    },
+    {
+      "name": "match_dependencies",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"match_dependencies\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"source_match_id\" TEXT NOT NULL REFERENCES matches (id) ON DELETE RESTRICT, \"source_outcome\" TEXT NOT NULL CHECK (source_outcome IN ('winner', 'loser')), \"destination_match_id\" TEXT NOT NULL REFERENCES matches (id) ON DELETE RESTRICT, \"destination_slot\" TEXT NOT NULL CHECK (destination_slot IN ('sideOne', 'sideTwo')), PRIMARY KEY (\"source_match_id\", \"source_outcome\", \"destination_match_id\", \"destination_slot\"), CHECK (source_match_id <> destination_match_id), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
+        }
+      ]
+    },
+    {
+      "name": "court_queue_entries",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"court_queue_entries\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"event_id\" TEXT NOT NULL REFERENCES events (id) ON DELETE RESTRICT, \"division_id\" TEXT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"match_id\" TEXT NOT NULL REFERENCES matches (id) ON DELETE RESTRICT, \"queue_position\" INTEGER NOT NULL CHECK (queue_position >= 0), PRIMARY KEY (\"id\"), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
+        }
+      ]
+    },
+    {
+      "name": "division_placements",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"division_placements\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"team_id\" TEXT NOT NULL REFERENCES teams (id) ON DELETE RESTRICT, \"position\" INTEGER NOT NULL CHECK (position > 0), PRIMARY KEY (\"id\"), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
+        }
+      ]
+    },
+    {
+      "name": "players_display_name_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX players_display_name_idx ON players (display_name)"
+        }
+      ]
+    },
+    {
+      "name": "events_status_scheduled_at_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX events_status_scheduled_at_idx ON events (status, scheduled_at)"
+        }
+      ]
+    },
+    {
+      "name": "event_divisions_event_id_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX event_divisions_event_id_idx ON event_divisions (event_id)"
+        }
+      ]
+    },
+    {
+      "name": "event_divisions_active_name_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE UNIQUE INDEX event_divisions_active_name_idx ON event_divisions (event_id, lower(name)) WHERE deleted_at IS NULL"
+        }
+      ]
+    },
+    {
+      "name": "event_participants_player_id_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX event_participants_player_id_idx ON event_participants (player_id)"
+        }
+      ]
+    },
+    {
+      "name": "event_participants_active_player_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE UNIQUE INDEX event_participants_active_player_idx ON event_participants (event_id, player_id) WHERE deleted_at IS NULL"
+        }
+      ]
+    },
+    {
+      "name": "division_participants_event_participant_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX division_participants_event_participant_idx ON division_participants (event_participant_id)"
+        }
+      ]
+    },
+    {
+      "name": "division_participants_active_entry_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE UNIQUE INDEX division_participants_active_entry_idx ON division_participants (division_id, event_participant_id) WHERE deleted_at IS NULL"
+        }
+      ]
+    },
+    {
+      "name": "participant_payments_active_event_scope_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE UNIQUE INDEX participant_payments_active_event_scope_idx ON participant_payments (event_participant_id) WHERE division_id IS NULL AND deleted_at IS NULL"
+        }
+      ]
+    },
+    {
+      "name": "participant_payments_active_division_scope_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE UNIQUE INDEX participant_payments_active_division_scope_idx ON participant_payments (event_participant_id, division_id) WHERE division_id IS NOT NULL AND deleted_at IS NULL"
+        }
+      ]
+    },
+    {
+      "name": "teams_division_id_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX teams_division_id_idx ON teams (division_id)"
+        }
+      ]
+    },
+    {
+      "name": "team_members_player_id_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX team_members_player_id_idx ON team_members (player_id)"
+        }
+      ]
+    },
+    {
+      "name": "matches_division_status_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX matches_division_status_idx ON matches (division_id, status, sequence_number)"
+        }
+      ]
+    },
+    {
+      "name": "match_dependencies_destination_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX match_dependencies_destination_idx ON match_dependencies (destination_match_id)"
+        }
+      ]
+    },
+    {
+      "name": "match_dependencies_active_destination_slot_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE UNIQUE INDEX match_dependencies_active_destination_slot_idx ON match_dependencies (destination_match_id, destination_slot) WHERE deleted_at IS NULL"
+        }
+      ]
+    },
+    {
+      "name": "court_queue_entries_active_position_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE UNIQUE INDEX court_queue_entries_active_position_idx ON court_queue_entries (event_id, queue_position) WHERE deleted_at IS NULL"
+        }
+      ]
+    },
+    {
+      "name": "court_queue_entries_active_match_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE UNIQUE INDEX court_queue_entries_active_match_idx ON court_queue_entries (match_id) WHERE deleted_at IS NULL"
+        }
+      ]
+    },
+    {
+      "name": "division_placements_active_position_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE UNIQUE INDEX division_placements_active_position_idx ON division_placements (division_id, position) WHERE deleted_at IS NULL"
+        }
+      ]
+    },
+    {
+      "name": "division_placements_active_team_idx",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE UNIQUE INDEX division_placements_active_team_idx ON division_placements (division_id, team_id) WHERE deleted_at IS NULL"
+        }
+      ]
+    }
+  ]
+}

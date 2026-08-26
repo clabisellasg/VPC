@@ -2,15 +2,22 @@
 
 ## Current status
 
-**Designed only; not implemented through Milestone 3.** This document defines
-the required conceptual behavior without choosing SQLite packages, outbox/sync
-schemas, endpoint shapes, or an exact conflict-resolution policy.
+**Designed only; not implemented through Milestone 4.** This document defines
+the required conceptual behavior without choosing outbox/sync schemas, endpoint
+shapes, or an exact conflict-resolution policy.
 
 Milestone 3 supplies only the hosted business-record schema, optimistic version
 fields, tombstones, RLS, and Realtime publication. It creates no outbox,
 operation receipt, checkpoint, failed-operation, or conflict table and no
 synchronization coordinator. Realtime remains a refetch signal; its publication
 configuration is not synchronization implementation.
+
+Milestone 4 supplies Android SQLite schema version 1 and local player, event,
+and match repository adapters. Its twelve operational tables intentionally have
+no sync-state, dirty, outbox, inbox, retry, cursor, device, conflict, or
+replication field/table. Local transactions in M4 prove atomic business writes,
+but they do not yet record synchronization intent. M5 must introduce the outbox
+and prove atomic mutation-plus-operation behavior without rewriting M4 history.
 
 ## Local-first writes and outbox
 

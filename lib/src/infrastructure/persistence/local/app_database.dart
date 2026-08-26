@@ -1,0 +1,610 @@
+import 'package:drift/drift.dart';
+
+import 'database_connection.dart';
+
+part 'app_database.g.dart';
+
+mixin RecordMetadataColumns on Table {
+  DateTimeColumn get createdAt => dateTime()();
+
+  DateTimeColumn get updatedAt => dateTime()();
+
+  IntColumn get version =>
+      integer().customConstraint('NOT NULL CHECK (version >= 0)')();
+
+  DateTimeColumn get deletedAt => dateTime().nullable()();
+}
+
+@DataClassName('LocalPlayerRow')
+@TableIndex(name: 'players_display_name_idx', columns: {#displayName})
+class Players extends Table with RecordMetadataColumns {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+
+  TextColumn get displayName =>
+      text().customConstraint("NOT NULL CHECK (trim(display_name) <> '')")();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (updated_at >= created_at)',
+    'CHECK (deleted_at IS NULL OR deleted_at >= updated_at)',
+  ];
+}
+
+@DataClassName('LocalEventRow')
+@TableIndex(
+  name: 'events_status_scheduled_at_idx',
+  columns: {#status, #scheduledAt},
+)
+class Events extends Table with RecordMetadataColumns {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+
+  TextColumn get name =>
+      text().customConstraint("NOT NULL CHECK (trim(name) <> '')")();
+
+  DateTimeColumn get scheduledAt => dateTime()();
+
+  TextColumn get eventType => text().customConstraint(
+    "NOT NULL CHECK (event_type IN ('casual', 'formal'))",
+  )();
+
+  TextColumn get status => text().customConstraint(
+    "NOT NULL CHECK (status IN "
+    "('upcoming', 'registration', 'inProgress', 'completed', 'archived'))",
+  )();
+
+  IntColumn get entryFeeMinorUnits => integer().nullable()();
+
+  TextColumn get entryFeeCurrency => text().nullable()();
+
+  TextColumn get courtLabel =>
+      text().customConstraint("NOT NULL CHECK (trim(court_label) <> '')")();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK ((entry_fee_minor_units IS NULL AND entry_fee_currency IS NULL) '
+        'OR (entry_fee_minor_units >= 0 '
+        "AND entry_fee_currency GLOB '[A-Z][A-Z][A-Z]'))",
+    'CHECK (updated_at >= created_at)',
+    'CHECK (deleted_at IS NULL OR deleted_at >= updated_at)',
+  ];
+}
+
+@DataClassName('LocalEventDivisionRow')
+@TableIndex(name: 'event_divisions_event_id_idx', columns: {#eventId})
+@TableIndex.sql(
+  'CREATE UNIQUE INDEX event_divisions_active_name_idx '
+  'ON event_divisions (event_id, lower(name)) WHERE deleted_at IS NULL',
+)
+class EventDivisions extends Table with RecordMetadataColumns {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+
+  TextColumn get eventId =>
+      text().references(Events, #id, onDelete: KeyAction.restrict)();
+
+  TextColumn get name =>
+      text().customConstraint("NOT NULL CHECK (trim(name) <> '')")();
+
+  TextColumn get tournamentFormat => text().customConstraint(
+    "NOT NULL CHECK (tournament_format IN ('singleElimination', "
+    "'doubleElimination', 'singleRoundRobin', 'doubleRoundRobin'))",
+  )();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (updated_at >= created_at)',
+    'CHECK (deleted_at IS NULL OR deleted_at >= updated_at)',
+  ];
+}
+
+@DataClassName('LocalEventParticipantRow')
+@TableIndex(name: 'event_participants_player_id_idx', columns: {#playerId})
+@TableIndex.sql(
+  'CREATE UNIQUE INDEX event_participants_active_player_idx '
+  'ON event_participants (event_id, player_id) WHERE deleted_at IS NULL',
+)
+class EventParticipants extends Table with RecordMetadataColumns {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+
+  TextColumn get eventId =>
+      text().references(Events, #id, onDelete: KeyAction.restrict)();
+
+  TextColumn get playerId =>
+      text().references(Players, #id, onDelete: KeyAction.restrict)();
+
+  TextColumn get checkInStatus => text().customConstraint(
+    "NOT NULL CHECK (check_in_status IN ('notPresent', 'checkedIn'))",
+  )();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (updated_at >= created_at)',
+    'CHECK (deleted_at IS NULL OR deleted_at >= updated_at)',
+  ];
+}
+
+@DataClassName('LocalDivisionParticipantRow')
+@TableIndex(
+  name: 'division_participants_event_participant_idx',
+  columns: {#eventParticipantId},
+)
+@TableIndex.sql(
+  'CREATE UNIQUE INDEX division_participants_active_entry_idx '
+  'ON division_participants (division_id, event_participant_id) '
+  'WHERE deleted_at IS NULL',
+)
+class DivisionParticipants extends Table with RecordMetadataColumns {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+
+  TextColumn get divisionId =>
+      text().references(EventDivisions, #id, onDelete: KeyAction.restrict)();
+
+  TextColumn get eventParticipantId =>
+      text().references(EventParticipants, #id, onDelete: KeyAction.restrict)();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (updated_at >= created_at)',
+    'CHECK (deleted_at IS NULL OR deleted_at >= updated_at)',
+  ];
+}
+
+@DataClassName('LocalParticipantPaymentRow')
+@TableIndex.sql(
+  'CREATE UNIQUE INDEX participant_payments_active_event_scope_idx '
+  'ON participant_payments (event_participant_id) '
+  'WHERE division_id IS NULL AND deleted_at IS NULL',
+)
+@TableIndex.sql(
+  'CREATE UNIQUE INDEX participant_payments_active_division_scope_idx '
+  'ON participant_payments (event_participant_id, division_id) '
+  'WHERE division_id IS NOT NULL AND deleted_at IS NULL',
+)
+class ParticipantPayments extends Table with RecordMetadataColumns {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+
+  TextColumn get eventParticipantId =>
+      text().references(EventParticipants, #id, onDelete: KeyAction.restrict)();
+
+  TextColumn get divisionId => text()
+      .references(EventDivisions, #id, onDelete: KeyAction.restrict)
+      .nullable()();
+
+  TextColumn get status => text().customConstraint(
+    "NOT NULL CHECK (status IN ('unpaid', 'paid'))",
+  )();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (updated_at >= created_at)',
+    'CHECK (deleted_at IS NULL OR deleted_at >= updated_at)',
+  ];
+}
+
+@DataClassName('LocalTeamRow')
+@TableIndex(name: 'teams_division_id_idx', columns: {#divisionId})
+class Teams extends Table with RecordMetadataColumns {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+
+  TextColumn get divisionId =>
+      text().references(EventDivisions, #id, onDelete: KeyAction.restrict)();
+
+  TextColumn get formationMethod => text().customConstraint(
+    "NOT NULL CHECK (formation_method IN ('manual', 'random', 'balanced'))",
+  )();
+
+  TextColumn get displayLabel => text().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => [
+    "CHECK (display_label IS NULL OR trim(display_label) <> '')",
+    'CHECK (updated_at >= created_at)',
+    'CHECK (deleted_at IS NULL OR deleted_at >= updated_at)',
+  ];
+}
+
+@DataClassName('LocalTeamMemberRow')
+@TableIndex(name: 'team_members_player_id_idx', columns: {#playerId})
+class TeamMembers extends Table with RecordMetadataColumns {
+  TextColumn get teamId =>
+      text().references(Teams, #id, onDelete: KeyAction.restrict)();
+
+  TextColumn get playerId =>
+      text().references(Players, #id, onDelete: KeyAction.restrict)();
+
+  @override
+  Set<Column<Object>> get primaryKey => {teamId, playerId};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (updated_at >= created_at)',
+    'CHECK (deleted_at IS NULL OR deleted_at >= updated_at)',
+  ];
+}
+
+@DataClassName('LocalMatchRow')
+@TableIndex(
+  name: 'matches_division_status_idx',
+  columns: {#divisionId, #status, #sequenceNumber},
+)
+class Matches extends Table with RecordMetadataColumns {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+
+  TextColumn get divisionId =>
+      text().references(EventDivisions, #id, onDelete: KeyAction.restrict)();
+
+  @ReferenceName('matchesAsSideOne')
+  TextColumn get sideOneTeamId =>
+      text().references(Teams, #id, onDelete: KeyAction.restrict).nullable()();
+
+  @ReferenceName('matchesAsSideTwo')
+  TextColumn get sideTwoTeamId =>
+      text().references(Teams, #id, onDelete: KeyAction.restrict).nullable()();
+
+  TextColumn get status => text().customConstraint(
+    "NOT NULL CHECK (status IN ('scheduled', 'queued', 'inProgress', 'completed'))",
+  )();
+
+  IntColumn get sideOneScore => integer().nullable()();
+
+  IntColumn get sideTwoScore => integer().nullable()();
+
+  @ReferenceName('matchesAsWinner')
+  TextColumn get winnerTeamId =>
+      text().references(Teams, #id, onDelete: KeyAction.restrict).nullable()();
+
+  IntColumn get roundNumber => integer().nullable()();
+
+  IntColumn get sequenceNumber => integer().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (side_one_team_id IS NULL OR side_two_team_id IS NULL '
+        'OR side_one_team_id <> side_two_team_id)',
+    'CHECK (side_one_score IS NULL OR side_one_score >= 0)',
+    'CHECK (side_two_score IS NULL OR side_two_score >= 0)',
+    'CHECK (round_number IS NULL OR round_number > 0)',
+    'CHECK (sequence_number IS NULL OR sequence_number > 0)',
+    "CHECK ((status = 'completed' AND side_one_team_id IS NOT NULL "
+        'AND side_two_team_id IS NOT NULL AND side_one_score IS NOT NULL '
+        'AND side_two_score IS NOT NULL AND winner_team_id IS NOT NULL '
+        'AND winner_team_id IN (side_one_team_id, side_two_team_id)) '
+        "OR (status <> 'completed' AND winner_team_id IS NULL))",
+    'CHECK (updated_at >= created_at)',
+    'CHECK (deleted_at IS NULL OR deleted_at >= updated_at)',
+  ];
+}
+
+@DataClassName('LocalMatchDependencyRow')
+@TableIndex(
+  name: 'match_dependencies_destination_idx',
+  columns: {#destinationMatchId},
+)
+@TableIndex.sql(
+  'CREATE UNIQUE INDEX match_dependencies_active_destination_slot_idx '
+  'ON match_dependencies (destination_match_id, destination_slot) '
+  'WHERE deleted_at IS NULL',
+)
+class MatchDependencies extends Table with RecordMetadataColumns {
+  @ReferenceName('dependenciesAsSource')
+  TextColumn get sourceMatchId =>
+      text().references(Matches, #id, onDelete: KeyAction.restrict)();
+
+  TextColumn get sourceOutcome => text().customConstraint(
+    "NOT NULL CHECK (source_outcome IN ('winner', 'loser'))",
+  )();
+
+  @ReferenceName('dependenciesAsDestination')
+  TextColumn get destinationMatchId =>
+      text().references(Matches, #id, onDelete: KeyAction.restrict)();
+
+  TextColumn get destinationSlot => text().customConstraint(
+    "NOT NULL CHECK (destination_slot IN ('sideOne', 'sideTwo'))",
+  )();
+
+  @override
+  Set<Column<Object>> get primaryKey => {
+    sourceMatchId,
+    sourceOutcome,
+    destinationMatchId,
+    destinationSlot,
+  };
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (source_match_id <> destination_match_id)',
+    'CHECK (updated_at >= created_at)',
+    'CHECK (deleted_at IS NULL OR deleted_at >= updated_at)',
+  ];
+}
+
+@DataClassName('LocalCourtQueueEntryRow')
+@TableIndex.sql(
+  'CREATE UNIQUE INDEX court_queue_entries_active_position_idx '
+  'ON court_queue_entries (event_id, queue_position) WHERE deleted_at IS NULL',
+)
+@TableIndex.sql(
+  'CREATE UNIQUE INDEX court_queue_entries_active_match_idx '
+  'ON court_queue_entries (match_id) WHERE deleted_at IS NULL',
+)
+class CourtQueueEntries extends Table with RecordMetadataColumns {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+
+  TextColumn get eventId =>
+      text().references(Events, #id, onDelete: KeyAction.restrict)();
+
+  TextColumn get divisionId => text()
+      .references(EventDivisions, #id, onDelete: KeyAction.restrict)
+      .nullable()();
+
+  TextColumn get matchId =>
+      text().references(Matches, #id, onDelete: KeyAction.restrict)();
+
+  IntColumn get queuePosition =>
+      integer().customConstraint('NOT NULL CHECK (queue_position >= 0)')();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (updated_at >= created_at)',
+    'CHECK (deleted_at IS NULL OR deleted_at >= updated_at)',
+  ];
+}
+
+@DataClassName('LocalDivisionPlacementRow')
+@TableIndex.sql(
+  'CREATE UNIQUE INDEX division_placements_active_position_idx '
+  'ON division_placements (division_id, position) WHERE deleted_at IS NULL',
+)
+@TableIndex.sql(
+  'CREATE UNIQUE INDEX division_placements_active_team_idx '
+  'ON division_placements (division_id, team_id) WHERE deleted_at IS NULL',
+)
+class DivisionPlacements extends Table with RecordMetadataColumns {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+
+  TextColumn get divisionId =>
+      text().references(EventDivisions, #id, onDelete: KeyAction.restrict)();
+
+  TextColumn get teamId =>
+      text().references(Teams, #id, onDelete: KeyAction.restrict)();
+
+  IntColumn get position =>
+      integer().customConstraint('NOT NULL CHECK (position > 0)')();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (updated_at >= created_at)',
+    'CHECK (deleted_at IS NULL OR deleted_at >= updated_at)',
+  ];
+}
+
+@DriftDatabase(
+  tables: [
+    Players,
+    Events,
+    EventDivisions,
+    EventParticipants,
+    DivisionParticipants,
+    ParticipantPayments,
+    Teams,
+    TeamMembers,
+    Matches,
+    MatchDependencies,
+    CourtQueueEntries,
+    DivisionPlacements,
+  ],
+)
+final class AppDatabase extends _$AppDatabase {
+  AppDatabase(super.executor);
+
+  AppDatabase.forAndroid() : super(openAndroidDatabaseConnection());
+
+  AppDatabase.inMemory() : super(openInMemoryDatabaseConnection());
+
+  @override
+  int get schemaVersion => 1;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (migrator) async {
+      await migrator.createAll();
+      for (final statement in _scopeAndTransitionTriggers) {
+        await customStatement(statement);
+      }
+    },
+    onUpgrade: (_, from, to) => throw StateError(
+      'No local schema upgrade path exists from $from to $to.',
+    ),
+    beforeOpen: (_) async {
+      await customStatement('PRAGMA foreign_keys = ON');
+    },
+  );
+
+  Future<void> insertTeamWithMembers(
+    TeamsCompanion team,
+    Iterable<TeamMembersCompanion> members,
+  ) => transaction(() async {
+    await into(teams).insert(team);
+    for (final member in members) {
+      await into(teamMembers).insert(member);
+    }
+  });
+}
+
+const _scopeAndTransitionTriggers = <String>[
+  '''
+CREATE TRIGGER events_status_transition_guard
+BEFORE UPDATE OF status ON events
+WHEN NEW.status <> OLD.status AND NOT (
+  (OLD.status = 'upcoming' AND NEW.status = 'registration') OR
+  (OLD.status = 'registration' AND NEW.status = 'inProgress') OR
+  (OLD.status = 'inProgress' AND NEW.status = 'completed') OR
+  (OLD.status = 'completed' AND NEW.status = 'archived')
+)
+BEGIN
+  SELECT RAISE(ABORT, 'invalid event status transition');
+END
+''',
+  '''
+CREATE TRIGGER matches_status_transition_guard
+BEFORE UPDATE OF status ON matches
+WHEN NEW.status <> OLD.status AND NOT (
+  (OLD.status = 'scheduled' AND NEW.status = 'queued') OR
+  (OLD.status = 'queued' AND NEW.status = 'inProgress') OR
+  (OLD.status = 'inProgress' AND NEW.status = 'completed')
+)
+BEGIN
+  SELECT RAISE(ABORT, 'invalid match status transition');
+END
+''',
+  '''
+CREATE TRIGGER division_participants_scope_guard
+BEFORE INSERT ON division_participants
+WHEN (SELECT event_id FROM event_divisions WHERE id = NEW.division_id) <>
+     (SELECT event_id FROM event_participants WHERE id = NEW.event_participant_id)
+BEGIN
+  SELECT RAISE(ABORT, 'division participant event mismatch');
+END
+''',
+  '''
+CREATE TRIGGER division_participants_scope_update_guard
+BEFORE UPDATE OF division_id, event_participant_id ON division_participants
+WHEN (SELECT event_id FROM event_divisions WHERE id = NEW.division_id) <>
+     (SELECT event_id FROM event_participants WHERE id = NEW.event_participant_id)
+BEGIN
+  SELECT RAISE(ABORT, 'division participant event mismatch');
+END
+''',
+  '''
+CREATE TRIGGER participant_payments_scope_guard
+BEFORE INSERT ON participant_payments
+WHEN NEW.division_id IS NOT NULL AND
+     (SELECT event_id FROM event_divisions WHERE id = NEW.division_id) <>
+     (SELECT event_id FROM event_participants WHERE id = NEW.event_participant_id)
+BEGIN
+  SELECT RAISE(ABORT, 'payment division event mismatch');
+END
+''',
+  '''
+CREATE TRIGGER participant_payments_scope_update_guard
+BEFORE UPDATE OF division_id, event_participant_id ON participant_payments
+WHEN NEW.division_id IS NOT NULL AND
+     (SELECT event_id FROM event_divisions WHERE id = NEW.division_id) <>
+     (SELECT event_id FROM event_participants WHERE id = NEW.event_participant_id)
+BEGIN
+  SELECT RAISE(ABORT, 'payment division event mismatch');
+END
+''',
+  '''
+CREATE TRIGGER matches_team_scope_guard
+BEFORE INSERT ON matches
+WHEN (NEW.side_one_team_id IS NOT NULL AND
+      (SELECT division_id FROM teams WHERE id = NEW.side_one_team_id) <> NEW.division_id)
+  OR (NEW.side_two_team_id IS NOT NULL AND
+      (SELECT division_id FROM teams WHERE id = NEW.side_two_team_id) <> NEW.division_id)
+  OR (NEW.winner_team_id IS NOT NULL AND
+      (SELECT division_id FROM teams WHERE id = NEW.winner_team_id) <> NEW.division_id)
+BEGIN
+  SELECT RAISE(ABORT, 'match team division mismatch');
+END
+''',
+  '''
+CREATE TRIGGER matches_team_scope_update_guard
+BEFORE UPDATE OF division_id, side_one_team_id, side_two_team_id, winner_team_id
+ON matches
+WHEN (NEW.side_one_team_id IS NOT NULL AND
+      (SELECT division_id FROM teams WHERE id = NEW.side_one_team_id) <> NEW.division_id)
+  OR (NEW.side_two_team_id IS NOT NULL AND
+      (SELECT division_id FROM teams WHERE id = NEW.side_two_team_id) <> NEW.division_id)
+  OR (NEW.winner_team_id IS NOT NULL AND
+      (SELECT division_id FROM teams WHERE id = NEW.winner_team_id) <> NEW.division_id)
+BEGIN
+  SELECT RAISE(ABORT, 'match team division mismatch');
+END
+''',
+  '''
+CREATE TRIGGER match_dependencies_scope_guard
+BEFORE INSERT ON match_dependencies
+WHEN (SELECT division_id FROM matches WHERE id = NEW.source_match_id) <>
+     (SELECT division_id FROM matches WHERE id = NEW.destination_match_id)
+BEGIN
+  SELECT RAISE(ABORT, 'match dependency division mismatch');
+END
+''',
+  '''
+CREATE TRIGGER match_dependencies_scope_update_guard
+BEFORE UPDATE OF source_match_id, destination_match_id ON match_dependencies
+WHEN (SELECT division_id FROM matches WHERE id = NEW.source_match_id) <>
+     (SELECT division_id FROM matches WHERE id = NEW.destination_match_id)
+BEGIN
+  SELECT RAISE(ABORT, 'match dependency division mismatch');
+END
+''',
+  '''
+CREATE TRIGGER court_queue_entries_scope_guard
+BEFORE INSERT ON court_queue_entries
+WHEN (SELECT event_id FROM event_divisions
+      WHERE id = (SELECT division_id FROM matches WHERE id = NEW.match_id)) <> NEW.event_id
+  OR (NEW.division_id IS NOT NULL AND
+      NEW.division_id <> (SELECT division_id FROM matches WHERE id = NEW.match_id))
+BEGIN
+  SELECT RAISE(ABORT, 'court queue scope mismatch');
+END
+''',
+  '''
+CREATE TRIGGER court_queue_entries_scope_update_guard
+BEFORE UPDATE OF event_id, division_id, match_id ON court_queue_entries
+WHEN (SELECT event_id FROM event_divisions
+      WHERE id = (SELECT division_id FROM matches WHERE id = NEW.match_id)) <> NEW.event_id
+  OR (NEW.division_id IS NOT NULL AND
+      NEW.division_id <> (SELECT division_id FROM matches WHERE id = NEW.match_id))
+BEGIN
+  SELECT RAISE(ABORT, 'court queue scope mismatch');
+END
+''',
+  '''
+CREATE TRIGGER division_placements_scope_guard
+BEFORE INSERT ON division_placements
+WHEN (SELECT division_id FROM teams WHERE id = NEW.team_id) <> NEW.division_id
+BEGIN
+  SELECT RAISE(ABORT, 'placement team division mismatch');
+END
+''',
+  '''
+CREATE TRIGGER division_placements_scope_update_guard
+BEFORE UPDATE OF division_id, team_id ON division_placements
+WHEN (SELECT division_id FROM teams WHERE id = NEW.team_id) <> NEW.division_id
+BEGIN
+  SELECT RAISE(ABORT, 'placement team division mismatch');
+END
+''',
+];

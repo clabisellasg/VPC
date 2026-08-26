@@ -39,6 +39,12 @@ jobs:
       - name: Resolve dependencies
         run: flutter pub get
 
+      - name: Verify generated Drift sources and schema snapshot
+        run: |
+          dart run build_runner build
+          dart run drift_dev schema dump lib/src/infrastructure/persistence/local/app_database.dart drift_schemas/app_database_v1.json
+          git diff --exit-code -- lib/src/infrastructure/persistence/local/app_database.g.dart drift_schemas/app_database_v1.json
+
       - name: Verify formatting
         run: dart format --output=none --set-exit-if-changed .
 

@@ -4,8 +4,9 @@
 
 Tournament, release, recovery, and deployment procedures in this document are
 still **PRELIMINARY / FUTURE**. Milestone 3 validates the initial hosted
-Supabase migration/security foundation only; it does not validate a tournament
-runbook, release APK, PWA deployment, backup, restore, or pilot.
+Supabase migration/security foundation, and Milestone 4 validates the local
+schema/repository foundation. Neither validates a tournament runbook, release
+APK, PWA deployment, backup, restore, synchronization, or pilot.
 
 ## Supabase migration maintenance — M3 VALIDATED FOUNDATION
 
@@ -24,6 +25,25 @@ runbook, release APK, PWA deployment, backup, restore, or pilot.
 - No production seed data or automatic organizer assignment is part of the
   migration workflow. Organizer-role administration remains a privileged
   future runbook.
+
+## Android local schema maintenance — M4 VALIDATED FOUNDATION
+
+- The production file is `vpc.sqlite` beneath Android's application-support
+  directory. Do not copy it into the repository or treat a debug database as a
+  backup format.
+- Regenerate Drift sources and export `drift_schemas/app_database_v1.json`
+  after an approved schema edit. Review both artifacts and require a clean
+  second generation before committing.
+- Version 1 is the first local schema. Any later schema-version increment must
+  include an explicit migration and tests from every supported snapshot; the
+  current database fails visibly if an unimplemented upgrade is attempted.
+- Foreign keys must remain enabled. Preserve restrictive history, tombstones,
+  versions, UUID identities, and UTC precision during future migrations.
+- Web and non-Android native platforms must not open this database. No SQLite
+  Web assets or native desktop/iOS database setup is part of Version 1.
+- Closing the Riverpod owner closes the database connection/background isolate.
+  No M4 procedure claims pending sync, conflict recovery, backup, or restore is
+  implemented.
 
 ## Pre-tournament readiness — PRELIMINARY / FUTURE
 

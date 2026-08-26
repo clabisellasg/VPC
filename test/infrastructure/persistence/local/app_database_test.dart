@@ -1,0 +1,228 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:vpc/src/domain/common/domain_enums.dart';
+import 'package:vpc/src/domain/common/domain_failure.dart';
+import 'package:vpc/src/infrastructure/persistence/local/app_database.dart';
+import 'package:vpc/src/infrastructure/persistence/local/drift_mapping.dart';
+
+import 'persistence_test_support.dart';
+
+void main() {
+  late AppDatabase database;
+
+  setUp(() {
+    database = AppDatabase.inMemory();
+  });
+
+  tearDown(() async {
+    await database.close();
+  });
+
+  test(
+    'fresh schema creates exactly the 12 operational tables at version 1',
+    () async {
+      final rows = await database
+          .customSelect(
+            "SELECT name FROM sqlite_master WHERE type = 'table' "
+            "AND name NOT LIKE 'sqlite_%' AND name <> 'drift_schema' ORDER BY name",
+          )
+          .get();
+
+      expect(database.schemaVersion, 1);
+      expect(rows.map((row) => row.read<String>('name')).toSet(), {
+        'court_queue_entries',
+        'division_participants',
+        'division_placements',
+        'event_divisions',
+        'event_participants',
+        'events',
+        'match_dependencies',
+        'matches',
+        'participant_payments',
+        'players',
+        'team_members',
+        'teams',
+      });
+    },
+  );
+
+  test('foreign keys are enabled and reject missing parents', () async {
+    final pragma = await database
+        .customSelect('PRAGMA foreign_keys')
+        .getSingle();
+    expect(pragma.read<int>('foreign_keys'), 1);
+
+    await expectLater(
+      database.into(database.eventDivisions).insert(divisionCompanion()),
+      throwsA(anything),
+    );
+  });
+
+  test(
+    'approved enum names map exactly and schema guards are installed',
+    () async {
+      for (final value in EventType.values) {
+        expect(
+          enumValue(EventType.values, value.name, field: 'eventType'),
+          value,
+        );
+      }
+      for (final value in EventStatus.values) {
+        expect(
+          enumValue(EventStatus.values, value.name, field: 'eventStatus'),
+          value,
+        );
+      }
+      for (final value in TournamentFormat.values) {
+        expect(
+          enumValue(TournamentFormat.values, value.name, field: 'format'),
+          value,
+        );
+      }
+      for (final value in CheckInStatus.values) {
+        expect(
+          enumValue(CheckInStatus.values, value.name, field: 'checkIn'),
+          value,
+        );
+      }
+      for (final value in PaymentStatus.values) {
+        expect(
+          enumValue(PaymentStatus.values, value.name, field: 'payment'),
+          value,
+        );
+      }
+      for (final value in TeamFormationMethod.values) {
+        expect(
+          enumValue(TeamFormationMethod.values, value.name, field: 'formation'),
+          value,
+        );
+      }
+      for (final value in MatchStatus.values) {
+        expect(
+          enumValue(MatchStatus.values, value.name, field: 'matchStatus'),
+          value,
+        );
+      }
+      for (final value in MatchDependencySource.values) {
+        expect(
+          enumValue(MatchDependencySource.values, value.name, field: 'source'),
+          value,
+        );
+      }
+      for (final value in MatchDestinationSlot.values) {
+        expect(
+          enumValue(MatchDestinationSlot.values, value.name, field: 'slot'),
+          value,
+        );
+      }
+
+      final triggers = await database
+          .customSelect("SELECT name FROM sqlite_master WHERE type = 'trigger'")
+          .get();
+      expect(triggers, hasLength(14));
+    },
+  );
+
+  test(
+    'active uniqueness constraints reject duplicate participation',
+    () async {
+      await insertEventGraph(database);
+      await database
+          .into(database.eventParticipants)
+          .insert(
+            EventParticipantsCompanion.insert(
+              id: participantOneId,
+              eventId: eventOneId,
+              playerId: playerOneId,
+              checkInStatus: 'checkedIn',
+              createdAt: createdAt,
+              updatedAt: updatedAt,
+              version: 0,
+            ),
+          );
+
+      await expectLater(
+        database
+            .into(database.eventParticipants)
+            .insert(
+              EventParticipantsCompanion.insert(
+                id: participantTwoId,
+                eventId: eventOneId,
+                playerId: playerOneId,
+                checkInStatus: 'notPresent',
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                version: 0,
+              ),
+            ),
+        throwsA(anything),
+      );
+    },
+  );
+
+  test('UUID, money, UTC, enums, version, and tombstone round-trip', () async {
+    final deletedAt = DateTime.utc(2026, 8, 26, 3, 4, 5, 678, 901);
+    await database
+        .into(database.events)
+        .insert(eventCompanion(version: 7, deletedAt: deletedAt));
+
+    final row = await database.select(database.events).getSingle();
+    expect(row.id, eventOneId);
+    expect(row.entryFeeMinorUnits, 25000);
+    expect(row.entryFeeCurrency, 'PHP');
+    expect(row.eventType, 'formal');
+    expect(row.status, 'upcoming');
+    expect(row.version, 7);
+    expect(row.createdAt, createdAt);
+    expect(row.updatedAt, updatedAt);
+    expect(row.deletedAt, deletedAt);
+    expect(row.createdAt.isUtc, isTrue);
+    expect(row.createdAt.microsecond, createdAt.microsecond);
+  });
+
+  test('successful multi-table transaction commits every record', () async {
+    await insertEventGraph(database);
+    await database.insertTeamWithMembers(teamCompanion(), [
+      teamMemberCompanion(),
+    ]);
+
+    expect(await database.select(database.teams).get(), hasLength(1));
+    expect(await database.select(database.teamMembers).get(), hasLength(1));
+  });
+
+  test('failed multi-table transaction rolls back every record', () async {
+    await insertEventGraph(database);
+
+    await expectLater(
+      database.insertTeamWithMembers(teamCompanion(), [
+        teamMemberCompanion(),
+        teamMemberCompanion(),
+      ]),
+      throwsA(anything),
+    );
+
+    expect(await database.select(database.teams).get(), isEmpty);
+    expect(await database.select(database.teamMembers).get(), isEmpty);
+  });
+
+  test('invalid stored UUID is rejected by the domain mapper', () {
+    final row = LocalPlayerRow(
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      version: 0,
+      id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+      displayName: 'Invalid Row',
+    );
+
+    expect(() => playerFromRow(row), throwsA(isA<ValidationFailure>()));
+  });
+
+  test('close reliably prevents later database access', () async {
+    await database.customSelect('SELECT 1').get();
+    await database.close();
+
+    await expectLater(
+      database.customSelect('SELECT 1').get(),
+      throwsA(anything),
+    );
+  });
+}

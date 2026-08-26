@@ -4,10 +4,42 @@
 
 Milestone 0 established the intended strategy, Milestone 1 introduced the
 Flutter bootstrap harness, and Milestone 2 added pure-domain/contract suites.
-Milestone 3 adds Supabase configuration tests, version-controlled pgTAP policy
-tests, hosted catalog assertions, and publishable-key RLS smoke checks.
-Authentication flows, repository adapters, SQLite, tournament-engine, and
-synchronization tests remain outside M3.
+Milestone 3 adds Supabase configuration and database-security coverage.
+Milestone 4 adds deterministic in-memory SQLite, generated-schema freshness,
+production repository-adapter, transaction, lifecycle, and platform-boundary
+coverage. Authentication flows, synchronization, and tournament-engine tests
+remain future work.
+
+## Milestone 4 coverage and execution
+
+- Fresh schema creation verifies explicit version 1 and all twelve operational
+  tables, with no local profile, role, or synchronization table.
+- Constraint tests cover foreign-key enforcement, active uniqueness, exact enum
+  mapping, state/scope trigger installation, and invalid stored UUID mapping.
+- Round-trip tests cover client UUIDs, integer-minor-unit money, every approved
+  enum name, UTC sub-second timestamps, optimistic versions, and tombstones.
+- Transaction tests prove both full multi-table commit and full rollback after
+  a later member insert fails.
+- Production `PlayerRepository`, `EventRepository`, and `MatchRepository`
+  adapters are tested for save, lookup, observation, filtering, tombstone
+  exclusion, missing records, version conflicts, lifecycle constraints, and
+  refusal to discard an unsupported account link.
+- Lifecycle/platform tests cover database close and the explicit null local
+  persistence boundary on Web and unsupported native platforms.
+- Tests use in-memory SQLite. They require no emulator, Internet, Supabase,
+  credentials, authenticated account, or community data.
+- CI regenerates `app_database.g.dart`, re-exports the version-one Drift schema,
+  and fails on a generated diff before formatting, analysis, tests, and builds.
+- The final local run formatted 63 files with no change, found no analyzer
+  issue, and passed all 65 Flutter tests: 47 M1–M3 tests plus 18 M4 tests.
+- `flutter build web` produced `build/web`; `flutter build apk --debug`
+  produced `build/app/outputs/flutter-apk/app-debug.apk`.
+- The Web build repeated the non-fatal optional Cupertino-icons font diagnostic
+  and passed its Wasm dry run. The first M4 native build downloaded CMake
+  `3.22.1` through Gradle using the existing Android SDK license state; the APK
+  build then passed without a direct `sqlite3_flutter_libs` dependency.
+- Repeated generation produced no Dart output, and repeated schema export kept
+  both generated-artifact SHA-256 hashes unchanged.
 
 ## Milestone 3 coverage and execution
 
