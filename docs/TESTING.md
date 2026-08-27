@@ -7,8 +7,47 @@ Flutter bootstrap harness, and Milestone 2 added pure-domain/contract suites.
 Milestone 3 adds Supabase configuration and database-security coverage.
 Milestone 4 adds deterministic in-memory SQLite, generated-schema freshness,
 production repository-adapter, transaction, lifecycle, and platform-boundary
-coverage. Authentication flows, synchronization, and tournament-engine tests
-remain future work.
+coverage. Milestone 5 adds the player synchronization vertical-slice suite.
+Authentication flows, remaining-entity synchronization, and tournament-engine
+tests remain future work.
+
+## Milestone 5 coverage and execution
+
+- Drift migration verification starts from the committed v1 schema, inserts an
+  M4 player, migrates to v2, validates the schema, and proves the player
+  survived while all three synchronization tables and indexes were added.
+- In-memory SQLite tests cover constrained outbox/checkpoint/conflict storage,
+  stable operation UUIDs, deterministic ordering, stale in-flight recovery,
+  tombstone and UTC/version payloads, and checkpoint persistence.
+- Repository tests prove player mutation plus outbox commit atomically and a
+  forced duplicate-operation failure rolls back the player update completely.
+- Coordinator tests cover one active run, bounded batches, accepted and replayed
+  uploads, authorization blocking, retryable backoff with injected jitter,
+  conflict preservation, authoritative pull, and disposal.
+- Pull tests cover equal-version idempotency, newer-remote application,
+  tombstones, and pending-local-versus-remote conflicts with neither silent
+  local-wins nor remote-wins behavior.
+- Realtime/runtime tests cover initial foreground triggering, refresh hints,
+  burst coalescing, duplicate-start prevention, and subscription/timer disposal.
+- Ordinary Flutter tests use in-memory Drift, fake clock/IDs/jitter/gateways,
+  and no network, credentials, Docker, emulator, or Supabase account.
+- `player_sync_vertical_slice_test.sql` contains ten pgTAP catalog and
+  anonymous/non-organizer security assertions. Docker was unavailable, so this
+  file was retained but not executed locally.
+- Hosted assertion migrations validated private receipts, safe function grants
+  and `search_path`, organizer-only apply/pull, create, replay idempotency,
+  changed-payload rejection, stale-version conflict, authoritative pull, and
+  complete removal of temporary assertion records.
+- Publishable-key smoke checks returned `200` for public player reads and `401`
+  for payment/profile/role reads and anonymous apply/pull calls. Linked history
+  matches and linked database lint reports no errors.
+
+The final acceptance run passed formatting, analysis, all 85 Flutter tests,
+the Web production build, and Android debug APK build. Outputs are `build/web`
+and `build/app/outputs/flutter-apk/app-debug.apk`; both remain ignored. The Web
+build repeated the accepted optional Cupertino-font diagnostic and successful
+Wasm dry run. Android repeated the accepted SDK XML-version warning and passed
+without a license failure. No remote GitHub Actions run is claimed.
 
 ## Milestone 4 coverage and execution
 

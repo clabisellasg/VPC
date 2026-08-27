@@ -52,6 +52,11 @@ explicit planner/architect approval, with the approval and date recorded.
 | V1-042 | Local schema version 1 uses ISO-8601 text for UTC timestamps to preserve sub-second precision and text UUID columns revalidated by M2 nominal ID constructors. | ACCEPTED |
 | V1-043 | Drift generated Dart and the version-one JSON schema snapshot are committed and checked for freshness; no fictional pre-version-one migration is created. | ACCEPTED |
 | V1-044 | Production Drift adapters implement the unchanged M2 player, event, and match ports, exclude tombstones from ordinary reads, use optimistic versions, and translate expected constraints into typed failures. | ACCEPTED |
+| V1-045 | M5 proves synchronization with permanent players only; extension to the other operational records remains later work and must preserve entity dependencies. | ACCEPTED |
+| V1-046 | Android local schema version 2 stores durable outbox operations, pull checkpoints, and conflicts in separate tables rather than adding dirty/sync columns to every domain table. | ACCEPTED |
+| V1-047 | Player cloud mutations use a fixed, organizer-guarded PostgreSQL function with private operation receipts so identical operation-ID replays are idempotent and changed-payload reuse is rejected. | ACCEPTED |
+| V1-048 | M5 detects and preserves version conflicts without choosing local-wins, remote-wins, or a product-level conflict-resolution policy. | ACCEPTED |
+| V1-049 | Player Realtime notifications are debounced refresh hints that invoke an authoritative checkpointed pull; notification payloads are never written directly to SQLite. | ACCEPTED |
 
 ## Open decisions
 

@@ -8,7 +8,8 @@ import 'android_host.dart';
 import 'app_database.dart';
 import 'drift_event_repository.dart';
 import 'drift_match_repository.dart';
-import 'drift_player_repository.dart';
+import '../../sync/drift_syncing_player_repository.dart';
+import '../../sync/sync_dependency_providers.dart';
 
 enum LocalPersistencePlatform { android, web, unsupported }
 
@@ -50,7 +51,13 @@ final localDatabaseProvider = Provider<AppDatabase?>((ref) {
 
 final playerRepositoryProvider = Provider<PlayerRepository?>((ref) {
   final database = ref.watch(localDatabaseProvider);
-  return database == null ? null : DriftPlayerRepository(database);
+  return database == null
+      ? null
+      : DriftSyncingPlayerRepository(
+          database: database,
+          idFactory: ref.watch(syncIdFactoryProvider),
+          clock: ref.watch(syncClockProvider),
+        );
 });
 
 final eventRepositoryProvider = Provider<EventRepository?>((ref) {

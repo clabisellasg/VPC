@@ -6,9 +6,9 @@ single-court community. It will eventually manage reusable community players,
 participation, check-in, payment status, temporary teams, approved tournament
 formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 4 — Android SQLite Persistence Foundation
-(`COMPLETED`). The accepted M0–M3 baseline remains intact, and Android-only
-local persistence is validated.
+**Current status:** Milestone 5 — Synchronization Vertical Slice
+(`COMPLETED`). The accepted M0–M4 baseline remains intact. M5 synchronizes
+permanent players only; it does not imply full-table synchronization.
 
 ## Version 1 technology stack
 
@@ -46,6 +46,7 @@ scope, replace the stack, or begin a later milestone.
 - [Milestone 2 implementation record](docs/milestones/M02_DOMAIN_PERSISTENCE_CONTRACTS.md)
 - [Milestone 3 implementation record](docs/milestones/M03_SUPABASE_CLOUD_FOUNDATION.md)
 - [Milestone 4 implementation record](docs/milestones/M04_ANDROID_SQLITE_PERSISTENCE.md)
+- [Milestone 5 implementation record](docs/milestones/M05_SYNCHRONIZATION_VERTICAL_SLICE.md)
 
 ## Development setup
 
@@ -112,11 +113,13 @@ Run only the pure-domain Milestone 2 suites with:
 flutter test test/domain
 ```
 
-Regenerate and verify the Android SQLite schema artifacts with:
+Regenerate and verify the Android SQLite schema and migration-test artifacts
+with:
 
 ```powershell
 dart run build_runner build --delete-conflicting-outputs
-dart run drift_dev schema dump lib/src/infrastructure/persistence/local/app_database.dart drift_schemas/app_database_v1.json
+dart run drift_dev schema dump lib/src/infrastructure/persistence/local/app_database.dart drift_schemas
+dart run drift_dev schema generate drift_schemas test/generated_migrations
 flutter test test/infrastructure/persistence/local
 ```
 
@@ -132,5 +135,6 @@ supabase db lint --linked
 
 The Web output is written to `build/web`. The Android debug APK is written to
 `build/app/outputs/flutter-apk/app-debug.apk`. These are local build artifacts,
-not deployments or releases. Milestone 5 must not begin without explicit
-authorization.
+not deployments or releases. The M5 coordinator requires both Android local
+persistence and configured Supabase; without an authenticated organizer
+session, queued uploads remain pending. Authentication UI remains M7 work.

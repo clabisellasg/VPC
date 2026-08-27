@@ -227,3 +227,34 @@ local structural protections with M3. The committed version-one snapshot is
 
 No local sync/outbox fields or tables exist in M4. Those conceptual records in
 the synchronization section remain future M5 work.
+
+## Milestone 5 player synchronization realization
+
+Local schema version 2 preserves every M4 table and adds three infrastructure
+tables for the permanent-player slice:
+
+| Synchronization concept | Drift table | Purpose |
+| --- | --- | --- |
+| Durable operation intent | `sync_outbox_operations` | Stable operation/entity UUIDs, fixed entity/kind values, base version, deterministic player payload, UTC ordering/eligibility, attempts, claim state, and redacted failure information. |
+| Pull cursor | `sync_pull_checkpoints` | Last authoritative `(updated_at, player_id)` tuple applied for deterministic player pulls. |
+| Preserved conflict | `sync_conflicts` | Operation identity, expected version, local proposal, optional authoritative remote record/version, detection time, and unresolved/resolved state. |
+
+These tables are separate infrastructure metadata, not domain records or a
+claim that all operational tables synchronize. The v1→v2 migration creates
+them and their indexes without changing the twelve M4 tables. Generated
+snapshots use Drift's recognized `drift_schema_v1.json` and
+`drift_schema_v2.json` names; the accepted legacy M4 snapshot remains intact.
+
+The hosted M5 migration creates `private.player_sync_operation_receipts` and
+two fixed public functions. Receipts are not Data API-readable and contain only
+the validated request and accepted/conflict result needed for idempotent replay.
+`apply_player_sync_operation` can mutate only `public.players`, checks the M3
+organizer permission, validates an allowlisted payload, preserves tombstones,
+and enforces exact optimistic-version advancement. `pull_player_sync_changes`
+returns an organizer-authorized, tombstone-aware page ordered by
+`(updated_at, id)`. Neither function accepts a table name or SQL fragment.
+
+No profile, role, payment, event, team, match, queue, placement, or account-link
+record is added to the synchronization slice. There is still no hard deletion,
+derived player-stat counter, real community data, or final physical design for
+future entities.

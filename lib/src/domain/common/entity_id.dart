@@ -83,3 +83,13 @@ final class CourtQueueEntryId extends EntityId {
 final class DivisionPlacementId extends EntityId {
   DivisionPlacementId(super.value);
 }
+
+/// Stable identity for a durable client synchronization operation.
+final class SyncOperationId extends EntityId {
+  SyncOperationId(super.value);
+}
+
+/// Stable identity for a locally preserved synchronization conflict.
+final class SyncConflictId extends EntityId {
+  SyncConflictId(super.value);
+}

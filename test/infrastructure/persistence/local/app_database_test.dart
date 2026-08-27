@@ -18,7 +18,7 @@ void main() {
   });
 
   test(
-    'fresh schema creates exactly the 12 operational tables at version 1',
+    'fresh schema creates operational and synchronization tables at version 2',
     () async {
       final rows = await database
           .customSelect(
@@ -27,7 +27,7 @@ void main() {
           )
           .get();
 
-      expect(database.schemaVersion, 1);
+      expect(database.schemaVersion, 2);
       expect(rows.map((row) => row.read<String>('name')).toSet(), {
         'court_queue_entries',
         'division_participants',
@@ -41,6 +41,9 @@ void main() {
         'players',
         'team_members',
         'teams',
+        'sync_conflicts',
+        'sync_outbox_operations',
+        'sync_pull_checkpoints',
       });
     },
   );

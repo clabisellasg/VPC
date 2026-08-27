@@ -3,9 +3,10 @@
 ## Scope
 
 This document defines the conceptual Version 1 architecture and the foundations
-established through Milestone 4. It deliberately does not prescribe a final
-feature-folder layout. Synchronization, authentication flows, remote repository
-adapters, and tournament-engine implementation begin only in later milestones.
+established through Milestone 5. It deliberately does not prescribe a final
+feature-folder layout. Authentication flows, full operational synchronization,
+public feature repositories, and tournament-engine implementation begin only
+in later milestones.
 
 ## Milestone 1 implemented foundation
 
@@ -76,6 +77,30 @@ adapters, and tournament-engine implementation begin only in later milestones.
   records.
 - There is no outbox, synchronization coordinator, Supabase fallback, or
   Realtime subscription in the local adapter.
+
+## Milestone 5 implemented synchronization slice
+
+- Permanent players are the sole production synchronization slice. The design
+  is reusable, but no other operational table is claimed as synchronized.
+- Android schema version 2 adds separate durable outbox, pull-checkpoint, and
+  conflict tables. A player mutation and its operation commit in one SQLite
+  transaction through the existing `PlayerRepository` port.
+- Pure-Dart application contracts isolate the coordinator from Drift and
+  Supabase. Deterministic ordering, a single active run, interrupted-claim
+  recovery, bounded batches, redacted failures, and bounded retry backoff live
+  at this boundary.
+- A narrow Supabase gateway calls organizer-guarded player apply/pull functions.
+  Private operation receipts make identical retries idempotent; versions make
+  stale writes explicit conflicts.
+- Accepted cloud rows reconcile into SQLite without re-enqueueing. Pending
+  incompatible local intent is preserved with both local and remote evidence;
+  M5 chooses neither side automatically.
+- Realtime subscribes only to `public.players`, coalesces notifications, and
+  requests a checkpointed pull. It never treats notification payloads as a
+  durable or authoritative player record.
+- Android composes the real synchronization runtime only when both its local
+  database and a configured Supabase client exist. Web opens no SQLite and
+  receives no offline synchronization coordinator.
 
 ## Layers and responsibilities
 

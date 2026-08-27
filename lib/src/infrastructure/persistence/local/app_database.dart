@@ -407,6 +407,127 @@ class DivisionPlacements extends Table with RecordMetadataColumns {
   ];
 }
 
+@DataClassName('LocalSyncOutboxRow')
+@TableIndex(
+  name: 'sync_outbox_eligibility_idx',
+  columns: {#status, #nextEligibleAt, #createdAt, #id},
+)
+@TableIndex(name: 'sync_outbox_entity_idx', columns: {#entityType, #entityId})
+class SyncOutboxOperations extends Table {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+
+  TextColumn get entityType =>
+      text().customConstraint("NOT NULL CHECK (entity_type = 'player')")();
+
+  TextColumn get entityId =>
+      text().references(Players, #id, onDelete: KeyAction.restrict)();
+
+  TextColumn get operationKind => text().customConstraint(
+    "NOT NULL CHECK (operation_kind IN ('upsert', 'tombstone'))",
+  )();
+
+  IntColumn get baseVersion => integer().nullable()();
+
+  TextColumn get payloadJson => text().customConstraint(
+    "NOT NULL CHECK (json_valid(payload_json) AND json_type(payload_json) = 'object')",
+  )();
+
+  DateTimeColumn get createdAt => dateTime()();
+
+  IntColumn get attemptCount => integer().withDefault(const Constant(0))();
+
+  DateTimeColumn get nextEligibleAt => dateTime()();
+
+  TextColumn get status => text().customConstraint(
+    "NOT NULL CHECK (status IN ('pending', 'inFlight', 'conflicted', 'failed'))",
+  )();
+
+  DateTimeColumn get claimedAt => dateTime().nullable()();
+
+  TextColumn get failureCode => text().nullable()();
+
+  TextColumn get failureMessage => text().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (base_version IS NULL OR base_version >= 0)',
+    'CHECK (attempt_count >= 0)',
+    "CHECK ((status = 'inFlight' AND claimed_at IS NOT NULL) "
+        "OR (status <> 'inFlight' AND claimed_at IS NULL))",
+    'CHECK (failure_message IS NULL OR length(failure_message) <= 240)',
+  ];
+}
+
+@DataClassName('LocalSyncCheckpointRow')
+class SyncPullCheckpoints extends Table {
+  TextColumn get entityType =>
+      text().customConstraint("NOT NULL CHECK (entity_type = 'player')")();
+
+  DateTimeColumn get cursorUpdatedAt => dateTime()();
+
+  TextColumn get cursorEntityId =>
+      text().references(Players, #id, onDelete: KeyAction.restrict)();
+
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {entityType};
+}
+
+@DataClassName('LocalSyncConflictRow')
+@TableIndex(
+  name: 'sync_conflicts_unresolved_idx',
+  columns: {#status, #detectedAt},
+)
+@TableIndex(
+  name: 'sync_conflicts_entity_idx',
+  columns: {#entityType, #entityId},
+)
+class SyncConflicts extends Table {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+
+  TextColumn get operationId => text()
+      .references(SyncOutboxOperations, #id, onDelete: KeyAction.restrict)
+      .unique()();
+
+  TextColumn get entityType =>
+      text().customConstraint("NOT NULL CHECK (entity_type = 'player')")();
+
+  TextColumn get entityId =>
+      text().references(Players, #id, onDelete: KeyAction.restrict)();
+
+  IntColumn get expectedVersion => integer().nullable()();
+
+  TextColumn get localPayloadJson => text().customConstraint(
+    "NOT NULL CHECK (json_valid(local_payload_json) "
+    "AND json_type(local_payload_json) = 'object')",
+  )();
+
+  TextColumn get remotePayloadJson => text().nullable()();
+
+  IntColumn get remoteVersion => integer().nullable()();
+
+  DateTimeColumn get detectedAt => dateTime()();
+
+  TextColumn get status => text().customConstraint(
+    "NOT NULL CHECK (status IN ('unresolved', 'resolved'))",
+  )();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (expected_version IS NULL OR expected_version >= 0)',
+    'CHECK (remote_version IS NULL OR remote_version >= 0)',
+    'CHECK (remote_payload_json IS NULL OR '
+        "(json_valid(remote_payload_json) AND json_type(remote_payload_json) = 'object'))",
+  ];
+}
+
 @DriftDatabase(
   tables: [
     Players,
@@ -421,6 +542,9 @@ class DivisionPlacements extends Table with RecordMetadataColumns {
     MatchDependencies,
     CourtQueueEntries,
     DivisionPlacements,
+    SyncOutboxOperations,
+    SyncPullCheckpoints,
+    SyncConflicts,
   ],
 )
 final class AppDatabase extends _$AppDatabase {
@@ -431,7 +555,7 @@ final class AppDatabase extends _$AppDatabase {
   AppDatabase.inMemory() : super(openInMemoryDatabaseConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -441,9 +565,21 @@ final class AppDatabase extends _$AppDatabase {
         await customStatement(statement);
       }
     },
-    onUpgrade: (_, from, to) => throw StateError(
-      'No local schema upgrade path exists from $from to $to.',
-    ),
+    onUpgrade: (migrator, from, to) async {
+      if (from == 1 && to == 2) {
+        await migrator.createTable(syncOutboxOperations);
+        await migrator.createTable(syncPullCheckpoints);
+        await migrator.createTable(syncConflicts);
+        await migrator.createIndex(syncOutboxEligibilityIdx);
+        await migrator.createIndex(syncOutboxEntityIdx);
+        await migrator.createIndex(syncConflictsUnresolvedIdx);
+        await migrator.createIndex(syncConflictsEntityIdx);
+        return;
+      }
+      throw StateError(
+        'No local schema upgrade path exists from $from to $to.',
+      );
+    },
     beforeOpen: (_) async {
       await customStatement('PRAGMA foreign_keys = ON');
     },

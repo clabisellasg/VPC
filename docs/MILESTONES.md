@@ -64,7 +64,7 @@ authorized proceeding.
 - **Purpose:** Prove offline queueing, reconnect, idempotency, cloud application,
   pull reconciliation, conflicts, and Realtime refresh.
 - **Dependencies:** M3 and M4.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED.
 
 ### M6 — Public Application and Guest Reading
 

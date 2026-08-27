@@ -4,9 +4,10 @@
 
 Tournament, release, recovery, and deployment procedures in this document are
 still **PRELIMINARY / FUTURE**. Milestone 3 validates the initial hosted
-Supabase migration/security foundation, and Milestone 4 validates the local
-schema/repository foundation. Neither validates a tournament runbook, release
-APK, PWA deployment, backup, restore, synchronization, or pilot.
+Supabase migration/security foundation, Milestone 4 validates the local
+schema/repository foundation, and Milestone 5 validates a player-only
+synchronization engine and hosted protocol. These do not validate a tournament
+runbook, release APK, PWA deployment, backup/restore, full-table sync, or pilot.
 
 ## Supabase migration maintenance — M3 VALIDATED FOUNDATION
 
@@ -26,24 +27,24 @@ APK, PWA deployment, backup, restore, synchronization, or pilot.
   migration workflow. Organizer-role administration remains a privileged
   future runbook.
 
-## Android local schema maintenance — M4 VALIDATED FOUNDATION
+## Android local schema maintenance — M4/M5 VALIDATED FOUNDATION
 
 - The production file is `vpc.sqlite` beneath Android's application-support
   directory. Do not copy it into the repository or treat a debug database as a
   backup format.
-- Regenerate Drift sources and export `drift_schemas/app_database_v1.json`
-  after an approved schema edit. Review both artifacts and require a clean
-  second generation before committing.
-- Version 1 is the first local schema. Any later schema-version increment must
-  include an explicit migration and tests from every supported snapshot; the
-  current database fails visibly if an unimplemented upgrade is attempted.
+- Regenerate Drift sources, export into `drift_schemas/`, and regenerate
+  `test/generated_migrations/` after an approved schema edit. Review every
+  artifact and require stable hashes across a second pass before committing.
+- Local schema v1 is the M4 baseline and v2 is the M5 synchronization slice.
+  The v1→v2 migration is validated against the committed v1 snapshot and
+  preserves M4 operational data. Every later increment needs equivalent tests.
 - Foreign keys must remain enabled. Preserve restrictive history, tombstones,
   versions, UUID identities, and UTC precision during future migrations.
 - Web and non-Android native platforms must not open this database. No SQLite
   Web assets or native desktop/iOS database setup is part of Version 1.
 - Closing the Riverpod owner closes the database connection/background isolate.
-  No M4 procedure claims pending sync, conflict recovery, backup, or restore is
-  implemented.
+  M5 adds player pending/conflict storage, but no procedure claims full-table
+  synchronization, backup, restore, or user-facing recovery is implemented.
 
 ## Pre-tournament readiness — PRELIMINARY / FUTURE
 
@@ -79,6 +80,10 @@ APK, PWA deployment, backup, restore, synchronization, or pilot.
 
 ## Pending-sync verification — PRELIMINARY / FUTURE
 
+M5 provides testable storage contracts for player pending/failed/conflicted
+operations but no production inspection screen. Until later operations UI is
+approved, do not clear or edit the outbox manually.
+
 - Before play, reduce pending operations to zero on each organizer Android
   device while online.
 - During and after play, inspect pending, retrying, failed, and conflicted counts.
@@ -88,6 +93,10 @@ APK, PWA deployment, backup, restore, synchronization, or pilot.
   destructive queue clearing.
 
 ## Conflict handling — PRELIMINARY / FUTURE
+
+M5 preserves player conflicts with local and remote evidence but intentionally
+does not resolve them. `OPEN-009` remains open; the steps below are still a
+future operational outline, not an approved resolution policy.
 
 - Stop progression that depends on a critical conflict, especially match
   results, bracket paths, placements, and court-queue state.
