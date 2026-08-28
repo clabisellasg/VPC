@@ -184,3 +184,15 @@ written to SQLite, placed in the operational outbox, or treated as offline
 authority. A temporarily persisted Auth session may be presented offline, but
 claim mutations and role confirmation require the cloud. PostgreSQL rechecks
 organizer permission for every M5 apply/pull RPC regardless of Flutter state.
+## M8 player-directory use of the M5 slice
+
+M8 reuses the player-only M5 synchronization slice without expanding its
+entity scope. Android organizer creation commits the player and outbox
+operation atomically. Public anonymous refresh is read-only: it creates no
+outbox record, never infers tombstones from partial results, and does not
+overwrite pending, failed, blocked, or conflicted local proposals. A confirmed
+organizer session remains necessary for authoritative tombstone pull and
+upload. Conflicts are displayed honestly and remain unresolved under OPEN-009.
+
+Web never creates SQLite/outbox infrastructure and applies organizer creation
+online through the existing idempotent cloud operation.

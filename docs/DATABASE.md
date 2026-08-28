@@ -305,3 +305,17 @@ The M6 data migration inserts three explicitly synthetic events and four
 synthetic divisions using deterministic IDs prefixed `61000000-` and
 `62000000-`. They exercise current, upcoming, and completed presentation only;
 they include no people, accounts, payments, contact data, or credentials.
+## M8 player-directory mapping
+
+M8 does not change the `players` record shape. Public list/profile reads use
+`id`, `display_name`, UTC metadata, version, and tombstone filtering only. A
+fixed `search_public_players` function provides normalized substring search,
+stable `(normalized name, id)` cursor ordering, and a hard 50-row maximum. It
+is invoker-security and remains subject to existing player RLS. A partial
+expression index supports active normalized-name ordering.
+
+Android maps the same fields to the existing Drift `players` table. Public
+pull reconciliation creates no outbox record and preserves pending/conflicted
+local rows. Organizer creation uses the existing player plus outbox transaction.
+No Auth UUID, email, claim, role, skill, statistics, merge, or event-specific
+column is added to `players`.

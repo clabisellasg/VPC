@@ -276,3 +276,17 @@ flowchart LR
 
 Detailed synchronization semantics are recorded in [SYNC.md](SYNC.md), and the
 conceptual entities are recorded in [DATABASE.md](DATABASE.md).
+## M8 permanent player directory boundary
+
+M8 adds a provider-neutral player directory query port above the M2 player
+domain. Widgets depend on Riverpod presentation state, never Drift or Supabase.
+On Android, the reader shows active Drift rows first and reconciles validated
+public cloud rows without producing outbox mutations or replacing unresolved
+local work. Organizer creation continues through the M5 atomic player/outbox
+repository and coordinator. On Web, reads and organizer creation use the
+online Supabase adapters and no SQLite database is initialized.
+
+The public projection contains no private Auth/profile/role/claim data. The
+basic profile deliberately has no skill or derived-stat fields. Realtime is
+still a refresh hint through the existing M5 runtime, and PostgreSQL RLS/RPC
+authorization remains the final organizer boundary.

@@ -6,11 +6,11 @@ single-court community. It will eventually manage reusable community players,
 participation, check-in, payment status, temporary teams, approved tournament
 formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 7 — Accounts, Roles, and Player Claiming
-(`COMPLETED`). The accepted M0–M6 baseline remains intact. M7 adds optional
-email/password accounts, server-authoritative organizer presentation, and an
-organizer-approved link to an existing permanent player. It does not add
-player editing, organizer tournament administration, or M8 functionality.
+**Current status:** Milestone 8 — Permanent Community Player Directory
+(`COMPLETED`). The accepted M0–M7 baseline remains intact. M8 adds guest
+player search/basic profiles and organizer creation with conservative duplicate
+warnings, while preserving Android offline-first and Web online-first bounds.
+It does not add player editing, skills, statistics, event participation, or M9.
 
 ## Version 1 technology stack
 
@@ -51,6 +51,7 @@ scope, replace the stack, or begin a later milestone.
 - [Milestone 5 implementation record](docs/milestones/M05_SYNCHRONIZATION_VERTICAL_SLICE.md)
 - [Milestone 6 implementation record](docs/milestones/M06_PUBLIC_APPLICATION_GUEST_READING.md)
 - [Milestone 7 implementation record](docs/milestones/M07_ACCOUNTS_ROLES_PLAYER_CLAIMING.md)
+- [Milestone 8 implementation record](docs/milestones/M08_PERMANENT_COMMUNITY_PLAYER_DIRECTORY.md)
 
 ## Development setup
 

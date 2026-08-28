@@ -396,3 +396,22 @@ smoke checks returned `200` for events/divisions and `401` for profiles, roles,
 claims, official writes, and the claim RPC. Public fixture rows exposed no Auth
 ID or email fields. The retained 22-assertion pgTAP suite was not run locally
 because the installed Docker executable could not reach its engine.
+## Milestone 8 player-directory coverage
+
+M8 adds deterministic tests for search normalization, bounded stable paging,
+duplicate warnings and acknowledgement, injected UUID/time, public row
+validation/redaction, tombstones, Android cache reconciliation, pending-write
+preservation, Web's no-SQLite boundary, public routes, missing profiles,
+organizer presentation guards, and narrow/wide layouts. Tests use fakes and
+in-memory Drift; ordinary `flutter test` performs no live network request.
+
+Hosted function/RLS validation and both mandatory manual walkthroughs are
+recorded in the M8 implementation record only after actually run.
+
+The M8 implementation run currently passes 159 Flutter tests, static analysis,
+Web production compilation, and Android debug APK compilation. Linked database
+lint passes and anonymous hosted smoke checks enforce the intended public and
+private boundaries. Local pgTAP was skipped because Docker is unavailable.
+Physical Android and Web acceptance passed on 2026-08-29. The conditional
+manual conflict injection was skipped because no safe control exists; in-memory
+tests verify conflict visibility and prohibit automatic resolution.

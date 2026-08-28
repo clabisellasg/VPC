@@ -13,8 +13,11 @@ class PublicAppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedIndex =
-        location.startsWith('/account') || location.startsWith('/organizer')
+    final selectedIndex = location.startsWith('/organizer/players')
+        ? 2
+        : location.startsWith('/account') || location.startsWith('/organizer')
+        ? 3
+        : location.startsWith('/players')
         ? 2
         : location.startsWith('/events')
         ? 1
@@ -41,6 +44,11 @@ class PublicAppShell extends StatelessWidget {
                           icon: Icon(Icons.event_outlined),
                           selectedIcon: Icon(Icons.event),
                           label: Text('Events'),
+                        ),
+                        NavigationRailDestination(
+                          icon: Icon(Icons.people_outline),
+                          selectedIcon: Icon(Icons.people),
+                          label: Text('Players'),
                         ),
                         NavigationRailDestination(
                           icon: Icon(Icons.account_circle_outlined),
@@ -73,6 +81,12 @@ class PublicAppShell extends StatelessWidget {
                       tooltip: 'Public events',
                     ),
                     NavigationDestination(
+                      icon: Icon(Icons.people_outline),
+                      selectedIcon: Icon(Icons.people),
+                      label: 'Players',
+                      tooltip: 'Community players',
+                    ),
+                    NavigationDestination(
                       icon: Icon(Icons.account_circle_outlined),
                       selectedIcon: Icon(Icons.account_circle),
                       label: 'Account',
@@ -89,6 +103,7 @@ class PublicAppShell extends StatelessWidget {
     context.go(switch (index) {
       0 => '/',
       1 => '/events',
+      2 => '/players',
       _ => '/account',
     });
   }

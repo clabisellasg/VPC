@@ -85,7 +85,7 @@ authorized proceeding.
 - **Purpose:** Implement reusable players, search, creation, duplicate warnings,
   and basic profiles.
 - **Dependencies:** M5 and M7.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED.
 
 ### M9 — Event and Division Lifecycle
 

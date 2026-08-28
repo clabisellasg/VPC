@@ -67,6 +67,11 @@ explicit planner/architect approval, with the approval and date recorded.
 | V1-057 | Organizer roles are normalized server-side permissions assigned or revoked only through trusted database administration; Flutter cannot assign roles and PostgreSQL RLS/RPC authorization remains authoritative. | ACCEPTED |
 | V1-058 | M7 confirmation callbacks use `/account/confirm` on Web and `com.voltapaddleclub.vpc://auth-callback/account/confirm` on Android. | ACCEPTED |
 | V1-059 | Only a currently authenticated account whose role is confirmed by the cloud as organizer starts the M5 player synchronization runtime; guest/member/sign-out states stop it. | ACCEPTED |
+| V1-060 | An M8 basic public player profile contains only permanent identity internally, public display name, and active/missing state; Auth, claims, roles, skill, contact details, and statistics are excluded. | ACCEPTED |
+| V1-061 | Player search and duplicate comparison trim and collapse whitespace and compare case-insensitively; directory search is substring-based and paged in deterministic batches of at most 50. | ACCEPTED |
+| V1-062 | An exact normalized-name match is a warning, not proof of identity; reusing preserves history, while a distinct same-name player requires explicit acknowledgement and is never auto-merged. | ACCEPTED |
+| V1-063 | Android player creation reuses M5 atomic local player/outbox persistence and idempotent synchronization; Web creation is online-only through the same authorized cloud apply protocol. | ACCEPTED |
+| V1-064 | M8 public player pagination uses a fixed, bounded, invoker-security PostgreSQL function that returns public player columns only and remains subject to RLS. | ACCEPTED |
 
 ## Open decisions
 

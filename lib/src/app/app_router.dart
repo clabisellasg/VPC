@@ -9,6 +9,9 @@ import 'package:vpc/src/presentation/accounts/auth_confirmation_page.dart';
 import 'package:vpc/src/presentation/accounts/auth_form_page.dart';
 import 'package:vpc/src/presentation/accounts/organizer_claims_page.dart';
 import 'package:vpc/src/presentation/accounts/player_claim_page.dart';
+import 'package:vpc/src/presentation/players/organizer_player_creation_page.dart';
+import 'package:vpc/src/presentation/players/public_player_directory_page.dart';
+import 'package:vpc/src/presentation/players/public_player_profile_page.dart';
 
 GoRouter createAppRouter() {
   return GoRouter(
@@ -61,8 +64,24 @@ GoRouter createAppRouter() {
             ],
           ),
           GoRoute(
+            path: '/players',
+            builder: (context, state) => const PublicPlayerDirectoryPage(),
+            routes: [
+              GoRoute(
+                path: ':playerId',
+                builder: (context, state) => PublicPlayerProfilePage(
+                  playerId: state.pathParameters['playerId'] ?? '',
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
             path: '/organizer/claims',
             builder: (context, state) => const OrganizerClaimsPage(),
+          ),
+          GoRoute(
+            path: '/organizer/players/new',
+            builder: (context, state) => const OrganizerPlayerCreationPage(),
           ),
         ],
       ),

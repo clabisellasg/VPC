@@ -224,3 +224,31 @@ pattern, unrelated permanent players, or intended organizer accounts.
   behavior, data integrity, unresolved sync, and release-blocking defects.
 - Fix and revalidate release blockers before Version 1 release; retain the pilot
   record as acceptance evidence for M21.
+## M8 player-directory manual acceptance (preliminary)
+
+## Android phone
+
+Use a configured build and only clearly synthetic `VPC M8 Test` names. As a
+guest, open Players, search an existing fixture, open its profile, and verify
+no private/Auth fields. Sign in as organizer, verify normalized-name duplicate
+warning and reuse path, then deliberately acknowledge creation of a distinct
+same-name test player. Confirm online synchronization. Create another
+synthetic player offline; verify pending display across close/reopen, restore
+connectivity, and confirm exactly one cloud row after reconciliation. If a safe
+conflict fixture is available, verify it is visible and not auto-resolved.
+Increase text size, sign out and retain guest access, then disconnect USB and
+reopen the installed app.
+
+## Web
+
+Verify guest list/search/profile, direct-route reload, browser back/forward,
+narrow/wide layouts, member write denial, organizer online creation, duplicate
+warning plus deliberate acknowledgement, authoritative cloud success, no
+SQLite initialization, no private fields, and no console errors.
+
+These procedures passed on 2026-08-29 on the configured Web build and a
+physical Android 14 phone. The Android offline fixture synchronized to exactly
+one cloud row after reconnect. The conditional conflict injection step was not
+run because M8 intentionally provides no safe conflict-control UI. Synthetic
+validation rows are documented in the M8 record; remove them only by exact ID
+through a reviewed administrative workflow, never by broad name matching.

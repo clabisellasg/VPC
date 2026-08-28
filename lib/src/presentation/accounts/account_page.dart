@@ -121,9 +121,16 @@ class _AuthenticatedAccount extends ConsumerWidget {
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
-            if (snapshot.profile.playerId != null)
-              const Text('Linked to an existing permanent community player.')
-            else if (claim != null)
+            if (snapshot.profile.playerId != null) ...[
+              const Text('Linked to an existing permanent community player.'),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: () =>
+                    context.go('/players/${snapshot.profile.playerId!.value}'),
+                icon: const Icon(Icons.person_outline),
+                label: const Text('Open public player profile'),
+              ),
+            ] else if (claim != null)
               Text('Claim status: ${_claimLabel(claim.status)}')
             else
               const Text('No permanent player is linked to this account.'),
