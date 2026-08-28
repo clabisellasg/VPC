@@ -71,7 +71,7 @@ authorized proceeding.
 - **Purpose:** Build shared navigation and public read-only
   current/upcoming/completed event experience.
 - **Dependencies:** M3 and M5.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED.
 
 ### M7 — Accounts, Roles, and Player Claiming
 

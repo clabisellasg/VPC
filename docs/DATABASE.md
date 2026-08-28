@@ -258,3 +258,23 @@ No profile, role, payment, event, team, match, queue, placement, or account-link
 record is added to the synchronization slice. There is still no hard deletion,
 derived player-stat counter, real community data, or final physical design for
 future entities.
+
+## Milestone 6 public event projection and fixtures
+
+The public guest projection reads only active rows from `events` and
+`event_divisions`. The Supabase adapter maps the existing PostgreSQL columns
+through M2 UUID, enum, money, UTC metadata, version, and tombstone validation;
+there is no parallel public schema or widget-level map parsing.
+
+Android reuses the M4 local `events` and `event_divisions` tables as a
+last-known public cache. A successful complete remote read is reconciled in one
+SQLite transaction. The cache preserves UUIDs, integer-minor-unit fees, exact
+enum values, UTC metadata, versions, and division relationships. Missing
+remote active rows receive local cache tombstones; no event/division outbox,
+dirty flag, cursor, or new table is introduced. A local row with a newer
+version/timestamp is preserved as a conflict rather than overwritten.
+
+The M6 data migration inserts three explicitly synthetic events and four
+synthetic divisions using deterministic IDs prefixed `61000000-` and
+`62000000-`. They exercise current, upcoming, and completed presentation only;
+they include no people, accounts, payments, contact data, or credentials.

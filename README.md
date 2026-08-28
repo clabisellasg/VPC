@@ -6,9 +6,10 @@ single-court community. It will eventually manage reusable community players,
 participation, check-in, payment status, temporary teams, approved tournament
 formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 5 — Synchronization Vertical Slice
-(`COMPLETED`). The accepted M0–M4 baseline remains intact. M5 synchronizes
-permanent players only; it does not imply full-table synchronization.
+**Current status:** Milestone 6 — Public Application and Guest Reading
+(`COMPLETED`). The accepted M0–M5 baseline remains intact. M6 adds guest
+navigation and public event/division reading; it does not add authentication,
+organizer writes, or tournament operation.
 
 ## Version 1 technology stack
 
@@ -47,6 +48,7 @@ scope, replace the stack, or begin a later milestone.
 - [Milestone 3 implementation record](docs/milestones/M03_SUPABASE_CLOUD_FOUNDATION.md)
 - [Milestone 4 implementation record](docs/milestones/M04_ANDROID_SQLITE_PERSISTENCE.md)
 - [Milestone 5 implementation record](docs/milestones/M05_SYNCHRONIZATION_VERTICAL_SLICE.md)
+- [Milestone 6 implementation record](docs/milestones/M06_PUBLIC_APPLICATION_GUEST_READING.md)
 
 ## Development setup
 
@@ -96,6 +98,12 @@ flutter run -d chrome `
 
 Providing only one value is rejected. Do not commit `.env` files or use a
 service-role/secret key in Flutter.
+
+Configured builds open the public guest shell without sign-in. Web reads
+events and divisions directly from Supabase. Android shows its last-known
+SQLite cache when available, then refreshes from the same anonymous public
+endpoint. An unconfigured build remains usable and explains why online public
+events cannot load.
 
 ## Quality and builds
 

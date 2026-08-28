@@ -150,3 +150,22 @@ and tombstone-aware pull report an authorization block, retain queued work, and
 defer the next eligible attempt. Production uploads never use service-role
 access. Fake authorized gateways prove coordinator behavior until M7 provides
 an approved organizer sign-in path.
+
+## Milestone 6 public cache boundary
+
+M6 performs an anonymous, read-only full snapshot of active events and
+divisions. On Android only, the snapshot is reconciled into the existing Drift
+tables for last-known guest display. This path deliberately bypasses the M5
+player queueing repository and creates no outbox operation, receipt, pull
+checkpoint, or conflict row. It is not an expansion of the organizer upload
+protocol and does not synchronize any event mutation.
+
+Because production organizer event editing does not exist before M9, this cache
+is safe for the M6 slice. Reconciliation rejects a newer local record instead
+of silently overwriting it. Before organizer event writes are introduced, the
+event synchronization protocol must define pending-intent detection and shared
+conflict handling. Web remains online-only.
+
+Opening the guest shell does not start player upload/pull. The M5 coordinator
+and Realtime implementation remain intact but await an authenticated lifecycle
+trigger in a later milestone.

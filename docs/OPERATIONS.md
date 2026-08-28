@@ -5,9 +5,32 @@
 Tournament, release, recovery, and deployment procedures in this document are
 still **PRELIMINARY / FUTURE**. Milestone 3 validates the initial hosted
 Supabase migration/security foundation, Milestone 4 validates the local
-schema/repository foundation, and Milestone 5 validates a player-only
-synchronization engine and hosted protocol. These do not validate a tournament
-runbook, release APK, PWA deployment, backup/restore, full-table sync, or pilot.
+schema/repository foundation, Milestone 5 validates a player-only
+synchronization engine and hosted protocol, and Milestone 6 adds a synthetic
+public-read fixture workflow. These do not validate a tournament runbook,
+release APK, PWA deployment, backup/restore, full-table sync, or pilot.
+
+## M6 synthetic public fixtures — REVIEWABLE DATA WORKFLOW
+
+- `20260828150000_m06_public_demo_seed.sql` is visibly a data migration, not a
+  schema change. It inserts only three `VPC Demo` events and four `Sample`
+  divisions with deterministic `61000000-...`/`62000000-...` UUIDs.
+- Verify the linked project and dry run before applying it. After application,
+  confirm exactly those IDs and anonymous RLS behavior; never use a
+  service-role key for client smoke checks.
+- The M6 validation applied this migration to the existing linked Tokyo `vpc`
+  project and confirmed all seven exact rows. No other hosted row was modified.
+- To retire the fixtures, create a new reviewed data migration. Delete the four
+  exact division IDs first and then the three exact event IDs. Never edit the
+  applied seed migration, delete by display-name pattern, or touch unrelated
+  community data.
+- The reference dates are around 2026-08-28. Lifecycle status controls public
+  grouping, so the fixtures remain explicit examples rather than pretending to
+  be live community schedules.
+- Physical Android and manual browser procedures are recorded in
+  [M06_PUBLIC_APPLICATION_GUEST_READING.md](milestones/M06_PUBLIC_APPLICATION_GUEST_READING.md)
+  and their M6 execution evidence is recorded in
+  [TESTING.md](TESTING.md).
 
 ## Supabase migration maintenance — M3 VALIDATED FOUNDATION
 

@@ -1,15 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vpc/src/core/config/app_environment.dart';
-import 'package:vpc/src/presentation/bootstrap_page.dart';
+import 'package:vpc/src/presentation/public_events/public_app_shell.dart';
+import 'package:vpc/src/presentation/public_events/public_event_details_page.dart';
+import 'package:vpc/src/presentation/public_events/public_events_page.dart';
+import 'package:vpc/src/presentation/public_events/public_home_page.dart';
 
-GoRouter createAppRouter(AppEnvironment environment) {
+GoRouter createAppRouter() {
   return GoRouter(
     initialLocation: '/',
     routes: <RouteBase>[
-      GoRoute(
-        path: '/',
-        builder: (context, state) => BootstrapPage(environment: environment),
+      ShellRoute(
+        builder: (context, state, child) =>
+            PublicAppShell(location: state.uri.path, child: child),
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (context, state) => const PublicHomePage(),
+          ),
+          GoRoute(
+            path: '/events',
+            builder: (context, state) => const PublicEventsPage(),
+            routes: [
+              GoRoute(
+                path: ':eventId',
+                builder: (context, state) => PublicEventDetailsPage(
+                  eventId: state.pathParameters['eventId'] ?? '',
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     ],
     errorBuilder: (context, state) =>
@@ -42,6 +62,11 @@ class _UnknownRoutePage extends StatelessWidget {
                   location,
                   style: Theme.of(context).textTheme.bodySmall,
                   textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                FilledButton(
+                  onPressed: () => context.go('/'),
+                  child: const Text('Return home'),
                 ),
               ],
             ),

@@ -8,8 +8,61 @@ Milestone 3 adds Supabase configuration and database-security coverage.
 Milestone 4 adds deterministic in-memory SQLite, generated-schema freshness,
 production repository-adapter, transaction, lifecycle, and platform-boundary
 coverage. Milestone 5 adds the player synchronization vertical-slice suite.
-Authentication flows, remaining-entity synchronization, and tournament-engine
-tests remain future work.
+Milestone 6 adds public guest navigation, query/mapping, Android public-cache,
+and responsive UI coverage. Authentication flows, remaining-entity
+synchronization, and tournament-engine tests remain future work.
+
+## Milestone 6 coverage and execution
+
+- Pure tests cover status-authoritative current/upcoming/completed grouping,
+  deterministic ordering, tombstone exclusion, immutable divisions, and UTC
+  presentation.
+- Supabase adapter tests cover valid event/division maps, invalid UUID/status/
+  timestamp rejection, safe error redaction, and the narrow two-table gateway.
+- In-memory Drift tests cover initial cached reads, atomic remote reconciliation,
+  missed adjacent lifecycle advancement, absent-row tombstones, preservation of
+  a newer local row, and proof that public pulls create no player outbox work.
+- Reader/provider tests cover remote lookup, cached fallback, typed
+  unconfigured failure, Android composition, and proof that Web never asks the
+  local database factory to initialize SQLite.
+- Widget/controller tests cover guest access, shared navigation, all three
+  groups, stable details and missing-event states, divisions, loading/empty/
+  error/unconfigured/cached states, safe retry, duplicate-refresh coalescing,
+  stale-controller disposal, narrow/wide navigation, and semantic event-card
+  actions. Fakes prevent ordinary-test network access.
+- `public_guest_read_test.sql` retains eight pgTAP assertions for required
+  tables, exact synthetic fixtures, anonymous reads, and anonymous event/
+  division write denial.
+
+The M6 implementation run resolved locked dependencies, formatted 102 files
+without change, found no analyzer issue, and passed all 116 Flutter tests. The
+Web production build produced `build/web`; the Android debug build produced
+`build/app/outputs/flutter-apk/app-debug.apk`. Web repeated the accepted
+optional Cupertino-font diagnostic and successful Wasm dry run. Android
+repeated the accepted SDK XML-version warning and passed without a license
+failure.
+
+The hosted seed migration applied to the linked Tokyo project, migration
+history agrees, and linked database lint reports no errors. Publishable-key
+smoke checks returned `200` with exactly three fixture events and four fixture
+divisions; anonymous event/division writes returned `401`, and private
+payment/profile/role endpoints remained hidden with `404`. Denied fixture IDs
+were confirmed absent. Docker's engine was unavailable, so the retained pgTAP
+file was not executed locally.
+
+A configured in-app browser walkthrough passed guest entry, groups, details,
+divisions, explicit refresh, route reload, back/forward, narrow/wide layouts,
+and console inspection. Browser-level network interruption was unavailable, so
+that Web-specific manual case remains automated only.
+
+The configured application was then installed on a physical `23021RAAEG`
+running Android 14 (API 34). The owner confirmed all required checks: launch,
+guest shell, three event groups and fixtures, details/divisions, Android Back,
+refresh, process reopen, increased-font usability, online-to-offline cached
+reopen with an honest indication, restored-connectivity refresh, and reopening
+the installed application after USB disconnection. This completes the M6
+physical-device gate. No remote GitHub Actions run is claimed because this
+branch is not pushed.
 
 ## Milestone 5 coverage and execution
 

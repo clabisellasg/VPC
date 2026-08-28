@@ -3,10 +3,10 @@
 ## Scope
 
 This document defines the conceptual Version 1 architecture and the foundations
-established through Milestone 5. It deliberately does not prescribe a final
+established through Milestone 6. It deliberately does not prescribe a final
 feature-folder layout. Authentication flows, full operational synchronization,
-public feature repositories, and tournament-engine implementation begin only
-in later milestones.
+organizer event workflows, and tournament-engine implementation begin only in
+later milestones.
 
 ## Milestone 1 implemented foundation
 
@@ -102,6 +102,31 @@ in later milestones.
   database and a configured Supabase client exist. Web opens no SQLite and
   receives no offline synchronization coordinator.
 
+## Milestone 6 implemented public-read slice
+
+- GoRouter now exposes a shared guest shell with `/`, `/events`, and stable
+  `/events/:eventId` detail locations. The shell uses phone navigation at
+  narrow widths and a navigation rail on wider browsers.
+- Widgets depend on a Riverpod presentation controller and a provider-neutral
+  `PublicEventReader`; they do not import Supabase or Drift.
+- The public scope is deliberately limited to active `events` and
+  `event_divisions`. Lifecycle status, not the wall clock, classifies upcoming,
+  current (`registration`/`inProgress`), and completed
+  (`completed`/`archived`) groups. Dates render from UTC values.
+- Web composes the anonymous Supabase reader and never requests local
+  persistence. Android reads last-known events/divisions from the existing
+  Drift tables, then reconciles a complete authoritative public snapshot.
+- Android public reconciliation creates no outbox operation, refuses to
+  overwrite a newer local version, advances missed event lifecycle steps
+  through the existing local trigger, and tombstones cache rows absent from a
+  successful complete snapshot.
+- A guest opening the public application does not start the M5 organizer player
+  upload runtime. The player synchronization infrastructure remains available
+  for a later authenticated lifecycle integration.
+- M6 uses explicit refresh and pull-to-refresh. It does not add Realtime event
+  subscriptions; the accepted change/refetch principle remains available for
+  later use.
+
 ## Layers and responsibilities
 
 ### Shared Flutter presentation layer
@@ -158,15 +183,15 @@ row-level security (RLS) enforces access; database functions provide critical
 transactional and idempotent cloud operations; and Realtime announces relevant
 changes.
 
-Milestone 3 implements the initial schema/security/publication foundation only.
-Provider-specific repository adapters and application use cases remain outside
-the cloud boundary.
+Milestone 3 implements the schema/security/publication foundation. Milestone 6
+adds only the anonymous event/division read adapter; organizer and other
+feature adapters remain outside this slice.
 
 ### Flutter Web/PWA online path
 
-The iPhone Safari Web/PWA uses the online Supabase repository path. Version 1
-does not promise native iPhone offline mutation. An authenticated organizer can
-perform authorized management operations while online.
+The iPhone Safari Web/PWA uses the online Supabase repository path. Its M6 guest
+event reader has no SQLite or Web offline cache. Version 1 does not promise
+native iPhone offline mutation; later authenticated organizers operate online.
 
 ## Conceptual flow
 

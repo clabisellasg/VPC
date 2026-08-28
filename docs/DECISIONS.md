@@ -57,6 +57,10 @@ explicit planner/architect approval, with the approval and date recorded.
 | V1-047 | Player cloud mutations use a fixed, organizer-guarded PostgreSQL function with private operation receipts so identical operation-ID replays are idempotent and changed-payload reuse is rejected. | ACCEPTED |
 | V1-048 | M5 detects and preserves version conflicts without choosing local-wins, remote-wins, or a product-level conflict-resolution policy. | ACCEPTED |
 | V1-049 | Player Realtime notifications are debounced refresh hints that invoke an authoritative checkpointed pull; notification payloads are never written directly to SQLite. | ACCEPTED |
+| V1-050 | M6 public event grouping follows lifecycle status: `upcoming` is upcoming, `registration`/`inProgress` are current, and `completed`/`archived` are completed; UTC dates are supporting display data. | ACCEPTED |
+| V1-051 | Public guest widgets use a provider-neutral read port; Web reads anonymous Supabase data online, while Android may reconcile the same event/division projection into its existing Drift tables without creating outbox work. | ACCEPTED |
+| V1-052 | M6 public refresh is explicit and authoritative; event/division Realtime subscriptions are deferred and any future subscription remains a refetch hint. | ACCEPTED |
+| V1-053 | Deterministic `VPC Demo` event/division rows may reside in the hosted project as clearly labeled, removable, non-personal public fixtures for M6 device verification. | ACCEPTED |
 
 ## Open decisions
 

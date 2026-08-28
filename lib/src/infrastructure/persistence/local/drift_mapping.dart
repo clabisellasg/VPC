@@ -6,6 +6,7 @@ import '../../../domain/common/entity_id.dart';
 import '../../../domain/common/money.dart';
 import '../../../domain/common/record_metadata.dart';
 import '../../../domain/events/event.dart' as domain;
+import '../../../domain/events/event_division.dart';
 import '../../../domain/matches/match.dart' as domain;
 import '../../../domain/players/permanent_player.dart';
 import 'app_database.dart';
@@ -87,6 +88,35 @@ EventsCompanion eventToCompanion(domain.Event event) => EventsCompanion(
   version: Value(event.metadata.recordVersion),
   deletedAt: Value(event.metadata.deletedAt),
 );
+
+EventDivision eventDivisionFromRow(LocalEventDivisionRow row) => EventDivision(
+  id: DivisionId(row.id),
+  eventId: EventId(row.eventId),
+  name: row.name,
+  format: enumValue(
+    TournamentFormat.values,
+    row.tournamentFormat,
+    field: 'tournamentFormat',
+  ),
+  metadata: metadataFromValues(
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+    version: row.version,
+    deletedAt: row.deletedAt,
+  ),
+);
+
+EventDivisionsCompanion eventDivisionToCompanion(EventDivision division) =>
+    EventDivisionsCompanion(
+      id: Value(division.id.value),
+      eventId: Value(division.eventId.value),
+      name: Value(division.name),
+      tournamentFormat: Value(division.format.name),
+      createdAt: Value(division.metadata.createdAt),
+      updatedAt: Value(division.metadata.updatedAt),
+      version: Value(division.metadata.recordVersion),
+      deletedAt: Value(division.metadata.deletedAt),
+    );
 
 domain.Match matchFromRow(LocalMatchRow row) => domain.Match(
   id: MatchId(row.id),
