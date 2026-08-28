@@ -131,6 +131,33 @@ the exact persistence design is deferred.
 See [ARCHITECTURE.md](ARCHITECTURE.md) for ownership boundaries and
 [SYNC.md](SYNC.md) for conceptual reconciliation behavior.
 
+## Milestone 7 account and player-claim realization
+
+M7 adds nullable `user_profiles.player_id` as the private, unique link from an
+Auth account to an existing permanent player. `players` is unchanged and still
+contains no Auth user ID, email, role, or claim information. Android SQLite
+does not mirror profiles, roles, or claims.
+
+`player_claim_requests` stores client-generated UUID, requesting Auth user,
+existing player, `pending`/`approved`/`rejected`/`cancelled` status, requested
+and review timestamps, reviewer, optional bounded reason, optimistic version,
+and tombstone metadata. Restrictive foreign keys and partial unique indexes
+prevent multiple pending claims per account, multiple approved players per
+account, and one player being approved for multiple accounts. Clients have no
+hard-delete privilege.
+
+Members use fixed RPCs to request or cancel their own pending claim and can
+read only their own active claim/profile. Organizers may read the minimum
+profile display name and pending-claim data needed for review. Atomic approval
+locks the claim, profile, and player, rechecks both uniqueness conditions,
+updates the private profile link, and finalizes review in one transaction.
+Rejection never changes player identity or the profile link.
+
+An `auth.users` trigger creates a private profile with a bounded optional
+metadata display name or the safe `Community member` fallback. Metadata never
+assigns roles or player links. Existing accounts without a profile receive the
+same minimum profile when their account snapshot is first requested.
+
 ## Milestone 2 domain mapping
 
 | Conceptual data | Pure-Dart representation | Boundary note |

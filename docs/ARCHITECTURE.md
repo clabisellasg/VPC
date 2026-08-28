@@ -127,6 +127,32 @@ later milestones.
   subscriptions; the accepted change/refetch principle remains available for
   later use.
 
+## Milestone 7 account and authorization boundary
+
+- Pure-Dart `AuthRepository`, `AuthUser`, session/failure, account-profile,
+  authorization, and player-claim contracts expose no Supabase, Drift, token,
+  or platform type. Supabase adapters map SDK and PostgreSQL responses outside
+  widgets and redact provider errors.
+- Supabase Flutter restores its persisted session and owns token storage.
+  Email/password registration and sign-in require connectivity; Web and
+  Android share the same repository boundary. Public M6 routes remain usable
+  while signed out.
+- PostgreSQL roles and RLS are authoritative. Flutter presents guest/member/
+  organizer/unavailable state, but never trusts user metadata or a cached
+  Boolean as cloud authority and cannot mutate `user_roles`.
+- The private profile owns the optional account-to-player link. A member can
+  request an existing public player; only organizer-guarded transactional RPCs
+  approve or reject. Public player rows still contain no Auth identity.
+- Android does not mirror profiles, roles, or claims in SQLite and does not
+  queue those online-only mutations. Web continues to initialize no SQLite.
+- The M5 player runtime is created only after a live account snapshot confirms
+  organizer permission. Member, guest, unavailable, and sign-out states
+  invalidate it; the cloud reauthorizes every upload regardless of UI state.
+- Confirmation callbacks are allow-listed at `/account/confirm` for Web and
+  the narrowly scoped Android custom URI. Supabase Flutter processes PKCE/Auth
+  callback material internally; application models and logs never receive
+  tokens.
+
 ## Layers and responsibilities
 
 ### Shared Flutter presentation layer
@@ -184,8 +210,8 @@ transactional and idempotent cloud operations; and Realtime announces relevant
 changes.
 
 Milestone 3 implements the schema/security/publication foundation. Milestone 6
-adds only the anonymous event/division read adapter; organizer and other
-feature adapters remain outside this slice.
+adds the anonymous event/division read adapter. Milestone 7 adds Auth and
+claim-specific adapters but no organizer tournament-data write adapter.
 
 ### Flutter Web/PWA online path
 

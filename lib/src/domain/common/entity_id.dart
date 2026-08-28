@@ -93,3 +93,8 @@ final class SyncOperationId extends EntityId {
 final class SyncConflictId extends EntityId {
   SyncConflictId(super.value);
 }
+
+/// Stable identity for an auditable account-to-player claim request.
+final class PlayerClaimId extends EntityId {
+  PlayerClaimId(super.value);
+}

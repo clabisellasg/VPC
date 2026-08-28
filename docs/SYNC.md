@@ -169,3 +169,18 @@ conflict handling. Web remains online-only.
 Opening the guest shell does not start player upload/pull. The M5 coordinator
 and Realtime implementation remain intact but await an authenticated lifecycle
 trigger in a later milestone.
+
+## Milestone 7 authenticated synchronization gate
+
+M7 supplies that lifecycle trigger without expanding the player-only protocol.
+Supabase restores the account session, then the private account snapshot reads
+the effective role from `user_roles`. Only a live `organizer` result starts the
+existing Android M5 runtime. Guest, ordinary member, unavailable authorization,
+and sign-out states invalidate and dispose it. Authorization rejection still
+leaves outbox operations pending; no operation is discarded.
+
+Profiles, roles, and player-claim requests are online-only M7 data. They are not
+written to SQLite, placed in the operational outbox, or treated as offline
+authority. A temporarily persisted Auth session may be presented offline, but
+claim mutations and role confirmation require the cloud. PostgreSQL rechecks
+organizer permission for every M5 apply/pull RPC regardless of Flutter state.

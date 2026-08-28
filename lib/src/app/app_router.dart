@@ -4,6 +4,11 @@ import 'package:vpc/src/presentation/public_events/public_app_shell.dart';
 import 'package:vpc/src/presentation/public_events/public_event_details_page.dart';
 import 'package:vpc/src/presentation/public_events/public_events_page.dart';
 import 'package:vpc/src/presentation/public_events/public_home_page.dart';
+import 'package:vpc/src/presentation/accounts/account_page.dart';
+import 'package:vpc/src/presentation/accounts/auth_confirmation_page.dart';
+import 'package:vpc/src/presentation/accounts/auth_form_page.dart';
+import 'package:vpc/src/presentation/accounts/organizer_claims_page.dart';
+import 'package:vpc/src/presentation/accounts/player_claim_page.dart';
 
 GoRouter createAppRouter() {
   return GoRouter(
@@ -28,6 +33,36 @@ GoRouter createAppRouter() {
                 ),
               ),
             ],
+          ),
+          GoRoute(
+            path: '/account',
+            builder: (context, state) => const AccountPage(),
+            routes: [
+              GoRoute(
+                path: 'sign-in',
+                builder: (context, state) => AuthFormPage(
+                  registration: false,
+                  returnTo: state.uri.queryParameters['from'],
+                ),
+              ),
+              GoRoute(
+                path: 'register',
+                builder: (context, state) =>
+                    const AuthFormPage(registration: true),
+              ),
+              GoRoute(
+                path: 'confirm',
+                builder: (context, state) => const AuthConfirmationPage(),
+              ),
+              GoRoute(
+                path: 'claim',
+                builder: (context, state) => const PlayerClaimPage(),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/organizer/claims',
+            builder: (context, state) => const OrganizerClaimsPage(),
           ),
         ],
       ),

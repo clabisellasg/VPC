@@ -61,6 +61,12 @@ explicit planner/architect approval, with the approval and date recorded.
 | V1-051 | Public guest widgets use a provider-neutral read port; Web reads anonymous Supabase data online, while Android may reconcile the same event/division projection into its existing Drift tables without creating outbox work. | ACCEPTED |
 | V1-052 | M6 public refresh is explicit and authoritative; event/division Realtime subscriptions are deferred and any future subscription remains a refetch hint. | ACCEPTED |
 | V1-053 | Deterministic `VPC Demo` event/division rows may reside in the hosted project as clearly labeled, removable, non-personal public fixtures for M6 device verification. | ACCEPTED |
+| V1-054 | Version 1 initially uses Supabase email/password authentication; hosted email confirmation remains enabled, while password recovery and other providers are deferred. | ACCEPTED |
+| V1-055 | Player claiming uses a request-and-organizer-approval workflow; approval atomically links the private account profile to one existing permanent player. | ACCEPTED |
+| V1-056 | The account-to-player link is private `user_profiles.player_id`; public `players` rows contain no Auth user ID or email, and accounts never replace permanent players. | ACCEPTED |
+| V1-057 | Organizer roles are normalized server-side permissions assigned or revoked only through trusted database administration; Flutter cannot assign roles and PostgreSQL RLS/RPC authorization remains authoritative. | ACCEPTED |
+| V1-058 | M7 confirmation callbacks use `/account/confirm` on Web and `com.voltapaddleclub.vpc://auth-callback/account/confirm` on Android. | ACCEPTED |
+| V1-059 | Only a currently authenticated account whose role is confirmed by the cloud as organizer starts the M5 player synchronization runtime; guest/member/sign-out states stop it. | ACCEPTED |
 
 ## Open decisions
 
@@ -69,7 +75,6 @@ decision is required before affected implementation proceeds.
 
 | ID | Open question | Resolve by | Status |
 | --- | --- | --- | --- |
-| OPEN-001 | How is a claim to an existing player verified or approved? | Before M7 implementation | OPEN |
 | OPEN-002 | What player skill scale is approved for balanced team generation? | Before M11 implementation | OPEN |
 | OPEN-003 | What are the exact score validation rules? | Before M12 implementation | OPEN |
 | OPEN-004 | How may a completed result be corrected after bracket progression? | Before M13 implementation | OPEN |
@@ -79,14 +84,14 @@ decision is required before affected implementation proceeds.
 | OPEN-008 | Is payment status event-wide, or may it differ by division? | Before M10 implementation | OPEN |
 | OPEN-009 | What is the exact simultaneous-organizer conflict/control policy? | Before M5 implementation | OPEN |
 | OPEN-010 | Which free static hosting provider will serve the Flutter Web/PWA? | Before M19 implementation | OPEN |
-| OPEN-011 | Which authentication methods are enabled in Version 1? | Before M3 implementation | OPEN |
 | OPEN-012 | Is Version 1 team size fixed at two or configurable? | Before M11 implementation | OPEN |
 
 ## Explicitly approved changes
 
-No changes to the accepted Version 1 baseline have been approved. Future
-entries must record a stable ID, approval date, approving authority, affected
-requirements, and resulting documentation updates.
+| ID | Approval | Result | Status |
+| --- | --- | --- | --- |
+| OPEN-001 | M7 planner specification, 2026-08-28 | Resolved by V1-055: an authenticated member requests an existing player link and an organizer approves or rejects it. | RESOLVED |
+| OPEN-011 | M7 planner specification, 2026-08-28 | Resolved by V1-054: initial V1 authentication is email/password with hosted confirmation preserved. Other providers remain deferred, not accepted. | RESOLVED |
 
 ## Future-version suggestions
 

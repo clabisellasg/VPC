@@ -13,7 +13,12 @@ class PublicAppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedIndex = location.startsWith('/events') ? 1 : 0;
+    final selectedIndex =
+        location.startsWith('/account') || location.startsWith('/organizer')
+        ? 2
+        : location.startsWith('/events')
+        ? 1
+        : 0;
     return LayoutBuilder(
       builder: (context, constraints) {
         final wide = constraints.maxWidth >= 760;
@@ -36,6 +41,11 @@ class PublicAppShell extends StatelessWidget {
                           icon: Icon(Icons.event_outlined),
                           selectedIcon: Icon(Icons.event),
                           label: Text('Events'),
+                        ),
+                        NavigationRailDestination(
+                          icon: Icon(Icons.account_circle_outlined),
+                          selectedIcon: Icon(Icons.account_circle),
+                          label: Text('Account'),
                         ),
                       ],
                     ),
@@ -62,6 +72,12 @@ class PublicAppShell extends StatelessWidget {
                       label: 'Events',
                       tooltip: 'Public events',
                     ),
+                    NavigationDestination(
+                      icon: Icon(Icons.account_circle_outlined),
+                      selectedIcon: Icon(Icons.account_circle),
+                      label: 'Account',
+                      tooltip: 'Account',
+                    ),
                   ],
                 ),
         );
@@ -70,6 +86,10 @@ class PublicAppShell extends StatelessWidget {
   }
 
   void _go(BuildContext context, int index) {
-    context.go(index == 0 ? '/' : '/events');
+    context.go(switch (index) {
+      0 => '/',
+      1 => '/events',
+      _ => '/account',
+    });
   }
 }

@@ -154,6 +154,55 @@ community distribution and is not a release.
 - Test clean install and upgrade on representative Android devices.
 - Do not describe a debug or otherwise unverified APK as a release.
 
+## Account and organizer operations — M7 PRELIMINARY
+
+Supabase **Authentication → URL Configuration** must allow exactly the
+configured deployment callback plus these development callbacks:
+
+- `com.voltapaddleclub.vpc://auth-callback/account/confirm`
+- `http://localhost:7357/account/confirm`
+- `http://127.0.0.1:7357/account/confirm`
+
+Hosted email confirmation remains enabled. Never disable it to bypass a test,
+and never place a password, token, private key, or personal email in source,
+documentation, shell history, screenshots, or issue text.
+
+The first organizer is assigned only after the Auth account exists, through a
+trusted Supabase SQL Editor or equivalent database-administration session. The
+operator substitutes the intended Auth UUID privately:
+
+```sql
+insert into public.user_roles (user_id, role)
+values ('<AUTH_USER_UUID>'::uuid, 'organizer')
+on conflict (user_id, role) do update
+set deleted_at = null, updated_at = now(), version = public.user_roles.version + 1;
+```
+
+Revoke the permission without deleting its audit row:
+
+```sql
+update public.user_roles
+set deleted_at = now(), updated_at = now(), version = version + 1
+where user_id = '<AUTH_USER_UUID>'::uuid
+  and role = 'organizer'
+  and deleted_at is null;
+```
+
+There is intentionally no Flutter role-management or self-promotion endpoint.
+After assignment or revocation, sign in normally and refresh the account page
+to verify the authoritative role. Do not use a service-role key in Flutter.
+
+The hosted public fixtures are:
+
+- `73000000-0000-4000-8000-000000000001` — `M7 Synthetic Claim Player`
+- `73000000-0000-4000-8000-000000000002` —
+  `M7 Android Synthetic Claim Player`
+
+They supported the separate Web and physical-Android claim walkthroughs.
+Remove either only through a reviewed later data migration after clearing its
+exact test claim history and private profile link; do not delete by display-name
+pattern, unrelated permanent players, or intended organizer accounts.
+
 ## PWA deployment — PRELIMINARY / FUTURE
 
 - Select the free static hosting provider through an approved decision before

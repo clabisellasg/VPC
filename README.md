@@ -6,10 +6,11 @@ single-court community. It will eventually manage reusable community players,
 participation, check-in, payment status, temporary teams, approved tournament
 formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 6 — Public Application and Guest Reading
-(`COMPLETED`). The accepted M0–M5 baseline remains intact. M6 adds guest
-navigation and public event/division reading; it does not add authentication,
-organizer writes, or tournament operation.
+**Current status:** Milestone 7 — Accounts, Roles, and Player Claiming
+(`COMPLETED`). The accepted M0–M6 baseline remains intact. M7 adds optional
+email/password accounts, server-authoritative organizer presentation, and an
+organizer-approved link to an existing permanent player. It does not add
+player editing, organizer tournament administration, or M8 functionality.
 
 ## Version 1 technology stack
 
@@ -49,6 +50,7 @@ scope, replace the stack, or begin a later milestone.
 - [Milestone 4 implementation record](docs/milestones/M04_ANDROID_SQLITE_PERSISTENCE.md)
 - [Milestone 5 implementation record](docs/milestones/M05_SYNCHRONIZATION_VERTICAL_SLICE.md)
 - [Milestone 6 implementation record](docs/milestones/M06_PUBLIC_APPLICATION_GUEST_READING.md)
+- [Milestone 7 implementation record](docs/milestones/M07_ACCOUNTS_ROLES_PLAYER_CLAIMING.md)
 
 ## Development setup
 
@@ -105,6 +107,13 @@ SQLite cache when available, then refreshes from the same anonymous public
 endpoint. An unconfigured build remains usable and explains why online public
 events cannot load.
 
+The Account destination supports email/password registration and sign-in when
+Supabase is configured. Hosted email confirmation redirects to
+`/account/confirm` on Web or the narrowly scoped Android URI
+`com.voltapaddleclub.vpc://auth-callback/account/confirm`. Public events remain
+available while signed out. Password recovery and additional Auth providers
+are not implemented in M7.
+
 ## Quality and builds
 
 ```powershell
@@ -145,4 +154,5 @@ The Web output is written to `build/web`. The Android debug APK is written to
 `build/app/outputs/flutter-apk/app-debug.apk`. These are local build artifacts,
 not deployments or releases. The M5 coordinator requires both Android local
 persistence and configured Supabase; without an authenticated organizer
-session, queued uploads remain pending. Authentication UI remains M7 work.
+session, queued uploads remain pending. Organizer tournament administration
+and permanent-player directory editing remain future milestone work.

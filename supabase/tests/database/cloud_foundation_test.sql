@@ -199,7 +199,8 @@ insert into auth.users (
 
 insert into public.user_profiles (user_id, display_name) values
   ('20000000-0000-4000-8000-000000000001', 'Ordinary Test User'),
-  ('20000000-0000-4000-8000-000000000002', 'Organizer Test User');
+  ('20000000-0000-4000-8000-000000000002', 'Organizer Test User')
+on conflict (user_id) do update set display_name = excluded.display_name;
 
 insert into public.user_roles (user_id, role)
 values ('20000000-0000-4000-8000-000000000002', 'organizer');

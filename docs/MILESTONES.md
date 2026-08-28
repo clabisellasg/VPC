@@ -78,7 +78,7 @@ authorized proceeding.
 - **Purpose:** Implement player accounts, organizer authorization, role-based
   controls, and approved claim workflow.
 - **Dependencies:** M3 and M6.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED.
 
 ### M8 — Permanent Community Player Directory
 

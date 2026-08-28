@@ -9,8 +9,9 @@ Milestone 4 adds deterministic in-memory SQLite, generated-schema freshness,
 production repository-adapter, transaction, lifecycle, and platform-boundary
 coverage. Milestone 5 adds the player synchronization vertical-slice suite.
 Milestone 6 adds public guest navigation, query/mapping, Android public-cache,
-and responsive UI coverage. Authentication flows, remaining-entity
-synchronization, and tournament-engine tests remain future work.
+and responsive UI coverage. Milestone 7 adds account/session, role, secure
+player-claim, and authorization-gated synchronization coverage. Remaining-
+entity synchronization and tournament-engine tests remain future work.
 
 ## Milestone 6 coverage and execution
 
@@ -349,3 +350,49 @@ Each milestone records the commands, environments, and outcomes used to satisfy
 its acceptance gate. Tests must not encode unresolved open decisions as though
 they were approved requirements. Failing or deferred coverage is documented
 and cannot be silently treated as passing.
+## Milestone 7 account, role, and claim coverage
+
+M7 adds deterministic tests for immutable account/claim models, UTC review
+invariants, session restoration, signed-out/authenticated transitions,
+confirmation-required registration, sign-in/sign-out/refresh, unconfigured
+builds, typed error redaction, guest-route preservation, form validation,
+provider overrides, member/organizer presentation, protected-route flash
+prevention, player search, claim review, responsive Web composition, and the
+authenticated M5 synchronization gate. Ordinary Flutter tests use fakes and
+contain no network access, live credential, token, or personal email.
+
+`supabase/tests/database/accounts_roles_player_claiming_test.sql` retains 22
+pgTAP assertions for schema, RLS/grants, profile-link protection, guest denial,
+member isolation, duplicate pending claims, organizer authorization, atomic
+approval, repeat/concurrent safety, and absence of Auth identity on public
+players. Docker's executable is installed but its engine was unavailable, so
+this suite was not run locally. The applied assertion migration and hosted
+anonymous/authenticated smoke checks provide separate deployment evidence and
+must not be described as a local pgTAP pass.
+
+The M7 implementation run uses:
+
+```powershell
+flutter pub get
+dart format --output=none --set-exit-if-changed .
+flutter analyze
+flutter test
+flutter build web
+flutter build apk --debug
+npx --yes supabase@2.115.0 migration list --linked
+npx --yes supabase@2.115.0 db lint --linked --fail-on error
+git diff --check
+```
+
+Manual acceptance additionally requires the documented configured Web flow
+and the 26-step physical Android walkthrough. Both were completed on
+2026-08-28 and are recorded in the M7 implementation document.
+
+Final M7 validation passed formatting, static analysis, all 132 Flutter tests,
+the Web production build, and the Android debug APK build. Linked migration
+history matched through `20260828181500`; the hosted migration dry-run was up
+to date and linked database lint returned no schema errors. Anonymous hosted
+smoke checks returned `200` for events/divisions and `401` for profiles, roles,
+claims, official writes, and the claim RPC. Public fixture rows exposed no Auth
+ID or email fields. The retained 22-assertion pgTAP suite was not run locally
+because the installed Docker executable could not reach its engine.

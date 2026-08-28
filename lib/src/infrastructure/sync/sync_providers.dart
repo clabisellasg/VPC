@@ -49,7 +49,6 @@ final syncRuntimeProvider = Provider<SyncRuntime?>((ref) {
     coordinator: coordinator,
     realtimeSource: SupabasePlayerRealtimeSource(client),
   );
-  unawaited(runtime.start());
   ref.onDispose(() => unawaited(runtime.dispose()));
   return runtime;
 });
