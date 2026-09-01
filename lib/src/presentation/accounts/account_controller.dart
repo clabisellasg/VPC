@@ -11,6 +11,7 @@ import '../../domain/common/repository_result.dart';
 import '../../domain/players/permanent_player.dart';
 import '../../infrastructure/accounts/account_providers.dart';
 import '../../infrastructure/sync/sync_providers.dart';
+import '../../infrastructure/events/event_setup_providers.dart';
 import 'auth_controller.dart';
 
 enum AccountPhase { guest, loading, content, unavailable, unconfigured }
@@ -67,10 +68,12 @@ final class AccountController extends Notifier<AccountViewState> {
     ref.onDispose(() => _disposed = true);
     if (auth is AuthUnconfigured) {
       ref.invalidate(syncRuntimeProvider);
+      ref.invalidate(eventSetupRealtimeRuntimeProvider);
       return const AccountViewState(phase: AccountPhase.unconfigured);
     }
     if (auth is! AuthAuthenticated) {
       ref.invalidate(syncRuntimeProvider);
+      ref.invalidate(eventSetupRealtimeRuntimeProvider);
       return const AccountViewState(phase: AccountPhase.guest);
     }
     unawaited(Future<void>(refresh));
@@ -99,12 +102,22 @@ final class AccountController extends Notifier<AccountViewState> {
           if (runtime != null) {
             unawaited(runtime.start());
           }
+          final eventSync = ref.read(eventSetupSynchronizerProvider);
+          if (eventSync != null) {
+            unawaited(eventSync.synchronize());
+          }
+          final eventRuntime = ref.read(eventSetupRealtimeRuntimeProvider);
+          if (eventRuntime != null) {
+            unawaited(eventRuntime.start());
+          }
         } else {
           ref.invalidate(syncRuntimeProvider);
+          ref.invalidate(eventSetupRealtimeRuntimeProvider);
         }
       },
       failure: (_) {
         ref.invalidate(syncRuntimeProvider);
+        ref.invalidate(eventSetupRealtimeRuntimeProvider);
         state = const AccountViewState(
           phase: AccountPhase.unavailable,
           message: 'Account information is temporarily unavailable.',

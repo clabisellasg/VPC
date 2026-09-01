@@ -147,11 +147,13 @@ EventDivision publicDivisionFromRow(Map<String, Object?> row) => EventDivision(
   id: DivisionId(_requiredString(row, 'id')),
   eventId: EventId(_requiredString(row, 'event_id')),
   name: _requiredString(row, 'name'),
-  format: _enumByName(
-    TournamentFormat.values,
-    _requiredString(row, 'tournament_format'),
-    'tournament_format',
-  ),
+  format: row['tournament_format'] == null
+      ? null
+      : _enumByName(
+          TournamentFormat.values,
+          _requiredString(row, 'tournament_format'),
+          'tournament_format',
+        ),
   metadata: _metadata(row),
 );
 

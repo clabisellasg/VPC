@@ -72,6 +72,9 @@ explicit planner/architect approval, with the approval and date recorded.
 | V1-062 | An exact normalized-name match is a warning, not proof of identity; reusing preserves history, while a distinct same-name player requires explicit acknowledgement and is never auto-merged. | ACCEPTED |
 | V1-063 | Android player creation reuses M5 atomic local player/outbox persistence and idempotent synchronization; Web creation is online-only through the same authorized cloud apply protocol. | ACCEPTED |
 | V1-064 | M8 public player pagination uses a fixed, bounded, invoker-security PostgreSQL function that returns public player columns only and remains subject to RLS. | ACCEPTED |
+| V1-065 | Tournament format is nullable on a division until M12; null means not configured yet, never a default or additional enum value. Existing configured values remain valid. | ACCEPTED |
+| V1-066 | M9-created divisions store a null format. UPCOMING may enter REGISTRATION, but an event cannot enter IN PROGRESS while an active division has no configured format. | ACCEPTED |
+| V1-067 | Android local schema version 3 adds a bounded event/division aggregate outbox, pull checkpoint, and preserved-conflict slice; Web uses the fixed cloud aggregate protocol online without SQLite. | ACCEPTED |
 
 ## Open decisions
 

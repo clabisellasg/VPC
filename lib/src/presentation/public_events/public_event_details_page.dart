@@ -97,7 +97,11 @@ class _Details extends StatelessWidget {
                   (division) => Card(
                     child: ListTile(
                       title: Text(division.name),
-                      subtitle: Text(_formatLabel(division.format)),
+                      subtitle: Text(
+                        division.format == null
+                            ? 'Format not configured yet'
+                            : _formatLabel(division.format!),
+                      ),
                       leading: const Icon(Icons.groups_outlined),
                     ),
                   ),

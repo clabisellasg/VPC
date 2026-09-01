@@ -93,11 +93,13 @@ EventDivision eventDivisionFromRow(LocalEventDivisionRow row) => EventDivision(
   id: DivisionId(row.id),
   eventId: EventId(row.eventId),
   name: row.name,
-  format: enumValue(
-    TournamentFormat.values,
-    row.tournamentFormat,
-    field: 'tournamentFormat',
-  ),
+  format: row.tournamentFormat == null
+      ? null
+      : enumValue(
+          TournamentFormat.values,
+          row.tournamentFormat!,
+          field: 'tournamentFormat',
+        ),
   metadata: metadataFromValues(
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
@@ -111,7 +113,7 @@ EventDivisionsCompanion eventDivisionToCompanion(EventDivision division) =>
       id: Value(division.id.value),
       eventId: Value(division.eventId.value),
       name: Value(division.name),
-      tournamentFormat: Value(division.format.name),
+      tournamentFormat: Value(division.format?.name),
       createdAt: Value(division.metadata.createdAt),
       updatedAt: Value(division.metadata.updatedAt),
       version: Value(division.metadata.recordVersion),

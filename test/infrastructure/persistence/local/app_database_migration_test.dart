@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:drift_dev/api/migrations_native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vpc/src/infrastructure/persistence/local/app_database.dart';
@@ -44,4 +45,54 @@ void main() {
       schema.close();
     },
   );
+
+  test('v2 to v3 preserves configured formats and permits null', () async {
+    final verifier = SchemaVerifier(GeneratedHelper());
+    final schema = await verifier.schemaAt(2);
+    schema.rawDatabase.execute('''
+      INSERT INTO events (
+        id,name,scheduled_at,event_type,status,court_label,
+        created_at,updated_at,version,deleted_at
+      ) VALUES (
+        '20000000-0000-4000-8000-000000000001','Existing Event',
+        '2026-09-01T00:00:00.000Z','formal','upcoming','Community Court',
+        '2026-09-01T00:00:00.000Z','2026-09-01T00:00:00.000Z',0,NULL
+      );
+      INSERT INTO event_divisions (
+        id,event_id,name,tournament_format,created_at,updated_at,version,deleted_at
+      ) VALUES (
+        '20000000-0000-4000-8000-000000000002',
+        '20000000-0000-4000-8000-000000000001','Open','singleElimination',
+        '2026-09-01T00:00:00.000Z','2026-09-01T00:00:00.000Z',0,NULL
+      );
+    ''');
+
+    final database = AppDatabase(schema.newConnection());
+    await verifier.migrateAndValidate(database, 3);
+    final preserved = await database
+        .select(database.eventDivisions)
+        .getSingle();
+    expect(preserved.tournamentFormat, 'singleElimination');
+    await database
+        .into(database.eventDivisions)
+        .insert(
+          EventDivisionsCompanion.insert(
+            id: '20000000-0000-4000-8000-000000000003',
+            eventId: '20000000-0000-4000-8000-000000000001',
+            name: 'Mixed',
+            tournamentFormat: const Value(null),
+            createdAt: DateTime.utc(2026, 9),
+            updatedAt: DateTime.utc(2026, 9),
+            version: 0,
+          ),
+        );
+    expect(
+      (await database.select(database.eventDivisions).get())
+          .last
+          .tournamentFormat,
+      isNull,
+    );
+    await database.close();
+    schema.close();
+  });
 }

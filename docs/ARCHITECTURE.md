@@ -3,7 +3,7 @@
 ## Scope
 
 This document defines the conceptual Version 1 architecture and the foundations
-established through Milestone 6. It deliberately does not prescribe a final
+established through Milestone 9. It deliberately does not prescribe a final
 feature-folder layout. Authentication flows, full operational synchronization,
 organizer event workflows, and tournament-engine implementation begin only in
 later milestones.
@@ -290,3 +290,15 @@ The public projection contains no private Auth/profile/role/claim data. The
 basic profile deliberately has no skill or derived-stat fields. Realtime is
 still a refresh hint through the existing M5 runtime, and PostgreSQL RLS/RPC
 authorization remains the final organizer boundary.
+
+## M9 event/division aggregate boundary
+
+M9 adds pure-Dart event-setup use cases above platform adapters. Android commits
+an event, divisions, and aggregate outbox operation atomically; Web invokes the
+fixed organizer-authorized cloud aggregate online and opens no SQLite. Pull
+reconciliation creates no outbox work and preserves pending/conflicted local
+aggregates. Realtime remains a refetch hint.
+
+Division tournament format is nullable until M12. Null explicitly represents
+unconfigured setup and introduces no enum/default. The domain and database
+block REGISTRATION → IN PROGRESS while an active division remains null.

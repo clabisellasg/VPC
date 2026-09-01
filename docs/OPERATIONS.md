@@ -252,3 +252,19 @@ one cloud row after reconnect. The conditional conflict injection step was not
 run because M8 intentionally provides no safe conflict-control UI. Synthetic
 validation rows are documented in the M8 record; remove them only by exact ID
 through a reviewed administrative workflow, never by broad name matching.
+
+## M9 event setup acceptance — VALIDATED 2026-09-01
+
+Use only synthetic `VPC M9` events. Android validation covers guest reads,
+member denial, organizer casual/formal setup, division validation, online sync,
+offline pending persistence/restart, reconnect exactly once, public details,
+sequential lifecycle, setup lock, format-required guard, preserved conflicts,
+text scaling, and USB-free reopen. Web covers the corresponding online flow,
+direct routes, browser navigation, responsive layouts, no SQLite, and no console
+errors. Never describe local pending state as cloud acceptance.
+
+The mandatory Web and physical-Android walkthroughs passed. Android validation
+also confirmed immediate local pending feedback, persistence across restart,
+reconnect reconciliation, and gesture-back navigation. Conflict injection and
+post-registration lifecycle checks remain deterministic-test-only because M9
+has no safe production conflict fixture or tournament-format selector.

@@ -150,6 +150,12 @@ class _AuthenticatedAccount extends ConsumerWidget {
                 icon: const Icon(Icons.fact_check_outlined),
                 label: const Text('Review player claims'),
               ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: () => context.push('/organizer/events'),
+                icon: const Icon(Icons.event_note_outlined),
+                label: const Text('Manage events'),
+              ),
             ],
             const SizedBox(height: 24),
             TextButton.icon(

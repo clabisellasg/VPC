@@ -83,14 +83,22 @@ final class DriftPublicEventCache implements PublicEventCache {
       await database.transaction(() async {
         final remoteEventIds = <String>{};
         final remoteDivisionIds = <String>{};
+        final preservedEventIds = <String>{};
         for (final item in authoritativeCatalog.events) {
           remoteEventIds.add(item.event.id.value);
+          if (await _hasPendingSetup(item.event.id.value)) {
+            preservedEventIds.add(item.event.id.value);
+            continue;
+          }
           await _guardAndAdvanceStatus(item);
           await database
               .into(database.events)
               .insertOnConflictUpdate(eventToCompanion(item.event));
         }
         for (final item in authoritativeCatalog.events) {
+          if (preservedEventIds.contains(item.event.id.value)) {
+            continue;
+          }
           for (final division in item.divisions) {
             remoteDivisionIds.add(division.id.value);
             await _guardDivisionVersion(division);
@@ -99,8 +107,8 @@ final class DriftPublicEventCache implements PublicEventCache {
                 .insertOnConflictUpdate(eventDivisionToCompanion(division));
           }
         }
-        await _tombstoneMissingDivisions(remoteDivisionIds, reconciledAt);
         await _tombstoneMissingEvents(remoteEventIds, reconciledAt);
+        await _tombstoneMissingDivisions(remoteDivisionIds, reconciledAt);
       });
       final cached = await readCatalog();
       final result = cached.when(
@@ -194,6 +202,9 @@ final class DriftPublicEventCache implements PublicEventCache {
     )..where((table) => table.deletedAt.isNull())).get();
     for (final row in activeRows) {
       if (!authoritativeIds.contains(row.id)) {
+        if (await _hasPendingSetup(row.id)) {
+          continue;
+        }
         final timestamp = row.updatedAt.isAfter(reconciledAt)
             ? row.updatedAt.toUtc()
             : reconciledAt;
@@ -218,6 +229,9 @@ final class DriftPublicEventCache implements PublicEventCache {
     )..where((table) => table.deletedAt.isNull())).get();
     for (final row in activeRows) {
       if (!authoritativeIds.contains(row.id)) {
+        if (await _hasPendingSetup(row.eventId)) {
+          continue;
+        }
         final timestamp = row.updatedAt.isAfter(reconciledAt)
             ? row.updatedAt.toUtc()
             : reconciledAt;
@@ -231,6 +245,17 @@ final class DriftPublicEventCache implements PublicEventCache {
         );
       }
     }
+  }
+
+  Future<bool> _hasPendingSetup(String eventId) async {
+    final row =
+        await (database.select(database.eventSetupOutboxOperations)..where(
+              (table) =>
+                  table.eventId.equals(eventId) &
+                  table.status.isIn(['pending', 'blocked', 'conflicted']),
+            ))
+            .getSingleOrNull();
+    return row != null;
   }
 }
 

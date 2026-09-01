@@ -92,7 +92,7 @@ authorized proceeding.
 - **Purpose:** Implement casual/formal event setup, divisions, quick casual
   setup, and lifecycle rules.
 - **Dependencies:** M5, M7, and M8.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED.
 
 ### M10 — Participation, Check-In, and Payment Status
 

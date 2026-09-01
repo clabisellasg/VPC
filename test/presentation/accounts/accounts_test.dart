@@ -135,6 +135,28 @@ void main() {
     },
   );
 
+  testWidgets('organizer event drill-down preserves the account back stack', (
+    tester,
+  ) async {
+    final app = await _pump(
+      tester,
+      auth: _FakeAuthRepository(_authenticated()),
+      claims: _FakeClaimRepository(_organizerSnapshot()),
+    );
+    app.router.go('/account');
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Manage events'));
+    await tester.pumpAndSettle();
+    expect(find.text('Organizer events'), findsOneWidget);
+
+    app.router.pop();
+    await tester.pumpAndSettle();
+    expect(app.router.routeInformationProvider.value.uri.path, '/account');
+    expect(find.text('Account'), findsWidgets);
+    expect(find.text('Manage events'), findsOneWidget);
+  });
+
   testWidgets(
     'unconfigured account state is honest and initializes no SQLite',
     (tester) async {

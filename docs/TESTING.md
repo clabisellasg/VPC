@@ -415,3 +415,23 @@ private boundaries. Local pgTAP was skipped because Docker is unavailable.
 Physical Android and Web acceptance passed on 2026-08-29. The conditional
 manual conflict injection was skipped because no safe control exists; in-memory
 tests verify conflict visibility and prohibit automatic resolution.
+
+## Milestone 9 event/division coverage
+
+M9 tests cover quick casual/formal setup, normalized division uniqueness,
+nullable-format preservation, lifecycle gates, Drift v2→v3 migration,
+aggregate/outbox atomicity and rollback, and pending-intent pull protection.
+Cloud pgTAP/catalog assertions cover nullability, enum checks, fixed RPC
+privileges, private receipts, and normalized uniqueness. Ordinary Flutter tests
+use fakes/in-memory Drift and make no network requests. Regression coverage also
+verifies repeated singleton-checkpoint reconciliation and immediate Android
+local pending results without waiting for cloud access.
+
+The 2026-09-01 M9 acceptance passed formatting, static analysis, all 174
+Flutter tests, Web production build, Android debug APK build, linked
+migration agreement, linked database lint, hosted anonymous read/write security
+smoke checks, and mandatory Web/physical-Android walkthroughs. Local pgTAP was
+not run because Docker was unavailable; the SQL assertions remain committed.
+Manual conflict injection and later lifecycle advancement were not performed
+because M9 provides no safe conflict control or tournament-format selector;
+deterministic tests cover both boundaries without changing accepted fixtures.

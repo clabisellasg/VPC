@@ -90,10 +90,12 @@ class EventDivisions extends Table with RecordMetadataColumns {
   TextColumn get name =>
       text().customConstraint("NOT NULL CHECK (trim(name) <> '')")();
 
-  TextColumn get tournamentFormat => text().customConstraint(
-    "NOT NULL CHECK (tournament_format IN ('singleElimination', "
-    "'doubleElimination', 'singleRoundRobin', 'doubleRoundRobin'))",
-  )();
+  TextColumn get tournamentFormat => text()
+      .customConstraint(
+        "CHECK (tournament_format IS NULL OR tournament_format IN ('singleElimination', "
+        "'doubleElimination', 'singleRoundRobin', 'doubleRoundRobin'))",
+      )
+      .nullable()();
 
   @override
   Set<Column<Object>> get primaryKey => {id};
@@ -528,6 +530,72 @@ class SyncConflicts extends Table {
   ];
 }
 
+@DataClassName('LocalEventSetupOutboxRow')
+@TableIndex(
+  name: 'event_setup_outbox_eligibility_idx',
+  columns: {#status, #createdAt, #id},
+)
+class EventSetupOutboxOperations extends Table {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+  TextColumn get eventId =>
+      text().references(Events, #id, onDelete: KeyAction.restrict)();
+  IntColumn get baseVersion => integer().nullable()();
+  TextColumn get payloadJson => text().customConstraint(
+    "NOT NULL CHECK (json_valid(payload_json) AND json_type(payload_json) = 'object')",
+  )();
+  DateTimeColumn get createdAt => dateTime()();
+  TextColumn get status => text().customConstraint(
+    "NOT NULL CHECK (status IN ('pending', 'blocked', 'conflicted', 'failed'))",
+  )();
+  TextColumn get failureMessage => text().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (base_version IS NULL OR base_version >= 0)',
+    'CHECK (failure_message IS NULL OR length(failure_message) <= 240)',
+  ];
+}
+
+@DataClassName('LocalEventSetupCheckpointRow')
+class EventSetupPullCheckpoints extends Table {
+  IntColumn get singleton => integer().withDefault(const Constant(1))();
+  DateTimeColumn get cursorUpdatedAt => dateTime()();
+  TextColumn get cursorEventId =>
+      text().references(Events, #id, onDelete: KeyAction.restrict)();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {singleton};
+
+  @override
+  List<String> get customConstraints => ['CHECK (singleton = 1)'];
+}
+
+@DataClassName('LocalEventSetupConflictRow')
+@TableIndex(name: 'event_setup_conflicts_event_idx', columns: {#eventId})
+class EventSetupConflicts extends Table {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+  TextColumn get operationId => text()
+      .references(EventSetupOutboxOperations, #id, onDelete: KeyAction.restrict)
+      .unique()();
+  TextColumn get eventId =>
+      text().references(Events, #id, onDelete: KeyAction.restrict)();
+  TextColumn get localPayloadJson => text().customConstraint(
+    "NOT NULL CHECK (json_valid(local_payload_json) AND json_type(local_payload_json) = 'object')",
+  )();
+  TextColumn get remotePayloadJson => text().nullable()();
+  DateTimeColumn get detectedAt => dateTime()();
+  TextColumn get status => text().customConstraint(
+    "NOT NULL CHECK (status IN ('unresolved', 'resolved'))",
+  )();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
 @DriftDatabase(
   tables: [
     Players,
@@ -545,6 +613,9 @@ class SyncConflicts extends Table {
     SyncOutboxOperations,
     SyncPullCheckpoints,
     SyncConflicts,
+    EventSetupOutboxOperations,
+    EventSetupPullCheckpoints,
+    EventSetupConflicts,
   ],
 )
 final class AppDatabase extends _$AppDatabase {
@@ -555,7 +626,7 @@ final class AppDatabase extends _$AppDatabase {
   AppDatabase.inMemory() : super(openInMemoryDatabaseConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -566,7 +637,7 @@ final class AppDatabase extends _$AppDatabase {
       }
     },
     onUpgrade: (migrator, from, to) async {
-      if (from == 1 && to == 2) {
+      if (from == 1 && to >= 2) {
         await migrator.createTable(syncOutboxOperations);
         await migrator.createTable(syncPullCheckpoints);
         await migrator.createTable(syncConflicts);
@@ -574,6 +645,20 @@ final class AppDatabase extends _$AppDatabase {
         await migrator.createIndex(syncOutboxEntityIdx);
         await migrator.createIndex(syncConflictsUnresolvedIdx);
         await migrator.createIndex(syncConflictsEntityIdx);
+        if (to == 2) {
+          return;
+        }
+      }
+      if (from <= 2 && to == 3) {
+        await migrator.alterTable(TableMigration(eventDivisions));
+        await migrator.createTable(eventSetupOutboxOperations);
+        await migrator.createTable(eventSetupPullCheckpoints);
+        await migrator.createTable(eventSetupConflicts);
+        await migrator.createIndex(eventSetupOutboxEligibilityIdx);
+        await migrator.createIndex(eventSetupConflictsEventIdx);
+        for (final statement in _m09IntegrityTriggers) {
+          await customStatement(statement);
+        }
         return;
       }
       throw StateError(
@@ -741,6 +826,33 @@ BEFORE UPDATE OF division_id, team_id ON division_placements
 WHEN (SELECT division_id FROM teams WHERE id = NEW.team_id) <> NEW.division_id
 BEGIN
   SELECT RAISE(ABORT, 'placement team division mismatch');
+END
+''',
+  ..._m09IntegrityTriggers,
+];
+
+const _m09IntegrityTriggers = <String>[
+  '''
+CREATE TRIGGER events_format_required_guard
+BEFORE UPDATE OF status ON events
+WHEN NEW.status = 'inProgress' AND OLD.status <> 'inProgress' AND EXISTS (
+  SELECT 1 FROM event_divisions
+  WHERE event_id = NEW.id AND deleted_at IS NULL AND tournament_format IS NULL
+)
+BEGIN
+  SELECT RAISE(ABORT, 'tournament formats must be configured before event begins');
+END
+''',
+  '''
+CREATE TRIGGER event_divisions_setup_lock_guard
+BEFORE UPDATE OF name, tournament_format, deleted_at ON event_divisions
+WHEN (NEW.name IS NOT OLD.name OR
+      NEW.tournament_format IS NOT OLD.tournament_format OR
+      NEW.deleted_at IS NOT OLD.deleted_at) AND
+     (SELECT status FROM events WHERE id = OLD.event_id) <> 'upcoming' AND
+     (SELECT deleted_at FROM events WHERE id = OLD.event_id) IS NULL
+BEGIN
+  SELECT RAISE(ABORT, 'event division setup is locked');
 END
 ''',
 ];

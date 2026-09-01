@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vpc/src/domain/common/domain_enums.dart';
 import 'package:vpc/src/domain/common/domain_failure.dart';
@@ -18,7 +19,7 @@ void main() {
   });
 
   test(
-    'fresh schema creates operational and synchronization tables at version 2',
+    'fresh schema creates operational and bounded sync tables at version 3',
     () async {
       final rows = await database
           .customSelect(
@@ -27,7 +28,7 @@ void main() {
           )
           .get();
 
-      expect(database.schemaVersion, 2);
+      expect(database.schemaVersion, 3);
       expect(rows.map((row) => row.read<String>('name')).toSet(), {
         'court_queue_entries',
         'division_participants',
@@ -44,6 +45,9 @@ void main() {
         'sync_conflicts',
         'sync_outbox_operations',
         'sync_pull_checkpoints',
+        'event_setup_outbox_operations',
+        'event_setup_pull_checkpoints',
+        'event_setup_conflicts',
       });
     },
   );
@@ -59,6 +63,33 @@ void main() {
       throwsA(anything),
     );
   });
+
+  test(
+    'null formats block in-progress and structural edits lock after upcoming',
+    () async {
+      await database.into(database.events).insert(eventCompanion());
+      await database
+          .into(database.eventDivisions)
+          .insert(
+            divisionCompanion().copyWith(tournamentFormat: const Value(null)),
+          );
+      await (database.update(database.events)
+            ..where((row) => row.id.equals(eventOneId)))
+          .write(const EventsCompanion(status: Value('registration')));
+      await expectLater(
+        (database.update(database.events)
+              ..where((row) => row.id.equals(eventOneId)))
+            .write(const EventsCompanion(status: Value('inProgress'))),
+        throwsA(anything),
+      );
+      await expectLater(
+        (database.update(database.eventDivisions)
+              ..where((row) => row.id.equals(divisionOneId)))
+            .write(const EventDivisionsCompanion(name: Value('Renamed'))),
+        throwsA(anything),
+      );
+    },
+  );
 
   test(
     'approved enum names map exactly and schema guards are installed',
@@ -121,7 +152,7 @@ void main() {
       final triggers = await database
           .customSelect("SELECT name FROM sqlite_master WHERE type = 'trigger'")
           .get();
-      expect(triggers, hasLength(14));
+      expect(triggers, hasLength(16));
     },
   );
 

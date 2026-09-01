@@ -8,7 +8,7 @@ final class EventDivision {
     required DivisionId id,
     required EventId eventId,
     required String name,
-    required TournamentFormat format,
+    TournamentFormat? format,
     required RecordMetadata metadata,
   }) => EventDivision._(
     id: id,
@@ -29,6 +29,8 @@ final class EventDivision {
   final DivisionId id;
   final EventId eventId;
   final String name;
-  final TournamentFormat format;
+
+  /// Null means the organizer has not configured the tournament format yet.
+  final TournamentFormat? format;
   final RecordMetadata metadata;
 }

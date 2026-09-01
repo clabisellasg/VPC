@@ -57,4 +57,14 @@ void main() {
     expect(eventLevel.divisionId, isNull);
     expect(divisionLevel.divisionId, DivisionId(divisionUuid));
   });
+
+  test('division accepts an unconfigured null tournament format', () {
+    final division = EventDivision(
+      id: DivisionId(divisionUuid),
+      eventId: EventId(eventUuid),
+      name: 'Open',
+      metadata: metadata(),
+    );
+    expect(division.format, isNull);
+  });
 }

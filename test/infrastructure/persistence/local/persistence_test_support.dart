@@ -56,7 +56,7 @@ EventDivisionsCompanion divisionCompanion({
   id: id,
   eventId: eventId,
   name: 'Open',
-  tournamentFormat: 'singleElimination',
+  tournamentFormat: const Value('singleElimination'),
   createdAt: createdAt,
   updatedAt: updatedAt,
   version: 0,

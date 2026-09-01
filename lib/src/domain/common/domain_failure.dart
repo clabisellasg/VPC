@@ -31,6 +31,14 @@ final class InvalidStateTransitionFailure extends DomainFailure {
   final String to;
 }
 
+final class TournamentFormatRequiredFailure extends DomainFailure {
+  const TournamentFormatRequiredFailure()
+    : super(
+        code: 'tournament_format_required',
+        message: 'Tournament formats must be configured before this event can begin.',
+      );
+}
+
 final class NotFoundFailure extends DomainFailure {
   const NotFoundFailure({required this.entity, required this.identifier})
     : super(code: 'not_found', message: '$entity $identifier was not found.');

@@ -1253,10 +1253,10 @@ class $EventDivisionsTable extends EventDivisions
   late final GeneratedColumn<String> tournamentFormat = GeneratedColumn<String>(
     'tournament_format',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL CHECK (tournament_format IN (\'singleElimination\', \'doubleElimination\', \'singleRoundRobin\', \'doubleRoundRobin\'))',
+    requiredDuringInsert: false,
+    $customConstraints: 'CHECK (tournament_format IS NULL OR tournament_format IN (\'singleElimination\', \'doubleElimination\', \'singleRoundRobin\', \'doubleRoundRobin\'))',
   );
   @override
   List<GeneratedColumn> get $columns => [
@@ -1340,8 +1340,6 @@ class $EventDivisionsTable extends EventDivisions
           _tournamentFormatMeta,
         ),
       );
-    } else if (isInserting) {
-      context.missing(_tournamentFormatMeta);
     }
     return context;
   }
@@ -1383,7 +1381,7 @@ class $EventDivisionsTable extends EventDivisions
       tournamentFormat: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}tournament_format'],
-      )!,
+      ),
     );
   }
 
@@ -1402,7 +1400,7 @@ class LocalEventDivisionRow extends DataClass
   final String id;
   final String eventId;
   final String name;
-  final String tournamentFormat;
+  final String? tournamentFormat;
   const LocalEventDivisionRow({
     required this.createdAt,
     required this.updatedAt,
@@ -1411,7 +1409,7 @@ class LocalEventDivisionRow extends DataClass
     required this.id,
     required this.eventId,
     required this.name,
-    required this.tournamentFormat,
+    this.tournamentFormat,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1425,7 +1423,9 @@ class LocalEventDivisionRow extends DataClass
     map['id'] = Variable<String>(id);
     map['event_id'] = Variable<String>(eventId);
     map['name'] = Variable<String>(name);
-    map['tournament_format'] = Variable<String>(tournamentFormat);
+    if (!nullToAbsent || tournamentFormat != null) {
+      map['tournament_format'] = Variable<String>(tournamentFormat);
+    }
     return map;
   }
 
@@ -1440,7 +1440,9 @@ class LocalEventDivisionRow extends DataClass
       id: Value(id),
       eventId: Value(eventId),
       name: Value(name),
-      tournamentFormat: Value(tournamentFormat),
+      tournamentFormat: tournamentFormat == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tournamentFormat),
     );
   }
 
@@ -1457,7 +1459,7 @@ class LocalEventDivisionRow extends DataClass
       id: serializer.fromJson<String>(json['id']),
       eventId: serializer.fromJson<String>(json['eventId']),
       name: serializer.fromJson<String>(json['name']),
-      tournamentFormat: serializer.fromJson<String>(json['tournamentFormat']),
+      tournamentFormat: serializer.fromJson<String?>(json['tournamentFormat']),
     );
   }
   @override
@@ -1471,7 +1473,7 @@ class LocalEventDivisionRow extends DataClass
       'id': serializer.toJson<String>(id),
       'eventId': serializer.toJson<String>(eventId),
       'name': serializer.toJson<String>(name),
-      'tournamentFormat': serializer.toJson<String>(tournamentFormat),
+      'tournamentFormat': serializer.toJson<String?>(tournamentFormat),
     };
   }
 
@@ -1483,7 +1485,7 @@ class LocalEventDivisionRow extends DataClass
     String? id,
     String? eventId,
     String? name,
-    String? tournamentFormat,
+    Value<String?> tournamentFormat = const Value.absent(),
   }) => LocalEventDivisionRow(
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -1492,7 +1494,9 @@ class LocalEventDivisionRow extends DataClass
     id: id ?? this.id,
     eventId: eventId ?? this.eventId,
     name: name ?? this.name,
-    tournamentFormat: tournamentFormat ?? this.tournamentFormat,
+    tournamentFormat: tournamentFormat.present
+        ? tournamentFormat.value
+        : this.tournamentFormat,
   );
   LocalEventDivisionRow copyWithCompanion(EventDivisionsCompanion data) {
     return LocalEventDivisionRow(
@@ -1557,7 +1561,7 @@ class EventDivisionsCompanion extends UpdateCompanion<LocalEventDivisionRow> {
   final Value<String> id;
   final Value<String> eventId;
   final Value<String> name;
-  final Value<String> tournamentFormat;
+  final Value<String?> tournamentFormat;
   final Value<int> rowid;
   const EventDivisionsCompanion({
     this.createdAt = const Value.absent(),
@@ -1578,15 +1582,14 @@ class EventDivisionsCompanion extends UpdateCompanion<LocalEventDivisionRow> {
     required String id,
     required String eventId,
     required String name,
-    required String tournamentFormat,
+    this.tournamentFormat = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : createdAt = Value(createdAt),
        updatedAt = Value(updatedAt),
        version = Value(version),
        id = Value(id),
        eventId = Value(eventId),
-       name = Value(name),
-       tournamentFormat = Value(tournamentFormat);
+       name = Value(name);
   static Insertable<LocalEventDivisionRow> custom({
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
@@ -1619,7 +1622,7 @@ class EventDivisionsCompanion extends UpdateCompanion<LocalEventDivisionRow> {
     Value<String>? id,
     Value<String>? eventId,
     Value<String>? name,
-    Value<String>? tournamentFormat,
+    Value<String?>? tournamentFormat,
     Value<int>? rowid,
   }) {
     return EventDivisionsCompanion(
@@ -8569,6 +8572,1341 @@ class SyncConflictsCompanion extends UpdateCompanion<LocalSyncConflictRow> {
   }
 }
 
+class $EventSetupOutboxOperationsTable extends EventSetupOutboxOperations
+    with TableInfo<$EventSetupOutboxOperationsTable, LocalEventSetupOutboxRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $EventSetupOutboxOperationsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _eventIdMeta = const VerificationMeta(
+    'eventId',
+  );
+  @override
+  late final GeneratedColumn<String> eventId = GeneratedColumn<String>(
+    'event_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES events (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _baseVersionMeta = const VerificationMeta(
+    'baseVersion',
+  );
+  @override
+  late final GeneratedColumn<int> baseVersion = GeneratedColumn<int>(
+    'base_version',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
+    'payloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
+    'payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK (json_valid(payload_json) AND json_type(payload_json) = \'object\')',
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK (status IN (\'pending\', \'blocked\', \'conflicted\', \'failed\'))',
+  );
+  static const VerificationMeta _failureMessageMeta = const VerificationMeta(
+    'failureMessage',
+  );
+  @override
+  late final GeneratedColumn<String> failureMessage = GeneratedColumn<String>(
+    'failure_message',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    eventId,
+    baseVersion,
+    payloadJson,
+    createdAt,
+    status,
+    failureMessage,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'event_setup_outbox_operations';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalEventSetupOutboxRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('event_id')) {
+      context.handle(
+        _eventIdMeta,
+        eventId.isAcceptableOrUnknown(data['event_id']!, _eventIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_eventIdMeta);
+    }
+    if (data.containsKey('base_version')) {
+      context.handle(
+        _baseVersionMeta,
+        baseVersion.isAcceptableOrUnknown(
+          data['base_version']!,
+          _baseVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('payload_json')) {
+      context.handle(
+        _payloadJsonMeta,
+        payloadJson.isAcceptableOrUnknown(
+          data['payload_json']!,
+          _payloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadJsonMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('failure_message')) {
+      context.handle(
+        _failureMessageMeta,
+        failureMessage.isAcceptableOrUnknown(
+          data['failure_message']!,
+          _failureMessageMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LocalEventSetupOutboxRow map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalEventSetupOutboxRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      eventId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}event_id'],
+      )!,
+      baseVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}base_version'],
+      ),
+      payloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_json'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      failureMessage: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}failure_message'],
+      ),
+    );
+  }
+
+  @override
+  $EventSetupOutboxOperationsTable createAlias(String alias) {
+    return $EventSetupOutboxOperationsTable(attachedDatabase, alias);
+  }
+}
+
+class LocalEventSetupOutboxRow extends DataClass
+    implements Insertable<LocalEventSetupOutboxRow> {
+  final String id;
+  final String eventId;
+  final int? baseVersion;
+  final String payloadJson;
+  final DateTime createdAt;
+  final String status;
+  final String? failureMessage;
+  const LocalEventSetupOutboxRow({
+    required this.id,
+    required this.eventId,
+    this.baseVersion,
+    required this.payloadJson,
+    required this.createdAt,
+    required this.status,
+    this.failureMessage,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['event_id'] = Variable<String>(eventId);
+    if (!nullToAbsent || baseVersion != null) {
+      map['base_version'] = Variable<int>(baseVersion);
+    }
+    map['payload_json'] = Variable<String>(payloadJson);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || failureMessage != null) {
+      map['failure_message'] = Variable<String>(failureMessage);
+    }
+    return map;
+  }
+
+  EventSetupOutboxOperationsCompanion toCompanion(bool nullToAbsent) {
+    return EventSetupOutboxOperationsCompanion(
+      id: Value(id),
+      eventId: Value(eventId),
+      baseVersion: baseVersion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(baseVersion),
+      payloadJson: Value(payloadJson),
+      createdAt: Value(createdAt),
+      status: Value(status),
+      failureMessage: failureMessage == null && nullToAbsent
+          ? const Value.absent()
+          : Value(failureMessage),
+    );
+  }
+
+  factory LocalEventSetupOutboxRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalEventSetupOutboxRow(
+      id: serializer.fromJson<String>(json['id']),
+      eventId: serializer.fromJson<String>(json['eventId']),
+      baseVersion: serializer.fromJson<int?>(json['baseVersion']),
+      payloadJson: serializer.fromJson<String>(json['payloadJson']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      status: serializer.fromJson<String>(json['status']),
+      failureMessage: serializer.fromJson<String?>(json['failureMessage']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'eventId': serializer.toJson<String>(eventId),
+      'baseVersion': serializer.toJson<int?>(baseVersion),
+      'payloadJson': serializer.toJson<String>(payloadJson),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'status': serializer.toJson<String>(status),
+      'failureMessage': serializer.toJson<String?>(failureMessage),
+    };
+  }
+
+  LocalEventSetupOutboxRow copyWith({
+    String? id,
+    String? eventId,
+    Value<int?> baseVersion = const Value.absent(),
+    String? payloadJson,
+    DateTime? createdAt,
+    String? status,
+    Value<String?> failureMessage = const Value.absent(),
+  }) => LocalEventSetupOutboxRow(
+    id: id ?? this.id,
+    eventId: eventId ?? this.eventId,
+    baseVersion: baseVersion.present ? baseVersion.value : this.baseVersion,
+    payloadJson: payloadJson ?? this.payloadJson,
+    createdAt: createdAt ?? this.createdAt,
+    status: status ?? this.status,
+    failureMessage: failureMessage.present
+        ? failureMessage.value
+        : this.failureMessage,
+  );
+  LocalEventSetupOutboxRow copyWithCompanion(
+    EventSetupOutboxOperationsCompanion data,
+  ) {
+    return LocalEventSetupOutboxRow(
+      id: data.id.present ? data.id.value : this.id,
+      eventId: data.eventId.present ? data.eventId.value : this.eventId,
+      baseVersion: data.baseVersion.present
+          ? data.baseVersion.value
+          : this.baseVersion,
+      payloadJson: data.payloadJson.present
+          ? data.payloadJson.value
+          : this.payloadJson,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      status: data.status.present ? data.status.value : this.status,
+      failureMessage: data.failureMessage.present
+          ? data.failureMessage.value
+          : this.failureMessage,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalEventSetupOutboxRow(')
+          ..write('id: $id, ')
+          ..write('eventId: $eventId, ')
+          ..write('baseVersion: $baseVersion, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('status: $status, ')
+          ..write('failureMessage: $failureMessage')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    eventId,
+    baseVersion,
+    payloadJson,
+    createdAt,
+    status,
+    failureMessage,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalEventSetupOutboxRow &&
+          other.id == this.id &&
+          other.eventId == this.eventId &&
+          other.baseVersion == this.baseVersion &&
+          other.payloadJson == this.payloadJson &&
+          other.createdAt == this.createdAt &&
+          other.status == this.status &&
+          other.failureMessage == this.failureMessage);
+}
+
+class EventSetupOutboxOperationsCompanion
+    extends UpdateCompanion<LocalEventSetupOutboxRow> {
+  final Value<String> id;
+  final Value<String> eventId;
+  final Value<int?> baseVersion;
+  final Value<String> payloadJson;
+  final Value<DateTime> createdAt;
+  final Value<String> status;
+  final Value<String?> failureMessage;
+  final Value<int> rowid;
+  const EventSetupOutboxOperationsCompanion({
+    this.id = const Value.absent(),
+    this.eventId = const Value.absent(),
+    this.baseVersion = const Value.absent(),
+    this.payloadJson = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.failureMessage = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  EventSetupOutboxOperationsCompanion.insert({
+    required String id,
+    required String eventId,
+    this.baseVersion = const Value.absent(),
+    required String payloadJson,
+    required DateTime createdAt,
+    required String status,
+    this.failureMessage = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       eventId = Value(eventId),
+       payloadJson = Value(payloadJson),
+       createdAt = Value(createdAt),
+       status = Value(status);
+  static Insertable<LocalEventSetupOutboxRow> custom({
+    Expression<String>? id,
+    Expression<String>? eventId,
+    Expression<int>? baseVersion,
+    Expression<String>? payloadJson,
+    Expression<DateTime>? createdAt,
+    Expression<String>? status,
+    Expression<String>? failureMessage,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (eventId != null) 'event_id': eventId,
+      if (baseVersion != null) 'base_version': baseVersion,
+      if (payloadJson != null) 'payload_json': payloadJson,
+      if (createdAt != null) 'created_at': createdAt,
+      if (status != null) 'status': status,
+      if (failureMessage != null) 'failure_message': failureMessage,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  EventSetupOutboxOperationsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? eventId,
+    Value<int?>? baseVersion,
+    Value<String>? payloadJson,
+    Value<DateTime>? createdAt,
+    Value<String>? status,
+    Value<String?>? failureMessage,
+    Value<int>? rowid,
+  }) {
+    return EventSetupOutboxOperationsCompanion(
+      id: id ?? this.id,
+      eventId: eventId ?? this.eventId,
+      baseVersion: baseVersion ?? this.baseVersion,
+      payloadJson: payloadJson ?? this.payloadJson,
+      createdAt: createdAt ?? this.createdAt,
+      status: status ?? this.status,
+      failureMessage: failureMessage ?? this.failureMessage,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (eventId.present) {
+      map['event_id'] = Variable<String>(eventId.value);
+    }
+    if (baseVersion.present) {
+      map['base_version'] = Variable<int>(baseVersion.value);
+    }
+    if (payloadJson.present) {
+      map['payload_json'] = Variable<String>(payloadJson.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (failureMessage.present) {
+      map['failure_message'] = Variable<String>(failureMessage.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('EventSetupOutboxOperationsCompanion(')
+          ..write('id: $id, ')
+          ..write('eventId: $eventId, ')
+          ..write('baseVersion: $baseVersion, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('status: $status, ')
+          ..write('failureMessage: $failureMessage, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $EventSetupPullCheckpointsTable extends EventSetupPullCheckpoints
+    with
+        TableInfo<
+          $EventSetupPullCheckpointsTable,
+          LocalEventSetupCheckpointRow
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $EventSetupPullCheckpointsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _singletonMeta = const VerificationMeta(
+    'singleton',
+  );
+  @override
+  late final GeneratedColumn<int> singleton = GeneratedColumn<int>(
+    'singleton',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _cursorUpdatedAtMeta = const VerificationMeta(
+    'cursorUpdatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> cursorUpdatedAt =
+      GeneratedColumn<DateTime>(
+        'cursor_updated_at',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _cursorEventIdMeta = const VerificationMeta(
+    'cursorEventId',
+  );
+  @override
+  late final GeneratedColumn<String> cursorEventId = GeneratedColumn<String>(
+    'cursor_event_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES events (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    singleton,
+    cursorUpdatedAt,
+    cursorEventId,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'event_setup_pull_checkpoints';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalEventSetupCheckpointRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('singleton')) {
+      context.handle(
+        _singletonMeta,
+        singleton.isAcceptableOrUnknown(data['singleton']!, _singletonMeta),
+      );
+    }
+    if (data.containsKey('cursor_updated_at')) {
+      context.handle(
+        _cursorUpdatedAtMeta,
+        cursorUpdatedAt.isAcceptableOrUnknown(
+          data['cursor_updated_at']!,
+          _cursorUpdatedAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_cursorUpdatedAtMeta);
+    }
+    if (data.containsKey('cursor_event_id')) {
+      context.handle(
+        _cursorEventIdMeta,
+        cursorEventId.isAcceptableOrUnknown(
+          data['cursor_event_id']!,
+          _cursorEventIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_cursorEventIdMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {singleton};
+  @override
+  LocalEventSetupCheckpointRow map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalEventSetupCheckpointRow(
+      singleton: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}singleton'],
+      )!,
+      cursorUpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}cursor_updated_at'],
+      )!,
+      cursorEventId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}cursor_event_id'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $EventSetupPullCheckpointsTable createAlias(String alias) {
+    return $EventSetupPullCheckpointsTable(attachedDatabase, alias);
+  }
+}
+
+class LocalEventSetupCheckpointRow extends DataClass
+    implements Insertable<LocalEventSetupCheckpointRow> {
+  final int singleton;
+  final DateTime cursorUpdatedAt;
+  final String cursorEventId;
+  final DateTime updatedAt;
+  const LocalEventSetupCheckpointRow({
+    required this.singleton,
+    required this.cursorUpdatedAt,
+    required this.cursorEventId,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['singleton'] = Variable<int>(singleton);
+    map['cursor_updated_at'] = Variable<DateTime>(cursorUpdatedAt);
+    map['cursor_event_id'] = Variable<String>(cursorEventId);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  EventSetupPullCheckpointsCompanion toCompanion(bool nullToAbsent) {
+    return EventSetupPullCheckpointsCompanion(
+      singleton: Value(singleton),
+      cursorUpdatedAt: Value(cursorUpdatedAt),
+      cursorEventId: Value(cursorEventId),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory LocalEventSetupCheckpointRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalEventSetupCheckpointRow(
+      singleton: serializer.fromJson<int>(json['singleton']),
+      cursorUpdatedAt: serializer.fromJson<DateTime>(json['cursorUpdatedAt']),
+      cursorEventId: serializer.fromJson<String>(json['cursorEventId']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'singleton': serializer.toJson<int>(singleton),
+      'cursorUpdatedAt': serializer.toJson<DateTime>(cursorUpdatedAt),
+      'cursorEventId': serializer.toJson<String>(cursorEventId),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  LocalEventSetupCheckpointRow copyWith({
+    int? singleton,
+    DateTime? cursorUpdatedAt,
+    String? cursorEventId,
+    DateTime? updatedAt,
+  }) => LocalEventSetupCheckpointRow(
+    singleton: singleton ?? this.singleton,
+    cursorUpdatedAt: cursorUpdatedAt ?? this.cursorUpdatedAt,
+    cursorEventId: cursorEventId ?? this.cursorEventId,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  LocalEventSetupCheckpointRow copyWithCompanion(
+    EventSetupPullCheckpointsCompanion data,
+  ) {
+    return LocalEventSetupCheckpointRow(
+      singleton: data.singleton.present ? data.singleton.value : this.singleton,
+      cursorUpdatedAt: data.cursorUpdatedAt.present
+          ? data.cursorUpdatedAt.value
+          : this.cursorUpdatedAt,
+      cursorEventId: data.cursorEventId.present
+          ? data.cursorEventId.value
+          : this.cursorEventId,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalEventSetupCheckpointRow(')
+          ..write('singleton: $singleton, ')
+          ..write('cursorUpdatedAt: $cursorUpdatedAt, ')
+          ..write('cursorEventId: $cursorEventId, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(singleton, cursorUpdatedAt, cursorEventId, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalEventSetupCheckpointRow &&
+          other.singleton == this.singleton &&
+          other.cursorUpdatedAt == this.cursorUpdatedAt &&
+          other.cursorEventId == this.cursorEventId &&
+          other.updatedAt == this.updatedAt);
+}
+
+class EventSetupPullCheckpointsCompanion
+    extends UpdateCompanion<LocalEventSetupCheckpointRow> {
+  final Value<int> singleton;
+  final Value<DateTime> cursorUpdatedAt;
+  final Value<String> cursorEventId;
+  final Value<DateTime> updatedAt;
+  const EventSetupPullCheckpointsCompanion({
+    this.singleton = const Value.absent(),
+    this.cursorUpdatedAt = const Value.absent(),
+    this.cursorEventId = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  EventSetupPullCheckpointsCompanion.insert({
+    this.singleton = const Value.absent(),
+    required DateTime cursorUpdatedAt,
+    required String cursorEventId,
+    required DateTime updatedAt,
+  }) : cursorUpdatedAt = Value(cursorUpdatedAt),
+       cursorEventId = Value(cursorEventId),
+       updatedAt = Value(updatedAt);
+  static Insertable<LocalEventSetupCheckpointRow> custom({
+    Expression<int>? singleton,
+    Expression<DateTime>? cursorUpdatedAt,
+    Expression<String>? cursorEventId,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (singleton != null) 'singleton': singleton,
+      if (cursorUpdatedAt != null) 'cursor_updated_at': cursorUpdatedAt,
+      if (cursorEventId != null) 'cursor_event_id': cursorEventId,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  EventSetupPullCheckpointsCompanion copyWith({
+    Value<int>? singleton,
+    Value<DateTime>? cursorUpdatedAt,
+    Value<String>? cursorEventId,
+    Value<DateTime>? updatedAt,
+  }) {
+    return EventSetupPullCheckpointsCompanion(
+      singleton: singleton ?? this.singleton,
+      cursorUpdatedAt: cursorUpdatedAt ?? this.cursorUpdatedAt,
+      cursorEventId: cursorEventId ?? this.cursorEventId,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (singleton.present) {
+      map['singleton'] = Variable<int>(singleton.value);
+    }
+    if (cursorUpdatedAt.present) {
+      map['cursor_updated_at'] = Variable<DateTime>(cursorUpdatedAt.value);
+    }
+    if (cursorEventId.present) {
+      map['cursor_event_id'] = Variable<String>(cursorEventId.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('EventSetupPullCheckpointsCompanion(')
+          ..write('singleton: $singleton, ')
+          ..write('cursorUpdatedAt: $cursorUpdatedAt, ')
+          ..write('cursorEventId: $cursorEventId, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $EventSetupConflictsTable extends EventSetupConflicts
+    with TableInfo<$EventSetupConflictsTable, LocalEventSetupConflictRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $EventSetupConflictsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _operationIdMeta = const VerificationMeta(
+    'operationId',
+  );
+  @override
+  late final GeneratedColumn<String> operationId = GeneratedColumn<String>(
+    'operation_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'UNIQUE REFERENCES event_setup_outbox_operations (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _eventIdMeta = const VerificationMeta(
+    'eventId',
+  );
+  @override
+  late final GeneratedColumn<String> eventId = GeneratedColumn<String>(
+    'event_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES events (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _localPayloadJsonMeta = const VerificationMeta(
+    'localPayloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> localPayloadJson = GeneratedColumn<String>(
+    'local_payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK (json_valid(local_payload_json) AND json_type(local_payload_json) = \'object\')',
+  );
+  static const VerificationMeta _remotePayloadJsonMeta = const VerificationMeta(
+    'remotePayloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> remotePayloadJson =
+      GeneratedColumn<String>(
+        'remote_payload_json',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _detectedAtMeta = const VerificationMeta(
+    'detectedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> detectedAt = GeneratedColumn<DateTime>(
+    'detected_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints:
+        'NOT NULL CHECK (status IN (\'unresolved\', \'resolved\'))',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    operationId,
+    eventId,
+    localPayloadJson,
+    remotePayloadJson,
+    detectedAt,
+    status,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'event_setup_conflicts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalEventSetupConflictRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('operation_id')) {
+      context.handle(
+        _operationIdMeta,
+        operationId.isAcceptableOrUnknown(
+          data['operation_id']!,
+          _operationIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_operationIdMeta);
+    }
+    if (data.containsKey('event_id')) {
+      context.handle(
+        _eventIdMeta,
+        eventId.isAcceptableOrUnknown(data['event_id']!, _eventIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_eventIdMeta);
+    }
+    if (data.containsKey('local_payload_json')) {
+      context.handle(
+        _localPayloadJsonMeta,
+        localPayloadJson.isAcceptableOrUnknown(
+          data['local_payload_json']!,
+          _localPayloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_localPayloadJsonMeta);
+    }
+    if (data.containsKey('remote_payload_json')) {
+      context.handle(
+        _remotePayloadJsonMeta,
+        remotePayloadJson.isAcceptableOrUnknown(
+          data['remote_payload_json']!,
+          _remotePayloadJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('detected_at')) {
+      context.handle(
+        _detectedAtMeta,
+        detectedAt.isAcceptableOrUnknown(data['detected_at']!, _detectedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_detectedAtMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LocalEventSetupConflictRow map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalEventSetupConflictRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      operationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}operation_id'],
+      )!,
+      eventId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}event_id'],
+      )!,
+      localPayloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}local_payload_json'],
+      )!,
+      remotePayloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_payload_json'],
+      ),
+      detectedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}detected_at'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+    );
+  }
+
+  @override
+  $EventSetupConflictsTable createAlias(String alias) {
+    return $EventSetupConflictsTable(attachedDatabase, alias);
+  }
+}
+
+class LocalEventSetupConflictRow extends DataClass
+    implements Insertable<LocalEventSetupConflictRow> {
+  final String id;
+  final String operationId;
+  final String eventId;
+  final String localPayloadJson;
+  final String? remotePayloadJson;
+  final DateTime detectedAt;
+  final String status;
+  const LocalEventSetupConflictRow({
+    required this.id,
+    required this.operationId,
+    required this.eventId,
+    required this.localPayloadJson,
+    this.remotePayloadJson,
+    required this.detectedAt,
+    required this.status,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['operation_id'] = Variable<String>(operationId);
+    map['event_id'] = Variable<String>(eventId);
+    map['local_payload_json'] = Variable<String>(localPayloadJson);
+    if (!nullToAbsent || remotePayloadJson != null) {
+      map['remote_payload_json'] = Variable<String>(remotePayloadJson);
+    }
+    map['detected_at'] = Variable<DateTime>(detectedAt);
+    map['status'] = Variable<String>(status);
+    return map;
+  }
+
+  EventSetupConflictsCompanion toCompanion(bool nullToAbsent) {
+    return EventSetupConflictsCompanion(
+      id: Value(id),
+      operationId: Value(operationId),
+      eventId: Value(eventId),
+      localPayloadJson: Value(localPayloadJson),
+      remotePayloadJson: remotePayloadJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remotePayloadJson),
+      detectedAt: Value(detectedAt),
+      status: Value(status),
+    );
+  }
+
+  factory LocalEventSetupConflictRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalEventSetupConflictRow(
+      id: serializer.fromJson<String>(json['id']),
+      operationId: serializer.fromJson<String>(json['operationId']),
+      eventId: serializer.fromJson<String>(json['eventId']),
+      localPayloadJson: serializer.fromJson<String>(json['localPayloadJson']),
+      remotePayloadJson: serializer.fromJson<String?>(
+        json['remotePayloadJson'],
+      ),
+      detectedAt: serializer.fromJson<DateTime>(json['detectedAt']),
+      status: serializer.fromJson<String>(json['status']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'operationId': serializer.toJson<String>(operationId),
+      'eventId': serializer.toJson<String>(eventId),
+      'localPayloadJson': serializer.toJson<String>(localPayloadJson),
+      'remotePayloadJson': serializer.toJson<String?>(remotePayloadJson),
+      'detectedAt': serializer.toJson<DateTime>(detectedAt),
+      'status': serializer.toJson<String>(status),
+    };
+  }
+
+  LocalEventSetupConflictRow copyWith({
+    String? id,
+    String? operationId,
+    String? eventId,
+    String? localPayloadJson,
+    Value<String?> remotePayloadJson = const Value.absent(),
+    DateTime? detectedAt,
+    String? status,
+  }) => LocalEventSetupConflictRow(
+    id: id ?? this.id,
+    operationId: operationId ?? this.operationId,
+    eventId: eventId ?? this.eventId,
+    localPayloadJson: localPayloadJson ?? this.localPayloadJson,
+    remotePayloadJson: remotePayloadJson.present
+        ? remotePayloadJson.value
+        : this.remotePayloadJson,
+    detectedAt: detectedAt ?? this.detectedAt,
+    status: status ?? this.status,
+  );
+  LocalEventSetupConflictRow copyWithCompanion(
+    EventSetupConflictsCompanion data,
+  ) {
+    return LocalEventSetupConflictRow(
+      id: data.id.present ? data.id.value : this.id,
+      operationId: data.operationId.present
+          ? data.operationId.value
+          : this.operationId,
+      eventId: data.eventId.present ? data.eventId.value : this.eventId,
+      localPayloadJson: data.localPayloadJson.present
+          ? data.localPayloadJson.value
+          : this.localPayloadJson,
+      remotePayloadJson: data.remotePayloadJson.present
+          ? data.remotePayloadJson.value
+          : this.remotePayloadJson,
+      detectedAt: data.detectedAt.present
+          ? data.detectedAt.value
+          : this.detectedAt,
+      status: data.status.present ? data.status.value : this.status,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalEventSetupConflictRow(')
+          ..write('id: $id, ')
+          ..write('operationId: $operationId, ')
+          ..write('eventId: $eventId, ')
+          ..write('localPayloadJson: $localPayloadJson, ')
+          ..write('remotePayloadJson: $remotePayloadJson, ')
+          ..write('detectedAt: $detectedAt, ')
+          ..write('status: $status')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    operationId,
+    eventId,
+    localPayloadJson,
+    remotePayloadJson,
+    detectedAt,
+    status,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalEventSetupConflictRow &&
+          other.id == this.id &&
+          other.operationId == this.operationId &&
+          other.eventId == this.eventId &&
+          other.localPayloadJson == this.localPayloadJson &&
+          other.remotePayloadJson == this.remotePayloadJson &&
+          other.detectedAt == this.detectedAt &&
+          other.status == this.status);
+}
+
+class EventSetupConflictsCompanion
+    extends UpdateCompanion<LocalEventSetupConflictRow> {
+  final Value<String> id;
+  final Value<String> operationId;
+  final Value<String> eventId;
+  final Value<String> localPayloadJson;
+  final Value<String?> remotePayloadJson;
+  final Value<DateTime> detectedAt;
+  final Value<String> status;
+  final Value<int> rowid;
+  const EventSetupConflictsCompanion({
+    this.id = const Value.absent(),
+    this.operationId = const Value.absent(),
+    this.eventId = const Value.absent(),
+    this.localPayloadJson = const Value.absent(),
+    this.remotePayloadJson = const Value.absent(),
+    this.detectedAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  EventSetupConflictsCompanion.insert({
+    required String id,
+    required String operationId,
+    required String eventId,
+    required String localPayloadJson,
+    this.remotePayloadJson = const Value.absent(),
+    required DateTime detectedAt,
+    required String status,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       operationId = Value(operationId),
+       eventId = Value(eventId),
+       localPayloadJson = Value(localPayloadJson),
+       detectedAt = Value(detectedAt),
+       status = Value(status);
+  static Insertable<LocalEventSetupConflictRow> custom({
+    Expression<String>? id,
+    Expression<String>? operationId,
+    Expression<String>? eventId,
+    Expression<String>? localPayloadJson,
+    Expression<String>? remotePayloadJson,
+    Expression<DateTime>? detectedAt,
+    Expression<String>? status,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (operationId != null) 'operation_id': operationId,
+      if (eventId != null) 'event_id': eventId,
+      if (localPayloadJson != null) 'local_payload_json': localPayloadJson,
+      if (remotePayloadJson != null) 'remote_payload_json': remotePayloadJson,
+      if (detectedAt != null) 'detected_at': detectedAt,
+      if (status != null) 'status': status,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  EventSetupConflictsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? operationId,
+    Value<String>? eventId,
+    Value<String>? localPayloadJson,
+    Value<String?>? remotePayloadJson,
+    Value<DateTime>? detectedAt,
+    Value<String>? status,
+    Value<int>? rowid,
+  }) {
+    return EventSetupConflictsCompanion(
+      id: id ?? this.id,
+      operationId: operationId ?? this.operationId,
+      eventId: eventId ?? this.eventId,
+      localPayloadJson: localPayloadJson ?? this.localPayloadJson,
+      remotePayloadJson: remotePayloadJson ?? this.remotePayloadJson,
+      detectedAt: detectedAt ?? this.detectedAt,
+      status: status ?? this.status,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (operationId.present) {
+      map['operation_id'] = Variable<String>(operationId.value);
+    }
+    if (eventId.present) {
+      map['event_id'] = Variable<String>(eventId.value);
+    }
+    if (localPayloadJson.present) {
+      map['local_payload_json'] = Variable<String>(localPayloadJson.value);
+    }
+    if (remotePayloadJson.present) {
+      map['remote_payload_json'] = Variable<String>(remotePayloadJson.value);
+    }
+    if (detectedAt.present) {
+      map['detected_at'] = Variable<DateTime>(detectedAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('EventSetupConflictsCompanion(')
+          ..write('id: $id, ')
+          ..write('operationId: $operationId, ')
+          ..write('eventId: $eventId, ')
+          ..write('localPayloadJson: $localPayloadJson, ')
+          ..write('remotePayloadJson: $remotePayloadJson, ')
+          ..write('detectedAt: $detectedAt, ')
+          ..write('status: $status, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -8595,6 +9933,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SyncPullCheckpointsTable syncPullCheckpoints =
       $SyncPullCheckpointsTable(this);
   late final $SyncConflictsTable syncConflicts = $SyncConflictsTable(this);
+  late final $EventSetupOutboxOperationsTable eventSetupOutboxOperations =
+      $EventSetupOutboxOperationsTable(this);
+  late final $EventSetupPullCheckpointsTable eventSetupPullCheckpoints =
+      $EventSetupPullCheckpointsTable(this);
+  late final $EventSetupConflictsTable eventSetupConflicts =
+      $EventSetupConflictsTable(this);
   late final Index playersDisplayNameIdx = Index(
     'players_display_name_idx',
     'CREATE INDEX players_display_name_idx ON players (display_name)',
@@ -8687,6 +10031,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'sync_conflicts_entity_idx',
     'CREATE INDEX sync_conflicts_entity_idx ON sync_conflicts (entity_type, entity_id)',
   );
+  late final Index eventSetupOutboxEligibilityIdx = Index(
+    'event_setup_outbox_eligibility_idx',
+    'CREATE INDEX event_setup_outbox_eligibility_idx ON event_setup_outbox_operations (status, created_at, id)',
+  );
+  late final Index eventSetupConflictsEventIdx = Index(
+    'event_setup_conflicts_event_idx',
+    'CREATE INDEX event_setup_conflicts_event_idx ON event_setup_conflicts (event_id)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -8707,6 +10059,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     syncOutboxOperations,
     syncPullCheckpoints,
     syncConflicts,
+    eventSetupOutboxOperations,
+    eventSetupPullCheckpoints,
+    eventSetupConflicts,
     playersDisplayNameIdx,
     eventsStatusScheduledAtIdx,
     eventDivisionsEventIdIdx,
@@ -8730,6 +10085,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     syncOutboxEntityIdx,
     syncConflictsUnresolvedIdx,
     syncConflictsEntityIdx,
+    eventSetupOutboxEligibilityIdx,
+    eventSetupConflictsEventIdx,
   ];
   @override
   DriftDatabaseOptions get options =>
@@ -9561,6 +10918,80 @@ final class $$EventsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<
+    $EventSetupOutboxOperationsTable,
+    List<LocalEventSetupOutboxRow>
+  >
+  _eventSetupOutboxOperationsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.eventSetupOutboxOperations,
+        aliasName: 'events__id__event_setup_outbox_operations__event_id',
+      );
+
+  $$EventSetupOutboxOperationsTableProcessedTableManager
+  get eventSetupOutboxOperationsRefs {
+    final manager = $$EventSetupOutboxOperationsTableTableManager(
+      $_db,
+      $_db.eventSetupOutboxOperations,
+    ).filter((f) => f.eventId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _eventSetupOutboxOperationsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $EventSetupPullCheckpointsTable,
+    List<LocalEventSetupCheckpointRow>
+  >
+  _eventSetupPullCheckpointsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.eventSetupPullCheckpoints,
+        aliasName: 'events__id__event_setup_pull_checkpoints__cursor_event_id',
+      );
+
+  $$EventSetupPullCheckpointsTableProcessedTableManager
+  get eventSetupPullCheckpointsRefs {
+    final manager = $$EventSetupPullCheckpointsTableTableManager(
+      $_db,
+      $_db.eventSetupPullCheckpoints,
+    ).filter((f) => f.cursorEventId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _eventSetupPullCheckpointsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $EventSetupConflictsTable,
+    List<LocalEventSetupConflictRow>
+  >
+  _eventSetupConflictsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.eventSetupConflicts,
+        aliasName: 'events__id__event_setup_conflicts__event_id',
+      );
+
+  $$EventSetupConflictsTableProcessedTableManager get eventSetupConflictsRefs {
+    final manager = $$EventSetupConflictsTableTableManager(
+      $_db,
+      $_db.eventSetupConflicts,
+    ).filter((f) => f.eventId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _eventSetupConflictsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$EventsTableFilterComposer
@@ -9698,6 +11129,85 @@ class $$EventsTableFilterComposer
           }) => $$CourtQueueEntriesTableFilterComposer(
             $db: $db,
             $table: $db.courtQueueEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> eventSetupOutboxOperationsRefs(
+    Expression<bool> Function($$EventSetupOutboxOperationsTableFilterComposer f)
+    f,
+  ) {
+    final $$EventSetupOutboxOperationsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.eventSetupOutboxOperations,
+          getReferencedColumn: (t) => t.eventId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$EventSetupOutboxOperationsTableFilterComposer(
+                $db: $db,
+                $table: $db.eventSetupOutboxOperations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<bool> eventSetupPullCheckpointsRefs(
+    Expression<bool> Function($$EventSetupPullCheckpointsTableFilterComposer f)
+    f,
+  ) {
+    final $$EventSetupPullCheckpointsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.eventSetupPullCheckpoints,
+          getReferencedColumn: (t) => t.cursorEventId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$EventSetupPullCheckpointsTableFilterComposer(
+                $db: $db,
+                $table: $db.eventSetupPullCheckpoints,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<bool> eventSetupConflictsRefs(
+    Expression<bool> Function($$EventSetupConflictsTableFilterComposer f) f,
+  ) {
+    final $$EventSetupConflictsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.eventSetupConflicts,
+      getReferencedColumn: (t) => t.eventId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventSetupConflictsTableFilterComposer(
+            $db: $db,
+            $table: $db.eventSetupConflicts,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -9907,6 +11417,88 @@ class $$EventsTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> eventSetupOutboxOperationsRefs<T extends Object>(
+    Expression<T> Function(
+      $$EventSetupOutboxOperationsTableAnnotationComposer a,
+    )
+    f,
+  ) {
+    final $$EventSetupOutboxOperationsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.eventSetupOutboxOperations,
+          getReferencedColumn: (t) => t.eventId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$EventSetupOutboxOperationsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.eventSetupOutboxOperations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> eventSetupPullCheckpointsRefs<T extends Object>(
+    Expression<T> Function($$EventSetupPullCheckpointsTableAnnotationComposer a)
+    f,
+  ) {
+    final $$EventSetupPullCheckpointsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.eventSetupPullCheckpoints,
+          getReferencedColumn: (t) => t.cursorEventId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$EventSetupPullCheckpointsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.eventSetupPullCheckpoints,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> eventSetupConflictsRefs<T extends Object>(
+    Expression<T> Function($$EventSetupConflictsTableAnnotationComposer a) f,
+  ) {
+    final $$EventSetupConflictsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.eventSetupConflicts,
+          getReferencedColumn: (t) => t.eventId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$EventSetupConflictsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.eventSetupConflicts,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$EventsTableTableManager
@@ -9926,6 +11518,9 @@ class $$EventsTableTableManager
             bool eventDivisionsRefs,
             bool eventParticipantsRefs,
             bool courtQueueEntriesRefs,
+            bool eventSetupOutboxOperationsRefs,
+            bool eventSetupPullCheckpointsRefs,
+            bool eventSetupConflictsRefs,
           })
         > {
   $$EventsTableTableManager(_$AppDatabase db, $EventsTable table)
@@ -10010,6 +11605,9 @@ class $$EventsTableTableManager
                 eventDivisionsRefs = false,
                 eventParticipantsRefs = false,
                 courtQueueEntriesRefs = false,
+                eventSetupOutboxOperationsRefs = false,
+                eventSetupPullCheckpointsRefs = false,
+                eventSetupConflictsRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -10017,6 +11615,11 @@ class $$EventsTableTableManager
                     if (eventDivisionsRefs) db.eventDivisions,
                     if (eventParticipantsRefs) db.eventParticipants,
                     if (courtQueueEntriesRefs) db.courtQueueEntries,
+                    if (eventSetupOutboxOperationsRefs)
+                      db.eventSetupOutboxOperations,
+                    if (eventSetupPullCheckpointsRefs)
+                      db.eventSetupPullCheckpoints,
+                    if (eventSetupConflictsRefs) db.eventSetupConflicts,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
@@ -10084,6 +11687,69 @@ class $$EventsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (eventSetupOutboxOperationsRefs)
+                        await $_getPrefetchedData<
+                          LocalEventRow,
+                          $EventsTable,
+                          LocalEventSetupOutboxRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$EventsTableReferences
+                              ._eventSetupOutboxOperationsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$EventsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).eventSetupOutboxOperationsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.eventId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (eventSetupPullCheckpointsRefs)
+                        await $_getPrefetchedData<
+                          LocalEventRow,
+                          $EventsTable,
+                          LocalEventSetupCheckpointRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$EventsTableReferences
+                              ._eventSetupPullCheckpointsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$EventsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).eventSetupPullCheckpointsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.cursorEventId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (eventSetupConflictsRefs)
+                        await $_getPrefetchedData<
+                          LocalEventRow,
+                          $EventsTable,
+                          LocalEventSetupConflictRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$EventsTableReferences
+                              ._eventSetupConflictsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$EventsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).eventSetupConflictsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.eventId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -10108,6 +11774,9 @@ typedef $$EventsTableProcessedTableManager =
         bool eventDivisionsRefs,
         bool eventParticipantsRefs,
         bool courtQueueEntriesRefs,
+        bool eventSetupOutboxOperationsRefs,
+        bool eventSetupPullCheckpointsRefs,
+        bool eventSetupConflictsRefs,
       })
     >;
 typedef $$EventDivisionsTableCreateCompanionBuilder =
@@ -10119,7 +11788,7 @@ typedef $$EventDivisionsTableCreateCompanionBuilder =
       required String id,
       required String eventId,
       required String name,
-      required String tournamentFormat,
+      Value<String?> tournamentFormat,
       Value<int> rowid,
     });
 typedef $$EventDivisionsTableUpdateCompanionBuilder =
@@ -10131,7 +11800,7 @@ typedef $$EventDivisionsTableUpdateCompanionBuilder =
       Value<String> id,
       Value<String> eventId,
       Value<String> name,
-      Value<String> tournamentFormat,
+      Value<String?> tournamentFormat,
       Value<int> rowid,
     });
 
@@ -10841,7 +12510,7 @@ class $$EventDivisionsTableTableManager
                 Value<String> id = const Value.absent(),
                 Value<String> eventId = const Value.absent(),
                 Value<String> name = const Value.absent(),
-                Value<String> tournamentFormat = const Value.absent(),
+                Value<String?> tournamentFormat = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => EventDivisionsCompanion(
                 createdAt: createdAt,
@@ -10863,7 +12532,7 @@ class $$EventDivisionsTableTableManager
                 required String id,
                 required String eventId,
                 required String name,
-                required String tournamentFormat,
+                Value<String?> tournamentFormat = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => EventDivisionsCompanion.insert(
                 createdAt: createdAt,
@@ -18021,6 +19690,1278 @@ typedef $$SyncConflictsTableProcessedTableManager =
       LocalSyncConflictRow,
       PrefetchHooks Function({bool operationId, bool entityId})
     >;
+typedef $$EventSetupOutboxOperationsTableCreateCompanionBuilder =
+    EventSetupOutboxOperationsCompanion Function({
+      required String id,
+      required String eventId,
+      Value<int?> baseVersion,
+      required String payloadJson,
+      required DateTime createdAt,
+      required String status,
+      Value<String?> failureMessage,
+      Value<int> rowid,
+    });
+typedef $$EventSetupOutboxOperationsTableUpdateCompanionBuilder =
+    EventSetupOutboxOperationsCompanion Function({
+      Value<String> id,
+      Value<String> eventId,
+      Value<int?> baseVersion,
+      Value<String> payloadJson,
+      Value<DateTime> createdAt,
+      Value<String> status,
+      Value<String?> failureMessage,
+      Value<int> rowid,
+    });
+
+final class $$EventSetupOutboxOperationsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $EventSetupOutboxOperationsTable,
+          LocalEventSetupOutboxRow
+        > {
+  $$EventSetupOutboxOperationsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $EventsTable _eventIdTable(_$AppDatabase db) => db.events.createAlias(
+    'event_setup_outbox_operations__event_id__events__id',
+  );
+
+  $$EventsTableProcessedTableManager get eventId {
+    final $_column = $_itemColumn<String>('event_id')!;
+
+    final manager = $$EventsTableTableManager(
+      $_db,
+      $_db.events,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_eventIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $EventSetupConflictsTable,
+    List<LocalEventSetupConflictRow>
+  >
+  _eventSetupConflictsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.eventSetupConflicts,
+        aliasName: 'event_setup_outbox_operations__id__event_setup_conflicts__operation_id',
+      );
+
+  $$EventSetupConflictsTableProcessedTableManager get eventSetupConflictsRefs {
+    final manager = $$EventSetupConflictsTableTableManager(
+      $_db,
+      $_db.eventSetupConflicts,
+    ).filter((f) => f.operationId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _eventSetupConflictsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$EventSetupOutboxOperationsTableFilterComposer
+    extends Composer<_$AppDatabase, $EventSetupOutboxOperationsTable> {
+  $$EventSetupOutboxOperationsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get baseVersion => $composableBuilder(
+    column: $table.baseVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get failureMessage => $composableBuilder(
+    column: $table.failureMessage,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$EventsTableFilterComposer get eventId {
+    final $$EventsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.eventId,
+      referencedTable: $db.events,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventsTableFilterComposer(
+            $db: $db,
+            $table: $db.events,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> eventSetupConflictsRefs(
+    Expression<bool> Function($$EventSetupConflictsTableFilterComposer f) f,
+  ) {
+    final $$EventSetupConflictsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.eventSetupConflicts,
+      getReferencedColumn: (t) => t.operationId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventSetupConflictsTableFilterComposer(
+            $db: $db,
+            $table: $db.eventSetupConflicts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$EventSetupOutboxOperationsTableOrderingComposer
+    extends Composer<_$AppDatabase, $EventSetupOutboxOperationsTable> {
+  $$EventSetupOutboxOperationsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get baseVersion => $composableBuilder(
+    column: $table.baseVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get failureMessage => $composableBuilder(
+    column: $table.failureMessage,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$EventsTableOrderingComposer get eventId {
+    final $$EventsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.eventId,
+      referencedTable: $db.events,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventsTableOrderingComposer(
+            $db: $db,
+            $table: $db.events,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$EventSetupOutboxOperationsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $EventSetupOutboxOperationsTable> {
+  $$EventSetupOutboxOperationsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get baseVersion => $composableBuilder(
+    column: $table.baseVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get failureMessage => $composableBuilder(
+    column: $table.failureMessage,
+    builder: (column) => column,
+  );
+
+  $$EventsTableAnnotationComposer get eventId {
+    final $$EventsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.eventId,
+      referencedTable: $db.events,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.events,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> eventSetupConflictsRefs<T extends Object>(
+    Expression<T> Function($$EventSetupConflictsTableAnnotationComposer a) f,
+  ) {
+    final $$EventSetupConflictsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.eventSetupConflicts,
+          getReferencedColumn: (t) => t.operationId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$EventSetupConflictsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.eventSetupConflicts,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$EventSetupOutboxOperationsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $EventSetupOutboxOperationsTable,
+          LocalEventSetupOutboxRow,
+          $$EventSetupOutboxOperationsTableFilterComposer,
+          $$EventSetupOutboxOperationsTableOrderingComposer,
+          $$EventSetupOutboxOperationsTableAnnotationComposer,
+          $$EventSetupOutboxOperationsTableCreateCompanionBuilder,
+          $$EventSetupOutboxOperationsTableUpdateCompanionBuilder,
+          (
+            LocalEventSetupOutboxRow,
+            $$EventSetupOutboxOperationsTableReferences,
+          ),
+          LocalEventSetupOutboxRow,
+          PrefetchHooks Function({bool eventId, bool eventSetupConflictsRefs})
+        > {
+  $$EventSetupOutboxOperationsTableTableManager(
+    _$AppDatabase db,
+    $EventSetupOutboxOperationsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$EventSetupOutboxOperationsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$EventSetupOutboxOperationsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$EventSetupOutboxOperationsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> eventId = const Value.absent(),
+                Value<int?> baseVersion = const Value.absent(),
+                Value<String> payloadJson = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> failureMessage = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => EventSetupOutboxOperationsCompanion(
+                id: id,
+                eventId: eventId,
+                baseVersion: baseVersion,
+                payloadJson: payloadJson,
+                createdAt: createdAt,
+                status: status,
+                failureMessage: failureMessage,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String eventId,
+                Value<int?> baseVersion = const Value.absent(),
+                required String payloadJson,
+                required DateTime createdAt,
+                required String status,
+                Value<String?> failureMessage = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => EventSetupOutboxOperationsCompanion.insert(
+                id: id,
+                eventId: eventId,
+                baseVersion: baseVersion,
+                payloadJson: payloadJson,
+                createdAt: createdAt,
+                status: status,
+                failureMessage: failureMessage,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$EventSetupOutboxOperationsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({eventId = false, eventSetupConflictsRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (eventSetupConflictsRefs) db.eventSetupConflicts,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (eventId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.eventId,
+                            referencedTable:
+                                $$EventSetupOutboxOperationsTableReferences
+                                    ._eventIdTable(db),
+                            referencedColumn:
+                                $$EventSetupOutboxOperationsTableReferences
+                                    ._eventIdTable(db)
+                                    .id,
+                          ) as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (eventSetupConflictsRefs)
+                        await $_getPrefetchedData<
+                          LocalEventSetupOutboxRow,
+                          $EventSetupOutboxOperationsTable,
+                          LocalEventSetupConflictRow
+                        >(
+                          currentTable: table,
+                          referencedTable:
+                              $$EventSetupOutboxOperationsTableReferences
+                                  ._eventSetupConflictsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$EventSetupOutboxOperationsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).eventSetupConflictsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.operationId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$EventSetupOutboxOperationsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $EventSetupOutboxOperationsTable,
+      LocalEventSetupOutboxRow,
+      $$EventSetupOutboxOperationsTableFilterComposer,
+      $$EventSetupOutboxOperationsTableOrderingComposer,
+      $$EventSetupOutboxOperationsTableAnnotationComposer,
+      $$EventSetupOutboxOperationsTableCreateCompanionBuilder,
+      $$EventSetupOutboxOperationsTableUpdateCompanionBuilder,
+      (LocalEventSetupOutboxRow, $$EventSetupOutboxOperationsTableReferences),
+      LocalEventSetupOutboxRow,
+      PrefetchHooks Function({bool eventId, bool eventSetupConflictsRefs})
+    >;
+typedef $$EventSetupPullCheckpointsTableCreateCompanionBuilder =
+    EventSetupPullCheckpointsCompanion Function({
+      Value<int> singleton,
+      required DateTime cursorUpdatedAt,
+      required String cursorEventId,
+      required DateTime updatedAt,
+    });
+typedef $$EventSetupPullCheckpointsTableUpdateCompanionBuilder =
+    EventSetupPullCheckpointsCompanion Function({
+      Value<int> singleton,
+      Value<DateTime> cursorUpdatedAt,
+      Value<String> cursorEventId,
+      Value<DateTime> updatedAt,
+    });
+
+final class $$EventSetupPullCheckpointsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $EventSetupPullCheckpointsTable,
+          LocalEventSetupCheckpointRow
+        > {
+  $$EventSetupPullCheckpointsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $EventsTable _cursorEventIdTable(_$AppDatabase db) => db.events
+      .createAlias('event_setup_pull_checkpoints__cursor_event_id__events__id');
+
+  $$EventsTableProcessedTableManager get cursorEventId {
+    final $_column = $_itemColumn<String>('cursor_event_id')!;
+
+    final manager = $$EventsTableTableManager(
+      $_db,
+      $_db.events,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_cursorEventIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$EventSetupPullCheckpointsTableFilterComposer
+    extends Composer<_$AppDatabase, $EventSetupPullCheckpointsTable> {
+  $$EventSetupPullCheckpointsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get singleton => $composableBuilder(
+    column: $table.singleton,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get cursorUpdatedAt => $composableBuilder(
+    column: $table.cursorUpdatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$EventsTableFilterComposer get cursorEventId {
+    final $$EventsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cursorEventId,
+      referencedTable: $db.events,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventsTableFilterComposer(
+            $db: $db,
+            $table: $db.events,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$EventSetupPullCheckpointsTableOrderingComposer
+    extends Composer<_$AppDatabase, $EventSetupPullCheckpointsTable> {
+  $$EventSetupPullCheckpointsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get singleton => $composableBuilder(
+    column: $table.singleton,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get cursorUpdatedAt => $composableBuilder(
+    column: $table.cursorUpdatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$EventsTableOrderingComposer get cursorEventId {
+    final $$EventsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cursorEventId,
+      referencedTable: $db.events,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventsTableOrderingComposer(
+            $db: $db,
+            $table: $db.events,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$EventSetupPullCheckpointsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $EventSetupPullCheckpointsTable> {
+  $$EventSetupPullCheckpointsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get singleton =>
+      $composableBuilder(column: $table.singleton, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get cursorUpdatedAt => $composableBuilder(
+    column: $table.cursorUpdatedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$EventsTableAnnotationComposer get cursorEventId {
+    final $$EventsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cursorEventId,
+      referencedTable: $db.events,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.events,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$EventSetupPullCheckpointsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $EventSetupPullCheckpointsTable,
+          LocalEventSetupCheckpointRow,
+          $$EventSetupPullCheckpointsTableFilterComposer,
+          $$EventSetupPullCheckpointsTableOrderingComposer,
+          $$EventSetupPullCheckpointsTableAnnotationComposer,
+          $$EventSetupPullCheckpointsTableCreateCompanionBuilder,
+          $$EventSetupPullCheckpointsTableUpdateCompanionBuilder,
+          (
+            LocalEventSetupCheckpointRow,
+            $$EventSetupPullCheckpointsTableReferences,
+          ),
+          LocalEventSetupCheckpointRow,
+          PrefetchHooks Function({bool cursorEventId})
+        > {
+  $$EventSetupPullCheckpointsTableTableManager(
+    _$AppDatabase db,
+    $EventSetupPullCheckpointsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$EventSetupPullCheckpointsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$EventSetupPullCheckpointsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$EventSetupPullCheckpointsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> singleton = const Value.absent(),
+                Value<DateTime> cursorUpdatedAt = const Value.absent(),
+                Value<String> cursorEventId = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => EventSetupPullCheckpointsCompanion(
+                singleton: singleton,
+                cursorUpdatedAt: cursorUpdatedAt,
+                cursorEventId: cursorEventId,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> singleton = const Value.absent(),
+                required DateTime cursorUpdatedAt,
+                required String cursorEventId,
+                required DateTime updatedAt,
+              }) => EventSetupPullCheckpointsCompanion.insert(
+                singleton: singleton,
+                cursorUpdatedAt: cursorUpdatedAt,
+                cursorEventId: cursorEventId,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$EventSetupPullCheckpointsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({cursorEventId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (cursorEventId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.cursorEventId,
+                        referencedTable:
+                            $$EventSetupPullCheckpointsTableReferences
+                                ._cursorEventIdTable(db),
+                        referencedColumn:
+                            $$EventSetupPullCheckpointsTableReferences
+                                ._cursorEventIdTable(db)
+                                .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$EventSetupPullCheckpointsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $EventSetupPullCheckpointsTable,
+      LocalEventSetupCheckpointRow,
+      $$EventSetupPullCheckpointsTableFilterComposer,
+      $$EventSetupPullCheckpointsTableOrderingComposer,
+      $$EventSetupPullCheckpointsTableAnnotationComposer,
+      $$EventSetupPullCheckpointsTableCreateCompanionBuilder,
+      $$EventSetupPullCheckpointsTableUpdateCompanionBuilder,
+      (
+        LocalEventSetupCheckpointRow,
+        $$EventSetupPullCheckpointsTableReferences,
+      ),
+      LocalEventSetupCheckpointRow,
+      PrefetchHooks Function({bool cursorEventId})
+    >;
+typedef $$EventSetupConflictsTableCreateCompanionBuilder =
+    EventSetupConflictsCompanion Function({
+      required String id,
+      required String operationId,
+      required String eventId,
+      required String localPayloadJson,
+      Value<String?> remotePayloadJson,
+      required DateTime detectedAt,
+      required String status,
+      Value<int> rowid,
+    });
+typedef $$EventSetupConflictsTableUpdateCompanionBuilder =
+    EventSetupConflictsCompanion Function({
+      Value<String> id,
+      Value<String> operationId,
+      Value<String> eventId,
+      Value<String> localPayloadJson,
+      Value<String?> remotePayloadJson,
+      Value<DateTime> detectedAt,
+      Value<String> status,
+      Value<int> rowid,
+    });
+
+final class $$EventSetupConflictsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $EventSetupConflictsTable,
+          LocalEventSetupConflictRow
+        > {
+  $$EventSetupConflictsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $EventSetupOutboxOperationsTable _operationIdTable(
+    _$AppDatabase db,
+  ) => db.eventSetupOutboxOperations.createAlias(
+    'event_setup_conflicts__operation_id__event_setup_outbox_operations__id',
+  );
+
+  $$EventSetupOutboxOperationsTableProcessedTableManager get operationId {
+    final $_column = $_itemColumn<String>('operation_id')!;
+
+    final manager = $$EventSetupOutboxOperationsTableTableManager(
+      $_db,
+      $_db.eventSetupOutboxOperations,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_operationIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $EventsTable _eventIdTable(_$AppDatabase db) =>
+      db.events.createAlias('event_setup_conflicts__event_id__events__id');
+
+  $$EventsTableProcessedTableManager get eventId {
+    final $_column = $_itemColumn<String>('event_id')!;
+
+    final manager = $$EventsTableTableManager(
+      $_db,
+      $_db.events,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_eventIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$EventSetupConflictsTableFilterComposer
+    extends Composer<_$AppDatabase, $EventSetupConflictsTable> {
+  $$EventSetupConflictsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get localPayloadJson => $composableBuilder(
+    column: $table.localPayloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get remotePayloadJson => $composableBuilder(
+    column: $table.remotePayloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get detectedAt => $composableBuilder(
+    column: $table.detectedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$EventSetupOutboxOperationsTableFilterComposer get operationId {
+    final $$EventSetupOutboxOperationsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.operationId,
+          referencedTable: $db.eventSetupOutboxOperations,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$EventSetupOutboxOperationsTableFilterComposer(
+                $db: $db,
+                $table: $db.eventSetupOutboxOperations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+
+  $$EventsTableFilterComposer get eventId {
+    final $$EventsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.eventId,
+      referencedTable: $db.events,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventsTableFilterComposer(
+            $db: $db,
+            $table: $db.events,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$EventSetupConflictsTableOrderingComposer
+    extends Composer<_$AppDatabase, $EventSetupConflictsTable> {
+  $$EventSetupConflictsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get localPayloadJson => $composableBuilder(
+    column: $table.localPayloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get remotePayloadJson => $composableBuilder(
+    column: $table.remotePayloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get detectedAt => $composableBuilder(
+    column: $table.detectedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$EventSetupOutboxOperationsTableOrderingComposer get operationId {
+    final $$EventSetupOutboxOperationsTableOrderingComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.operationId,
+          referencedTable: $db.eventSetupOutboxOperations,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$EventSetupOutboxOperationsTableOrderingComposer(
+                $db: $db,
+                $table: $db.eventSetupOutboxOperations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+
+  $$EventsTableOrderingComposer get eventId {
+    final $$EventsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.eventId,
+      referencedTable: $db.events,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventsTableOrderingComposer(
+            $db: $db,
+            $table: $db.events,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$EventSetupConflictsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $EventSetupConflictsTable> {
+  $$EventSetupConflictsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get localPayloadJson => $composableBuilder(
+    column: $table.localPayloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get remotePayloadJson => $composableBuilder(
+    column: $table.remotePayloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get detectedAt => $composableBuilder(
+    column: $table.detectedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  $$EventSetupOutboxOperationsTableAnnotationComposer get operationId {
+    final $$EventSetupOutboxOperationsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.operationId,
+          referencedTable: $db.eventSetupOutboxOperations,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$EventSetupOutboxOperationsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.eventSetupOutboxOperations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+
+  $$EventsTableAnnotationComposer get eventId {
+    final $$EventsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.eventId,
+      referencedTable: $db.events,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.events,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$EventSetupConflictsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $EventSetupConflictsTable,
+          LocalEventSetupConflictRow,
+          $$EventSetupConflictsTableFilterComposer,
+          $$EventSetupConflictsTableOrderingComposer,
+          $$EventSetupConflictsTableAnnotationComposer,
+          $$EventSetupConflictsTableCreateCompanionBuilder,
+          $$EventSetupConflictsTableUpdateCompanionBuilder,
+          (LocalEventSetupConflictRow, $$EventSetupConflictsTableReferences),
+          LocalEventSetupConflictRow,
+          PrefetchHooks Function({bool operationId, bool eventId})
+        > {
+  $$EventSetupConflictsTableTableManager(
+    _$AppDatabase db,
+    $EventSetupConflictsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$EventSetupConflictsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$EventSetupConflictsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$EventSetupConflictsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> operationId = const Value.absent(),
+                Value<String> eventId = const Value.absent(),
+                Value<String> localPayloadJson = const Value.absent(),
+                Value<String?> remotePayloadJson = const Value.absent(),
+                Value<DateTime> detectedAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => EventSetupConflictsCompanion(
+                id: id,
+                operationId: operationId,
+                eventId: eventId,
+                localPayloadJson: localPayloadJson,
+                remotePayloadJson: remotePayloadJson,
+                detectedAt: detectedAt,
+                status: status,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String operationId,
+                required String eventId,
+                required String localPayloadJson,
+                Value<String?> remotePayloadJson = const Value.absent(),
+                required DateTime detectedAt,
+                required String status,
+                Value<int> rowid = const Value.absent(),
+              }) => EventSetupConflictsCompanion.insert(
+                id: id,
+                operationId: operationId,
+                eventId: eventId,
+                localPayloadJson: localPayloadJson,
+                remotePayloadJson: remotePayloadJson,
+                detectedAt: detectedAt,
+                status: status,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$EventSetupConflictsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({operationId = false, eventId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (operationId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.operationId,
+                        referencedTable: $$EventSetupConflictsTableReferences
+                            ._operationIdTable(db),
+                        referencedColumn: $$EventSetupConflictsTableReferences
+                            ._operationIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+                    if (eventId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.eventId,
+                        referencedTable: $$EventSetupConflictsTableReferences
+                            ._eventIdTable(db),
+                        referencedColumn: $$EventSetupConflictsTableReferences
+                            ._eventIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$EventSetupConflictsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $EventSetupConflictsTable,
+      LocalEventSetupConflictRow,
+      $$EventSetupConflictsTableFilterComposer,
+      $$EventSetupConflictsTableOrderingComposer,
+      $$EventSetupConflictsTableAnnotationComposer,
+      $$EventSetupConflictsTableCreateCompanionBuilder,
+      $$EventSetupConflictsTableUpdateCompanionBuilder,
+      (LocalEventSetupConflictRow, $$EventSetupConflictsTableReferences),
+      LocalEventSetupConflictRow,
+      PrefetchHooks Function({bool operationId, bool eventId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -18055,4 +20996,17 @@ class $AppDatabaseManager {
       $$SyncPullCheckpointsTableTableManager(_db, _db.syncPullCheckpoints);
   $$SyncConflictsTableTableManager get syncConflicts =>
       $$SyncConflictsTableTableManager(_db, _db.syncConflicts);
+  $$EventSetupOutboxOperationsTableTableManager
+  get eventSetupOutboxOperations =>
+      $$EventSetupOutboxOperationsTableTableManager(
+        _db,
+        _db.eventSetupOutboxOperations,
+      );
+  $$EventSetupPullCheckpointsTableTableManager get eventSetupPullCheckpoints =>
+      $$EventSetupPullCheckpointsTableTableManager(
+        _db,
+        _db.eventSetupPullCheckpoints,
+      );
+  $$EventSetupConflictsTableTableManager get eventSetupConflicts =>
+      $$EventSetupConflictsTableTableManager(_db, _db.eventSetupConflicts);
 }

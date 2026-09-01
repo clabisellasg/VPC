@@ -319,3 +319,15 @@ pull reconciliation creates no outbox record and preserves pending/conflicted
 local rows. Organizer creation uses the existing player plus outbox transaction.
 No Auth UUID, email, claim, role, skill, statistics, merge, or event-specific
 column is added to `players`.
+
+## M9 event/division setup mapping
+
+`event_divisions.tournament_format` is nullable in PostgreSQL and Drift schema
+version 3. Domain `EventDivision.format` is optional. Null means not configured
+yet; it is not a fifth format or evidence that no format is needed. Existing
+non-null values remain unchanged. M12 owns format selection and generation.
+
+Android adds separate event-aggregate outbox, checkpoint, and conflict tables.
+The hosted private receipt table supports fixed idempotent application and is
+denied to client roles. Records retain UUID, UTC, version, tombstone,
+foreign-key, active-name uniqueness, and restrictive-delete constraints.

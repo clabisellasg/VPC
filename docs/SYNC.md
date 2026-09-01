@@ -196,3 +196,15 @@ upload. Conflicts are displayed honestly and remain unresolved under OPEN-009.
 
 Web never creates SQLite/outbox infrastructure and applies organizer creation
 online through the existing idempotent cloud operation.
+
+## M9 bounded event/division aggregate slice
+
+Android saves the event/divisions and operation atomically. The fixed cloud RPC
+authorizes organizers, validates allowlisted fields, checks versions, applies
+transactionally, and stores a private receipt. Identical replay is idempotent;
+changed-payload reuse and stale versions are rejected. Pull creates no outbox
+work and preserves pending/blocked/conflicted local intent.
+
+Anonymous M6 refresh detects pending event setup and preserves it. Realtime is
+still a refetch hint. No participant, payment, team, match, queue, placement,
+profile, role, or claim synchronization was added. `OPEN-009` remains open.

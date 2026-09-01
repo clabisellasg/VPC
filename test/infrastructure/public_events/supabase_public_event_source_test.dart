@@ -86,6 +86,27 @@ void main() {
       failure: (failure) => expect(failure, isA<ValidationFailure>()),
     );
   });
+
+  test(
+    'maps an unconfigured null format and rejects invalid non-null values',
+    () async {
+      final nullResult = await SupabasePublicEventSource(
+        _FakeRowsGateway(divisions: [_divisionRow(format: null)]),
+      ).fetchCatalog();
+      nullResult.when(
+        success: (catalog) =>
+            expect(catalog.events.single.divisions.single.format, isNull),
+        failure: (failure) => fail(failure.message),
+      );
+      final invalid = await SupabasePublicEventSource(
+        _FakeRowsGateway(divisions: [_divisionRow(format: 'unknown')]),
+      ).fetchCatalog();
+      invalid.when(
+        success: (_) => fail('Expected invalid format rejection.'),
+        failure: (failure) => expect(failure, isA<ValidationFailure>()),
+      );
+    },
+  );
 }
 
 class _FakeRowsGateway implements PublicRowsGateway {
@@ -144,11 +165,12 @@ Map<String, Object?> _eventRow({
 
 Map<String, Object?> _divisionRow({
   String eventId = '71000000-0000-4000-8000-000000000001',
+  String? format = 'singleRoundRobin',
 }) => {
   'id': '72000000-0000-4000-8000-000000000001',
   'event_id': eventId,
   'name': 'Sample Open',
-  'tournament_format': 'singleRoundRobin',
+  'tournament_format': format,
   'created_at': '2026-08-01T00:00:00Z',
   'updated_at': '2026-08-20T00:00:00Z',
   'version': 0,

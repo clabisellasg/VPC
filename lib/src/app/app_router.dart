@@ -12,6 +12,9 @@ import 'package:vpc/src/presentation/accounts/player_claim_page.dart';
 import 'package:vpc/src/presentation/players/organizer_player_creation_page.dart';
 import 'package:vpc/src/presentation/players/public_player_directory_page.dart';
 import 'package:vpc/src/presentation/players/public_player_profile_page.dart';
+import 'package:vpc/src/presentation/events/organizer_events_page.dart';
+import 'package:vpc/src/presentation/events/organizer_event_setup_page.dart';
+import 'package:vpc/src/domain/common/domain_enums.dart';
 
 GoRouter createAppRouter() {
   return GoRouter(
@@ -82,6 +85,27 @@ GoRouter createAppRouter() {
           GoRoute(
             path: '/organizer/players/new',
             builder: (context, state) => const OrganizerPlayerCreationPage(),
+          ),
+          GoRoute(
+            path: '/organizer/events',
+            builder: (context, state) => const OrganizerEventsPage(),
+            routes: [
+              GoRoute(
+                path: 'new',
+                builder: (context, state) => OrganizerEventSetupPage(
+                  type: state.uri.queryParameters['type'] == 'formal'
+                      ? EventType.formal
+                      : EventType.casual,
+                ),
+              ),
+              GoRoute(
+                path: ':eventId/setup',
+                builder: (context, state) => OrganizerEventSetupPage(
+                  type: EventType.formal,
+                  eventId: state.pathParameters['eventId'],
+                ),
+              ),
+            ],
           ),
         ],
       ),
