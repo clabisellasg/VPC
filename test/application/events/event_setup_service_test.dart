@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vpc/src/application/accounts/account_models.dart';
 import 'package:vpc/src/application/events/event_setup_contracts.dart';
 import 'package:vpc/src/application/events/event_setup_models.dart';
 import 'package:vpc/src/application/events/event_setup_service.dart';
@@ -87,26 +88,98 @@ void main() {
     },
   );
 
-  test('preconfigured event advances through later lifecycle states', () async {
-    for (final status in [
-      EventStatus.registration,
-      EventStatus.inProgress,
-      EventStatus.completed,
-    ]) {
-      final result = await service.advance(
-        _setup(status: status, format: TournamentFormat.singleElimination),
-      );
-      expect(result, isA<EventSetupSaved>());
-    }
-    expect(
-      await service.advance(
-        _setup(
-          status: EventStatus.archived,
-          format: TournamentFormat.singleElimination,
+  test(
+    'configured format alone cannot start; later states remain adjacent',
+    () async {
+      expect(
+        await service.advance(
+          _setup(
+            status: EventStatus.registration,
+            format: TournamentFormat.singleElimination,
+          ),
         ),
-      ),
-      isA<EventSetupMutationFailed>(),
-    );
+        isA<EventSetupMutationFailed>(),
+      );
+      for (final status in [EventStatus.inProgress, EventStatus.completed]) {
+        final result = await service.advance(
+          _setup(status: status, format: TournamentFormat.singleElimination),
+        );
+        expect(result, isA<EventSetupSaved>());
+      }
+      expect(
+        await service.advance(
+          _setup(
+            status: EventStatus.archived,
+            format: TournamentFormat.singleElimination,
+          ),
+        ),
+        isA<EventSetupMutationFailed>(),
+      );
+    },
+  );
+
+  test(
+    'readiness requires both complete teams and persisted matches',
+    () async {
+      final current = _setup(
+        status: EventStatus.registration,
+        format: TournamentFormat.singleElimination,
+      );
+      for (final counts in [(0, 0), (2, 0), (1, 1), (2, 1)]) {
+        final ready = EventSetup(
+          event: current.event,
+          divisions: current.divisions,
+          readiness: {
+            current.divisions.single.id: DivisionTournamentReadiness(
+              completeTeams: counts.$1,
+              activeMatches: counts.$2,
+            ),
+          },
+        );
+        expect(
+          await service.advance(ready),
+          counts == (2, 1)
+              ? isA<EventSetupSaved>()
+              : isA<EventSetupMutationFailed>(),
+        );
+      }
+    },
+  );
+
+  test('selects each format only in registration before generation', () async {
+    for (final status in EventStatus.values) {
+      final current = _setup(status: status, format: null);
+      for (final matches in [0, 1]) {
+        final ready = EventSetup(
+          event: current.event,
+          divisions: current.divisions,
+          readiness: {
+            current.divisions.single.id: DivisionTournamentReadiness(
+              completeTeams: 0,
+              activeMatches: matches,
+            ),
+          },
+        );
+        for (final format in TournamentFormat.values) {
+          final result = await service.selectFormat(
+            authorization: AuthorizationState.organizer,
+            current: ready,
+            divisionId: ready.divisions.single.id,
+            format: format,
+          );
+          if (status == EventStatus.registration && matches == 0) {
+            expect(result, isA<EventSetupSaved>());
+            expect(writer.last!.divisions.single.format, format);
+            expect(
+              writer.last!.event.metadata.recordVersion,
+              current.event.metadata.recordVersion + 1,
+            );
+          } else {
+            expect(result, isA<EventSetupMutationFailed>());
+          }
+        }
+      }
+    }
   });
 }
 
@@ -175,5 +248,5 @@ final class _Ids implements EventSetupIdFactory {
 final class _Clock implements EventSetupClock {
   const _Clock();
   @override
-  DateTime nowUtc() => DateTime.utc(2026, 9, 1);
+  DateTime nowUtc() => DateTime.utc(2026, 9, 2);
 }

@@ -3,6 +3,7 @@ import '../common/domain_failure.dart';
 import '../common/domain_validation.dart';
 import '../common/entity_id.dart';
 import '../common/record_metadata.dart';
+import 'validated_score.dart';
 
 /// Structural match state; it does not generate or progress a tournament.
 final class Match {
@@ -56,6 +57,17 @@ final class Match {
         throw const ValidationFailure(
           field: 'winnerTeamId',
           message: 'A completed match winner must be one of its two sides.',
+        );
+      }
+      final result = MatchResult(
+        sideOne: sideOneTeamId,
+        sideTwo: sideTwoTeamId,
+        score: ValidatedScore(sideOneScore, sideTwoScore),
+      );
+      if (winnerTeamId != result.winner) {
+        throw const ValidationFailure(
+          field: 'winnerTeamId',
+          message: 'The final score determines the winner.',
         );
       }
     } else if (winnerTeamId != null) {
@@ -135,7 +147,22 @@ final class Match {
       status: nextStatus,
       sideOneScore: sideOneScore ?? this.sideOneScore,
       sideTwoScore: sideTwoScore ?? this.sideTwoScore,
-      winnerTeamId: winnerTeamId ?? this.winnerTeamId,
+      winnerTeamId:
+          winnerTeamId ??
+          (nextStatus == MatchStatus.completed &&
+                  sideOneTeamId != null &&
+                  sideTwoTeamId != null &&
+                  (sideOneScore ?? this.sideOneScore) != null &&
+                  (sideTwoScore ?? this.sideTwoScore) != null
+              ? MatchResult(
+                  sideOne: sideOneTeamId!,
+                  sideTwo: sideTwoTeamId!,
+                  score: ValidatedScore(
+                    sideOneScore ?? this.sideOneScore!,
+                    sideTwoScore ?? this.sideTwoScore!,
+                  ),
+                ).winner
+              : this.winnerTeamId),
       roundNumber: roundNumber,
       sequenceNumber: sequenceNumber,
       metadata: metadata,

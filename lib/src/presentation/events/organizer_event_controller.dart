@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import '../../application/accounts/account_models.dart';
+import '../accounts/account_controller.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../application/events/event_setup_contracts.dart';
@@ -158,6 +161,26 @@ final class OrganizerEventController extends Notifier<OrganizerEventState> {
 
   Future<EventSetupMutationResult> advance(EventSetup setup) async {
     final result = await ref.read(eventSetupServiceProvider).advance(setup);
+    await refresh();
+    await _refreshPublicEventsAfterSuccess(result);
+    return result;
+  }
+
+  Future<EventSetupMutationResult> selectFormat(
+    EventSetup setup,
+    DivisionId divisionId,
+    TournamentFormat format,
+  ) async {
+    final result = await ref
+        .read(eventSetupServiceProvider)
+        .selectFormat(
+          current: setup,
+          divisionId: divisionId,
+          format: format,
+          authorization:
+              ref.read(accountControllerProvider).snapshot?.authorization ??
+              AuthorizationState.guest,
+        );
     await refresh();
     await _refreshPublicEventsAfterSuccess(result);
     return result;

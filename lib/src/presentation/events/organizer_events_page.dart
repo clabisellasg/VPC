@@ -7,6 +7,7 @@ import '../../application/events/event_setup_models.dart';
 import '../../domain/common/domain_enums.dart';
 import '../accounts/account_controller.dart';
 import 'organizer_event_controller.dart';
+import 'division_format_selector.dart';
 
 class OrganizerEventsPage extends ConsumerWidget {
   const OrganizerEventsPage({super.key});
@@ -117,8 +118,23 @@ class _EventCard extends ConsumerWidget {
                 setup.event.status == EventStatus.registration) ...[
               const SizedBox(height: 8),
               const Text(
-                'Tournament-format configuration is coming in M12. This event cannot begin yet.',
+                'Choose a format for every division below. Selection does not generate matches.',
               ),
+            ],
+            if (setup.event.status == EventStatus.registration) ...[
+              const Text(
+                'Starting requires at least two complete teams and generated matches in every active division. Generation arrives in M13–M15.',
+              ),
+              for (final division in setup.divisions.where(
+                (d) => !d.metadata.isDeleted,
+              ))
+                DivisionFormatSelector(
+                  key: ValueKey(
+                    '${division.id.value}/${division.metadata.recordVersion}',
+                  ),
+                  setup: setup,
+                  division: division,
+                ),
             ],
             const SizedBox(height: 12),
             Wrap(

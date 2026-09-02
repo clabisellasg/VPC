@@ -19,7 +19,7 @@ void main() {
   });
 
   test(
-    'fresh schema creates operational and bounded sync tables at version 5',
+    'fresh schema creates operational and bounded sync tables at version 6',
     () async {
       final rows = await database
           .customSelect(
@@ -28,7 +28,7 @@ void main() {
           )
           .get();
 
-      expect(database.schemaVersion, 5);
+      expect(database.schemaVersion, 6);
       expect(rows.map((row) => row.read<String>('name')).toSet(), {
         'court_queue_entries',
         'division_participants',
@@ -158,7 +158,15 @@ void main() {
       final triggers = await database
           .customSelect("SELECT name FROM sqlite_master WHERE type = 'trigger'")
           .get();
-      expect(triggers, hasLength(18));
+      expect(triggers, hasLength(21));
+      expect(
+        triggers.map((row) => row.read<String>('name')),
+        containsAll([
+          'matches_final_score_insert_guard',
+          'matches_final_score_update_guard',
+          'matches_completed_result_lock',
+        ]),
+      );
     },
   );
 

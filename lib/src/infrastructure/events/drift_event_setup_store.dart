@@ -67,7 +67,34 @@ final class DriftEventSetupStore implements EventSetupStore {
     return EventSetup(
       event: eventFromRow(row),
       divisions: divisions.map(eventDivisionFromRow),
+      readiness: await _readiness(row.id),
     );
+  }
+
+  Future<Map<DivisionId, DivisionTournamentReadiness>> _readiness(
+    String eventId,
+  ) async {
+    final rows = await database
+        .customSelect(
+          '''
+SELECT d.id, (SELECT count(*) FROM teams t WHERE t.division_id=d.id AND t.deleted_at IS NULL
+  AND (SELECT count(*) FROM team_members tm JOIN players p ON p.id=tm.player_id
+       WHERE tm.team_id=t.id AND tm.deleted_at IS NULL AND p.deleted_at IS NULL)=2) AS complete_teams,
+  (SELECT count(*) FROM matches m WHERE m.division_id=d.id AND m.deleted_at IS NULL) AS active_matches,
+  (SELECT count(*) FROM matches m WHERE m.division_id=d.id) AS generated_matches
+FROM event_divisions d WHERE d.event_id=? AND d.deleted_at IS NULL
+''',
+          variables: [Variable(eventId)],
+        )
+        .get();
+    return {
+      for (final row in rows)
+        DivisionId(row.read<String>('id')): DivisionTournamentReadiness(
+          completeTeams: row.read<int>('complete_teams'),
+          activeMatches: row.read<int>('active_matches'),
+          generatedMatches: row.read<int>('generated_matches'),
+        ),
+    };
   }
 
   @override
@@ -101,6 +128,18 @@ final class DriftEventSetupStore implements EventSetupStore {
             ConflictFailure(message: 'A new event must begin at version zero.'),
           );
         }
+        if (existing != null &&
+            existing.status != setup.event.status.name &&
+            setup.event.status == EventStatus.inProgress) {
+          final checked = EventSetup(
+            event: setup.event,
+            divisions: setup.divisions,
+            readiness: await _readiness(existing.id),
+          );
+          if (!checked.canBegin) {
+            throw const TournamentStructureRequiredFailure();
+          }
+        }
         await database
             .into(database.events)
             .insertOnConflictUpdate(eventToCompanion(setup.event));
@@ -123,7 +162,11 @@ final class DriftEventSetupStore implements EventSetupStore {
             );
         return RepositorySuccess(
           EventSetupSaved(
-            setup: setup,
+            setup: await _setupFor(
+              (await (database.select(
+                database.events,
+              )..where((e) => e.id.equals(setup.event.id.value))).getSingle()),
+            ),
             disposition: EventMutationDisposition.pending,
           ),
         );
@@ -143,11 +186,13 @@ final class DriftEventSetupStore implements EventSetupStore {
   @override
   Future<RepositoryResult<EventSetupSyncStatus>> syncStatus(EventId id) async {
     final conflict =
-        await (database.select(database.eventSetupConflicts)..where(
-              (row) =>
-                  row.eventId.equals(id.value) &
-                  row.status.equals('unresolved'),
-            ))
+        await (database.select(database.eventSetupConflicts)
+              ..where(
+                (row) =>
+                    row.eventId.equals(id.value) &
+                    row.status.equals('unresolved'),
+              )
+              ..limit(1))
             .getSingleOrNull();
     if (conflict != null) {
       return const RepositorySuccess(
@@ -157,7 +202,8 @@ final class DriftEventSetupStore implements EventSetupStore {
     final outbox =
         await (database.select(database.eventSetupOutboxOperations)
               ..where((row) => row.eventId.equals(id.value))
-              ..orderBy([(row) => OrderingTerm.desc(row.createdAt)]))
+              ..orderBy([(row) => OrderingTerm.desc(row.createdAt)])
+              ..limit(1))
             .getSingleOrNull();
     final disposition = switch (outbox?.status) {
       'blocked' => EventMutationDisposition.blocked,
@@ -197,10 +243,15 @@ final class DriftEventSetupStore implements EventSetupStore {
     EventSetupOperation operation,
     EventSetup authoritative,
   ) => database.transaction(() async {
-    await _replaceAuthoritative(authoritative);
     await (database.delete(
       database.eventSetupOutboxOperations,
     )..where((row) => row.id.equals(operation.operationId.value))).go();
+    final later =
+        await (database.select(database.eventSetupOutboxOperations)
+              ..where((r) => r.eventId.equals(operation.setup.event.id.value))
+              ..limit(1))
+            .getSingleOrNull();
+    if (later == null) await _replaceAuthoritative(authoritative);
   });
 
   Future<void> markBlocked(EventSetupOperation operation, String message) =>
@@ -260,10 +311,18 @@ final class DriftEventSetupStore implements EventSetupStore {
                     ..where(
                       (row) =>
                           row.eventId.equals(setup.event.id.value) &
-                          row.status.isIn(['pending', 'blocked', 'conflicted']),
-                    ))
+                          row.status.isIn([
+                            'pending',
+                            'blocked',
+                            'conflicted',
+                            'failed',
+                          ]),
+                    )
+                    ..limit(1))
                   .getSingleOrNull();
-          if (pending != null) continue;
+          if (pending != null) return 0;
+        }
+        for (final setup in setups) {
           await _replaceAuthoritative(setup);
           count++;
         }

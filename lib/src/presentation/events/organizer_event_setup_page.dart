@@ -65,7 +65,7 @@ class _OrganizerEventSetupPageState
         ),
         const SizedBox(height: 8),
         const Text(
-          'Tournament formats are intentionally not configured in M9. M12 will provide format selection.',
+          'New divisions begin without a tournament format. Select formats after opening Registration.',
         ),
         const SizedBox(height: 20),
         Form(
@@ -240,7 +240,7 @@ class _OrganizerEventSetupPageState
             '${_name.text.trim()}\n'
             '${type == EventType.casual ? 'Casual' : 'Formal'} • '
             '${divisions.length} division(s)\n'
-            'Tournament formats remain unconfigured until M12.',
+            'Select tournament formats after opening Registration.',
           ),
           actions: [
             TextButton(

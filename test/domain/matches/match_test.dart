@@ -22,6 +22,29 @@ Match makeMatch(MatchStatus status) => Match(
 );
 
 void main() {
+  test(
+    'completion derives the winner and rejects a contradictory supplied winner',
+    () {
+      final match = makeMatch(MatchStatus.inProgress);
+      final completed = match.transitionTo(
+        MatchStatus.completed,
+        metadata: metadata(),
+        sideOneScore: 10,
+        sideTwoScore: 12,
+      );
+      expect(completed.winnerTeamId, TeamId(teamTwoUuid));
+      expect(
+        () => match.transitionTo(
+          MatchStatus.completed,
+          metadata: metadata(),
+          sideOneScore: 10,
+          sideTwoScore: 12,
+          winnerTeamId: TeamId(teamOneUuid),
+        ),
+        throwsA(isA<ValidationFailure>()),
+      );
+    },
+  );
   group('Match structural state', () {
     test('contains exactly the approved statuses', () {
       expect(MatchStatus.values.map((value) => value.name), [

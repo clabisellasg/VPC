@@ -1,5 +1,14 @@
 # Conceptual Database Model
 
+## M12 integrity changes
+
+No new operational tables/enums. Drift v6 replaces format locks and adds final
+score/result triggers; PostgreSQL validates equivalent score/start guards.
+Existing records are preserved. Formats change only during Registration before
+generated match history. Starting requires two complete teams and active matches
+per division. Read-only setup responses expose readiness counts; command
+payloads cannot supply them. No match synchronization is added.
+
 ## Scope and conventions
 
 This document began as the high-level model. Milestone 3 adds the initial

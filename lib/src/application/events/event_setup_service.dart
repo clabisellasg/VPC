@@ -1,10 +1,12 @@
 import '../../domain/common/domain_enums.dart';
 import '../../domain/common/domain_failure.dart';
+import '../../domain/common/entity_id.dart';
 import '../../domain/common/record_metadata.dart';
 import '../../domain/events/event.dart';
 import '../../domain/events/event_division.dart';
 import 'event_setup_contracts.dart';
 import 'event_setup_models.dart';
+import '../accounts/account_models.dart';
 
 final class EventSetupService {
   const EventSetupService({
@@ -16,6 +18,78 @@ final class EventSetupService {
   final EventSetupWriter writer;
   final EventSetupIdFactory idFactory;
   final EventSetupClock clock;
+
+  Future<EventSetupMutationResult> selectFormat({
+    required EventSetup current,
+    required DivisionId divisionId,
+    required TournamentFormat format,
+    required AuthorizationState authorization,
+  }) async {
+    try {
+      if (authorization != AuthorizationState.organizer) {
+        throw const UnauthorizedFailure(
+          message: 'Organizer authorization is required.',
+        );
+      }
+      final selected = current.divisions
+          .where((d) => d.id == divisionId && !d.metadata.isDeleted)
+          .firstOrNull;
+      if (current.event.status != EventStatus.registration ||
+          current.event.metadata.isDeleted ||
+          selected == null ||
+          current.readiness[divisionId] == null ||
+          current.readiness[divisionId]!.generatedMatches != 0) {
+        throw const ValidationFailure(
+          field: 'format',
+          message: 'Formats may be selected during Registration only, before any match structure exists. Refresh if readiness is unavailable.',
+        );
+      }
+      final now = clock.nowUtc();
+      final event = current.event;
+      final setup = EventSetup(
+        event: Event(
+          id: event.id,
+          name: event.name,
+          scheduledAt: event.scheduledAt,
+          type: event.type,
+          status: event.status,
+          courtLabel: event.courtLabel,
+          entryFee: event.entryFee,
+          metadata: RecordMetadata(
+            createdAt: event.metadata.createdAt,
+            updatedAt: now,
+            recordVersion: event.metadata.recordVersion + 1,
+          ),
+        ),
+        divisions: current.divisions.map(
+          (d) => d.id != divisionId
+              ? d
+              : EventDivision(
+                  id: d.id,
+                  eventId: d.eventId,
+                  name: d.name,
+                  format: format,
+                  metadata: RecordMetadata(
+                    createdAt: d.metadata.createdAt,
+                    updatedAt: now,
+                    recordVersion: d.metadata.recordVersion + 1,
+                  ),
+                ),
+        ),
+        readiness: current.readiness,
+      );
+      final saved = await writer.save(
+        setup,
+        expectedVersion: event.metadata.recordVersion,
+      );
+      return saved.when<EventSetupMutationResult>(
+        success: (value) => value,
+        failure: EventSetupMutationFailed.new,
+      );
+    } on DomainFailure catch (failure) {
+      return EventSetupMutationFailed(failure);
+    }
+  }
 
   Future<EventSetupMutationResult> createQuickCasual({
     required String name,
@@ -204,6 +278,11 @@ final class EventSetupService {
     }
     if (target == EventStatus.inProgress && current.hasUnconfiguredFormats) {
       return const EventSetupMutationFailed(TournamentFormatRequiredFailure());
+    }
+    if (target == EventStatus.inProgress && !current.canBegin) {
+      return const EventSetupMutationFailed(
+        TournamentStructureRequiredFailure(),
+      );
     }
     final now = clock.nowUtc();
     try {

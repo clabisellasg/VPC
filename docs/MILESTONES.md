@@ -114,7 +114,7 @@ authorized proceeding.
 - **Purpose:** Create tournament contracts, deterministic generation, match
   state rules, fixtures, and invariant testing.
 - **Dependencies:** M2 and M11.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED; automated and hosted validation passed; Android/Web walkthroughs confirmed by the user.
 
 ### M13 — Single Elimination
 

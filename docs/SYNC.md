@@ -1,5 +1,13 @@
 # Android Synchronization Design
 
+## M12 format selection
+
+Registration-only format selection reuses M9 aggregate/outbox/idempotent RPCs.
+Acknowledging an earlier selection does not overwrite later pending intent.
+Pull pages containing protected local work cannot advance the checkpoint.
+Web remains online-only. Readiness evidence is not a synchronized mutation;
+M12 adds no match upload/pull or placeholder match records.
+
 ## Current status
 
 **Player vertical slice implemented in Milestone 5; full synchronization is not

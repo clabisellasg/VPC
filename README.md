@@ -6,9 +6,9 @@ single-court community. It will eventually manage reusable community players,
 participation, check-in, payment status, temporary teams, approved tournament
 formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 11 — Team Formation (`COMPLETED`). M11 adds the
-organizer-maintained 1–5/null community skill scale and preview-first manual,
-random, and simple balanced doubles formation without tournament generation.
+**Current status:** Milestone 12 — Tournament Engine Foundation (`COMPLETED`).
+Pure tournament contracts, score/invariant rules and organizer format selection;
+no concrete tournament generation.
 
 ## Version 1 technology stack
 
@@ -53,6 +53,7 @@ scope, replace the stack, or begin a later milestone.
 - [Milestone 9 implementation record](docs/milestones/M09_EVENT_DIVISION_SETUP.md)
 - [Milestone 10 implementation record](docs/milestones/M10_EVENT_PARTICIPATION.md)
 - [Milestone 11 implementation record](docs/milestones/M11_TEAM_FORMATION.md)
+- [Milestone 12 implementation record](docs/milestones/M12_TOURNAMENT_ENGINE_FOUNDATION.md)
 
 ## Development setup
 

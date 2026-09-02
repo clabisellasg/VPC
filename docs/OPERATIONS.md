@@ -1,5 +1,24 @@
 # Operations Outline
 
+## M12 manual acceptance — PASSED
+
+The user confirmed the physical Android M12 walkthrough, including offline
+selection, restart/reconnect and permission/accessibility checks. Web acceptance
+was also confirmed by the user, covering format persistence, start guard,
+browser navigation/layout and guest/member restrictions.
+
+Use a configured build and synthetic event in Registration. In Account →
+Manage events, verify active divisions expose exactly four formats to organizers
+only. Select and save a previously null format. No matches should appear;
+advancing to In Progress must explain the missing generated structure. M13–M15
+provide generation, not M12.
+
+Android: save a different format offline, observe Pending, close/reopen, restore
+connectivity and refresh; verify one accepted result without lost local intent.
+Web: verify online acceptance, guest/member denial, refresh/navigation and no
+SQLite. Check narrow/wide/enlarged-text layouts and affected public event,
+participant and team screens. No earlier manual result counts as M12 acceptance.
+
 ## Status and use
 
 Tournament, release, recovery, and deployment procedures in this document are

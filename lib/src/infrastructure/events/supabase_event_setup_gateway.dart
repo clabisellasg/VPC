@@ -48,6 +48,12 @@ final class SupabaseEventSetupGateway implements EventSetupRemoteGateway {
     } on DomainFailure catch (failure) {
       return EventSetupRemoteFailure(failure);
     } on PostgrestException catch (error) {
+      if (error.code == '23514' &&
+          error.message.contains('Tournament structure required')) {
+        return const EventSetupRemoteFailure(
+          TournamentStructureRequiredFailure(),
+        );
+      }
       if (error.code == '42501') {
         return const EventSetupRemoteFailure(
           UnauthorizedFailure(message: 'Organizer authorization is required.'),

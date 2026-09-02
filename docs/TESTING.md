@@ -1,5 +1,36 @@
 # Testing Strategy
 
+## M12 validation
+
+M12 adds score/winner, generic tournament invariant/conformance, format-selection
+permission/lifecycle, SQLite v5→v6, real restart/reconnect, rollback/conflict and
+320/1000-pixel enlarged-text widget tests. Ordinary tests use fakes/in-memory or
+temporary SQLite and do not contact the network.
+
+Final M12 automated checks passed: `flutter pub get`, repeated build_runner/Drift
+schema dump/helper generation with unchanged generated hashes, formatting,
+`flutter analyze`, **249 Flutter tests**, `flutter build web` and
+`flutter build apk --debug`. Documentation links, credential-pattern scan,
+domain import-boundary inspection and Git whitespace checks passed. Android ID
+remains `com.voltapaddleclub.vpc`; only Android/Web platform directories exist.
+The optional Cupertino font warning did not prevent the Web build. No dependency
+upgrade or remote GitHub Actions run occurred.
+
+The two M12 hosted migrations applied to the accepted Tokyo project. SQL
+assertions passed for denied anonymous/member commands, organizer selection,
+idempotent replay, changed-payload rejection, invalid formats/start locks and
+score examples; synthetic records/receipts rolled back. Linked history agrees
+and lint reports no schema errors. Publishable-key public events/divisions/
+players reads return 200; private payment/profile/role reads and anonymous
+aggregate commands return 401. Docker's Linux daemon is unavailable, so local
+pgTAP was not executed. The user confirmed M12 physical Android acceptance,
+including offline pending selection, restart/reconnect, start guard, four formats,
+enlarged text and guest/member denial. The user also confirmed the Web M12
+walkthrough: saved-format persistence, start guard, navigation/layout and
+guest/member restrictions. Configured Web startup rendered public events
+and account navigation with no captured browser errors;
+no remote CI run is claimed.
+
 ## Current status
 
 Milestone 0 established the intended strategy, Milestone 1 introduced the

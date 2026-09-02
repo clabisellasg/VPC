@@ -1,5 +1,15 @@
 # Architecture Baseline
 
+## M12 tournament foundation
+
+Pure Dart tournament contracts/invariants are inward of application adapters.
+Immutable planned keys do not depend on database UUID generation; canonical
+input is organizer-ordered or TeamId-ordered. Score rules implement OPEN-003.
+M9 aggregate synchronization carries Registration-only format selection;
+readiness is read-only and independently rechecked locally/in PostgreSQL.
+Selection creates no matches. No concrete generators or match synchronization.
+See the [M12 record](milestones/M12_TOURNAMENT_ENGINE_FOUNDATION.md).
+
 ## Scope
 
 This document defines the conceptual Version 1 architecture and the foundations

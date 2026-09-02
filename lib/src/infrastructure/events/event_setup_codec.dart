@@ -37,6 +37,7 @@ EventSetup decodeEventSetup(Object? value) {
   final event = _eventFromJson(Map<String, Object?>.from(eventMap));
   return EventSetup(
     event: event,
+    readiness: _readiness(map['readiness']),
     divisions: divisionList.map((value) {
       if (value is! Map) {
         throw const ValidationFailure(
@@ -47,6 +48,44 @@ EventSetup decodeEventSetup(Object? value) {
       return _divisionFromJson(Map<String, Object?>.from(value));
     }),
   );
+}
+
+Map<DivisionId, DivisionTournamentReadiness> _readiness(Object? value) {
+  if (value == null) return const {};
+  if (value is! List) {
+    throw const ValidationFailure(
+      field: 'readiness',
+      message: 'Invalid tournament readiness data.',
+    );
+  }
+  final result = <DivisionId, DivisionTournamentReadiness>{};
+  for (final item in value) {
+    if (item is! Map<String, Object?>) {
+      throw const ValidationFailure(
+        field: 'readiness',
+        message: 'Invalid tournament readiness row.',
+      );
+    }
+    final id = DivisionId(_string(item, 'division_id'));
+    final teams = _int(item, 'complete_teams');
+    final active = _int(item, 'active_matches');
+    final generated = _int(item, 'generated_matches');
+    if (teams < 0 ||
+        active < 0 ||
+        generated < active ||
+        result.containsKey(id)) {
+      throw const ValidationFailure(
+        field: 'readiness',
+        message: 'Invalid tournament readiness counts.',
+      );
+    }
+    result[id] = DivisionTournamentReadiness(
+      completeTeams: teams,
+      activeMatches: active,
+      generatedMatches: generated,
+    );
+  }
+  return result;
 }
 
 Map<String, Object?> _eventToJson(Event event) => {

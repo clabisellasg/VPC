@@ -9,8 +9,12 @@ import '../../domain/events/event_division.dart';
 enum EventMutationDisposition { pending, synchronized, blocked, conflicted }
 
 final class EventSetup {
-  EventSetup({required this.event, required Iterable<EventDivision> divisions})
-    : divisions = UnmodifiableListView(divisions.toList(growable: false)) {
+  EventSetup({
+    required this.event,
+    required Iterable<EventDivision> divisions,
+    Map<DivisionId, DivisionTournamentReadiness> readiness = const {},
+  }) : readiness = Map.unmodifiable(readiness),
+       divisions = UnmodifiableListView(divisions.toList(growable: false)) {
     final active = this.divisions.where(
       (division) => !division.metadata.isDeleted,
     );
@@ -39,10 +43,30 @@ final class EventSetup {
 
   final Event event;
   final UnmodifiableListView<EventDivision> divisions;
+  final Map<DivisionId, DivisionTournamentReadiness> readiness;
+
+  bool get canBegin =>
+      !hasUnconfiguredFormats &&
+      divisions
+          .where((d) => !d.metadata.isDeleted)
+          .every((d) => readiness[d.id]?.canBegin == true);
 
   bool get hasUnconfiguredFormats => divisions.any(
     (division) => !division.metadata.isDeleted && division.format == null,
   );
+}
+
+/// Read-only evidence; never serialized in an organizer mutation payload.
+final class DivisionTournamentReadiness {
+  const DivisionTournamentReadiness({
+    required this.completeTeams,
+    required this.activeMatches,
+    int? generatedMatches,
+  }) : generatedMatches = generatedMatches ?? activeMatches;
+  final int completeTeams;
+  final int activeMatches;
+  final int generatedMatches;
+  bool get canBegin => completeTeams >= 2 && activeMatches > 0;
 }
 
 String prepareSetupText(String value, {required String field}) {

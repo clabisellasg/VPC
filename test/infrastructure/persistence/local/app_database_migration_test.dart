@@ -7,6 +7,37 @@ import '../../../generated_migrations/schema.dart';
 
 void main() {
   test(
+    'v5 to v6 preserves nullable formats and replaces format-lock triggers',
+    () async {
+      final verifier = SchemaVerifier(GeneratedHelper());
+      final schema = await verifier.schemaAt(5);
+      schema.rawDatabase.execute('''
+INSERT INTO events (id,name,scheduled_at,event_type,status,court_label,created_at,updated_at,version)
+VALUES ('12000000-0000-4000-8000-000000000001','VPC M12 Migration','2026-09-03T00:00:00.000Z','formal','registration','Sample Court','2026-09-03T00:00:00.000Z','2026-09-03T00:00:00.000Z',7);
+INSERT INTO event_divisions (id,event_id,name,tournament_format,created_at,updated_at,version)
+VALUES ('12000000-0000-4000-8000-000000000002','12000000-0000-4000-8000-000000000001','Open',NULL,'2026-09-03T00:00:00.000Z','2026-09-03T00:00:00.000Z',8);
+''');
+      final db = AppDatabase(schema.newConnection());
+      await verifier.migrateAndValidate(db, 6);
+      final row = await db.select(db.eventDivisions).getSingle();
+      expect(row.tournamentFormat, isNull);
+      expect(row.version, 8);
+      await db.customStatement(
+        "UPDATE event_divisions SET tournament_format='singleElimination'",
+      );
+      expect(
+        (await db.select(db.eventDivisions).getSingle()).tournamentFormat,
+        'singleElimination',
+      );
+      await expectLater(
+        db.customStatement("UPDATE event_divisions SET name='Locked change'"),
+        throwsA(isA<Exception>()),
+      );
+      await db.close();
+      schema.close();
+    },
+  );
+  test(
     'v1 to v2 migration preserves player data and adds sync tables',
     () async {
       final verifier = SchemaVerifier(GeneratedHelper());

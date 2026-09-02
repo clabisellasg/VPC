@@ -83,6 +83,20 @@ explicit planner/architect approval, with the approval and date recorded.
 | V1-073 | Random formation shuffles once using an injectable source and pairs sequentially. Balanced formation deterministically sorts skill descending with PlayerId tie-breaks and pairs strongest with weakest; spread is maximum minus minimum team-strength sum. | ACCEPTED |
 | V1-074 | Android local schema version 5 adds nullable player skill and a bounded team-formation outbox/checkpoint/conflict slice. Team replacement is one aggregate; Web applies it online without SQLite. | ACCEPTED |
 
+M12 planner approval (2026-09-03):
+
+- **V1-075 — ACCEPTED:** OPEN-003 uses one game to 11, win by two, no cap.
+  Nonnegative integer final scores stop at the first winning point: 11–0 through
+  11–9, or exactly two ahead when the losing score is 10+. No draws, negatives,
+  overshoots (12–9, 13–10), best-of-three or configurable target. Score determines
+  the winning team.
+- **V1-076 — ACCEPTED:** Organizers select/change a division's existing V1 format
+  during Registration before any persisted match structure exists. Null remains
+  unconfigured; no default. Selection generates no matches.
+- **V1-077 — ACCEPTED:** Entering In Progress requires a format, at least two
+  valid complete teams and persisted active matches in every active division.
+  M13–M15 own generation. No placeholder matches or match synchronization in M12.
+
 ## Open decisions
 
 The “resolve by” milestone is the latest point at which an explicit accepted
@@ -90,7 +104,6 @@ decision is required before affected implementation proceeds.
 
 | ID | Open question | Resolve by | Status |
 | --- | --- | --- | --- |
-| OPEN-003 | What are the exact score validation rules? | Before M12 implementation | OPEN |
 | OPEN-004 | How may a completed result be corrected after bracket progression? | Before M13 implementation | OPEN |
 | OPEN-005 | What is the round-robin tie-breaker order? | Before M14 implementation | OPEN |
 | OPEN-006 | Does double elimination use a grand-final bracket reset? | Before M15 implementation | OPEN |
@@ -101,6 +114,7 @@ decision is required before affected implementation proceeds.
 
 | ID | Approval | Result | Status |
 | --- | --- | --- | --- |
+| OPEN-003 | M12 planner specification, 2026-09-03 | Resolved by V1-075: one game to 11, win by two, no cap, score-derived winner. | RESOLVED |
 | OPEN-001 | M7 planner specification, 2026-08-28 | Resolved by V1-055: an authenticated member requests an existing player link and an organizer approves or rejects it. | RESOLVED |
 | OPEN-011 | M7 planner specification, 2026-08-28 | Resolved by V1-054: initial V1 authentication is email/password with hosted confirmation preserved. Other providers remain deferred, not accepted. | RESOLVED |
 | OPEN-007 | M10 planner specification, 2026-09-01 | Resolved by V1-068: an event participant may be assigned to multiple divisions in the same event. | RESOLVED |

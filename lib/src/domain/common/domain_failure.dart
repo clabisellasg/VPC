@@ -9,6 +9,21 @@ sealed class DomainFailure implements Exception {
   String toString() => '$runtimeType($code): $message';
 }
 
+final class TournamentGenerationFailure extends DomainFailure {
+  const TournamentGenerationFailure({
+    required super.code,
+    required super.message,
+  });
+}
+
+final class TournamentStructureRequiredFailure extends DomainFailure {
+  const TournamentStructureRequiredFailure()
+    : super(
+        code: 'tournament_structure_required',
+        message: 'Each active division needs a format, at least two complete teams, and generated matches before this event can begin. Generation is provided in M13–M15.',
+      );
+}
+
 final class ValidationFailure extends DomainFailure {
   const ValidationFailure({required this.field, required super.message})
     : super(code: 'validation');

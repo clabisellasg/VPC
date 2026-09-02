@@ -770,7 +770,7 @@ final class AppDatabase extends _$AppDatabase {
   AppDatabase.inMemory() : super(openInMemoryDatabaseConnection());
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -815,7 +815,7 @@ final class AppDatabase extends _$AppDatabase {
         await migrator.createIndex(participationConflictsParticipantIdx);
         if (to == 4) return;
       }
-      if (from <= 4 && to == 5) {
+      if (from <= 4 && to >= 5) {
         await customStatement(
           'ALTER TABLE players ADD COLUMN skill_level INTEGER '
           'CHECK (skill_level IS NULL OR skill_level BETWEEN 1 AND 5)',
@@ -825,6 +825,15 @@ final class AppDatabase extends _$AppDatabase {
         await migrator.createTable(teamFormationConflicts);
         await migrator.createIndex(teamFormationOutboxEligibilityIdx);
         for (final statement in _m11IntegrityTriggers) {
+          await customStatement(statement);
+        }
+        if (to == 5) return;
+      }
+      if (from <= 5 && to == 6) {
+        await customStatement(
+          'DROP TRIGGER IF EXISTS event_divisions_setup_lock_guard',
+        );
+        for (final statement in _m12IntegrityTriggers) {
           await customStatement(statement);
         }
         return;
@@ -849,7 +858,7 @@ final class AppDatabase extends _$AppDatabase {
   });
 }
 
-const _scopeAndTransitionTriggers = <String>[
+final _scopeAndTransitionTriggers = <String>[
   '''
 CREATE TRIGGER events_status_transition_guard
 BEFORE UPDATE OF status ON events
@@ -998,6 +1007,47 @@ END
 ''',
   ..._m09IntegrityTriggers,
   ..._m11IntegrityTriggers,
+  'DROP TRIGGER event_divisions_setup_lock_guard',
+  ..._m12IntegrityTriggers,
+];
+
+final _m12IntegrityTriggers = <String>[
+  '''
+CREATE TRIGGER event_divisions_setup_lock_guard
+BEFORE UPDATE OF name, tournament_format, deleted_at ON event_divisions
+WHEN ((NEW.name IS NOT OLD.name OR NEW.deleted_at IS NOT OLD.deleted_at)
+  AND (SELECT status FROM events WHERE id=OLD.event_id) <> 'upcoming'
+  AND (SELECT deleted_at FROM events WHERE id=OLD.event_id) IS NULL)
+ OR (NEW.tournament_format IS NOT OLD.tournament_format AND
+   ((SELECT status FROM events WHERE id=OLD.event_id) <> 'registration'
+    OR OLD.deleted_at IS NOT NULL
+    OR EXISTS(SELECT 1 FROM matches WHERE division_id=OLD.id)))
+BEGIN
+  SELECT RAISE(ABORT, 'division setup or tournament format is locked');
+END
+''',
+  for (final action in ['INSERT', 'UPDATE'])
+    '''
+CREATE TRIGGER matches_final_score_${action.toLowerCase()}_guard
+BEFORE $action ON matches
+WHEN NEW.status='completed' AND NOT (
+  ((max(NEW.side_one_score,NEW.side_two_score)=11 AND min(NEW.side_one_score,NEW.side_two_score) BETWEEN 0 AND 9)
+    OR (min(NEW.side_one_score,NEW.side_two_score)>=10 AND abs(NEW.side_one_score-NEW.side_two_score)=2))
+  AND NEW.winner_team_id=CASE WHEN NEW.side_one_score>NEW.side_two_score THEN NEW.side_one_team_id ELSE NEW.side_two_team_id END)
+BEGIN
+  SELECT RAISE(ABORT, 'invalid final score or derived winner');
+END
+''',
+  '''
+CREATE TRIGGER matches_completed_result_lock
+BEFORE UPDATE ON matches
+WHEN OLD.status='completed' AND (NEW.side_one_score IS NOT OLD.side_one_score
+ OR NEW.side_two_score IS NOT OLD.side_two_score OR NEW.winner_team_id IS NOT OLD.winner_team_id
+ OR NEW.side_one_team_id IS NOT OLD.side_one_team_id OR NEW.side_two_team_id IS NOT OLD.side_two_team_id)
+BEGIN
+  SELECT RAISE(ABORT, 'completed result correction is not approved');
+END
+''',
 ];
 
 const _m11IntegrityTriggers = <String>[
