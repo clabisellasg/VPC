@@ -3,7 +3,7 @@
 ## Scope
 
 This document defines the conceptual Version 1 architecture and the foundations
-established through Milestone 9. It deliberately does not prescribe a final
+established through Milestone 10. It deliberately does not prescribe a final
 feature-folder layout. Authentication flows, full operational synchronization,
 organizer event workflows, and tournament-engine implementation begin only in
 later milestones.
@@ -302,3 +302,17 @@ aggregates. Realtime remains a refetch hint.
 Division tournament format is nullable until M12. Null explicitly represents
 unconfigured setup and introduces no enum/default. The domain and database
 block REGISTRATION → IN PROGRESS while an active division remains null.
+
+## M10 participation aggregate boundary
+
+Framework-independent participation use cases coordinate permanent players,
+event participants, division assignments, and event-scoped payment status.
+Widgets depend on these ports and never call Drift or Supabase directly.
+
+Android Drift schema version 4 commits a participant aggregate and one fixed
+outbox operation atomically. A bounded coordinator uploads organizer-authorized
+operations, preserves authorization blocks and version conflicts, and pulls
+authoritative tombstones without overwriting pending local intent. Web uses the
+same payload contract through an online Supabase adapter and initializes no
+SQLite. PostgreSQL RLS and fixed functions remain the final authorization
+boundary. Payment rows remain private and store only Paid/Unpaid.

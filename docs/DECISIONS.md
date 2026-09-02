@@ -75,6 +75,9 @@ explicit planner/architect approval, with the approval and date recorded.
 | V1-065 | Tournament format is nullable on a division until M12; null means not configured yet, never a default or additional enum value. Existing configured values remain valid. | ACCEPTED |
 | V1-066 | M9-created divisions store a null format. UPCOMING may enter REGISTRATION, but an event cannot enter IN PROGRESS while an active division has no configured format. | ACCEPTED |
 | V1-067 | Android local schema version 3 adds a bounded event/division aggregate outbox, pull checkpoint, and preserved-conflict slice; Web uses the fixed cloud aggregate protocol online without SQLite. | ACCEPTED |
+| V1-068 | M10 permits one event participant to hold multiple active division assignments in the same event; teams, partners, seeds, and tournament positions remain M11+ concerns. | ACCEPTED |
+| V1-069 | M10 registration creates one event-scoped administrative Paid/Unpaid record. The existing nullable division scope remains structurally compatible; M10 processes no money. | ACCEPTED |
+| V1-070 | Android local schema version 4 adds a bounded participation aggregate outbox, pull checkpoint, and preserved-conflict slice; Web uses the organizer-authorized cloud command online without SQLite. | ACCEPTED |
 
 ## Open decisions
 
@@ -88,8 +91,6 @@ decision is required before affected implementation proceeds.
 | OPEN-004 | How may a completed result be corrected after bracket progression? | Before M13 implementation | OPEN |
 | OPEN-005 | What is the round-robin tie-breaker order? | Before M14 implementation | OPEN |
 | OPEN-006 | Does double elimination use a grand-final bracket reset? | Before M15 implementation | OPEN |
-| OPEN-007 | May one player join multiple divisions in the same event? | Before M10 implementation | OPEN |
-| OPEN-008 | Is payment status event-wide, or may it differ by division? | Before M10 implementation | OPEN |
 | OPEN-009 | What is the exact simultaneous-organizer conflict/control policy? | Before M5 implementation | OPEN |
 | OPEN-010 | Which free static hosting provider will serve the Flutter Web/PWA? | Before M19 implementation | OPEN |
 | OPEN-012 | Is Version 1 team size fixed at two or configurable? | Before M11 implementation | OPEN |
@@ -100,6 +101,8 @@ decision is required before affected implementation proceeds.
 | --- | --- | --- | --- |
 | OPEN-001 | M7 planner specification, 2026-08-28 | Resolved by V1-055: an authenticated member requests an existing player link and an organizer approves or rejects it. | RESOLVED |
 | OPEN-011 | M7 planner specification, 2026-08-28 | Resolved by V1-054: initial V1 authentication is email/password with hosted confirmation preserved. Other providers remain deferred, not accepted. | RESOLVED |
+| OPEN-007 | M10 planner specification, 2026-09-01 | Resolved by V1-068: an event participant may be assigned to multiple divisions in the same event. | RESOLVED |
+| OPEN-008 | M10 planner specification, 2026-09-01 | Resolved by V1-069 for M10: registration uses one event-scoped Paid/Unpaid record; division-scoped rows are not created by the M10 UI. | RESOLVED |
 
 ## Future-version suggestions
 

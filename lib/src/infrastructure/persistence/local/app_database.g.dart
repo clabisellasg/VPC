@@ -9907,6 +9907,1367 @@ class EventSetupConflictsCompanion
   }
 }
 
+class $ParticipationOutboxOperationsTable extends ParticipationOutboxOperations
+    with
+        TableInfo<
+          $ParticipationOutboxOperationsTable,
+          LocalParticipationOutboxRow
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ParticipationOutboxOperationsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _eventParticipantIdMeta =
+      const VerificationMeta('eventParticipantId');
+  @override
+  late final GeneratedColumn<String> eventParticipantId =
+      GeneratedColumn<String>(
+        'event_participant_id',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES event_participants (id) ON DELETE RESTRICT',
+        ),
+      );
+  static const VerificationMeta _baseVersionMeta = const VerificationMeta(
+    'baseVersion',
+  );
+  @override
+  late final GeneratedColumn<int> baseVersion = GeneratedColumn<int>(
+    'base_version',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
+    'payloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
+    'payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK (json_valid(payload_json) AND json_type(payload_json) = \'object\')',
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK (status IN (\'pending\', \'blocked\', \'conflicted\', \'failed\'))',
+  );
+  static const VerificationMeta _failureMessageMeta = const VerificationMeta(
+    'failureMessage',
+  );
+  @override
+  late final GeneratedColumn<String> failureMessage = GeneratedColumn<String>(
+    'failure_message',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    eventParticipantId,
+    baseVersion,
+    payloadJson,
+    createdAt,
+    status,
+    failureMessage,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'participation_outbox_operations';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalParticipationOutboxRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('event_participant_id')) {
+      context.handle(
+        _eventParticipantIdMeta,
+        eventParticipantId.isAcceptableOrUnknown(
+          data['event_participant_id']!,
+          _eventParticipantIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_eventParticipantIdMeta);
+    }
+    if (data.containsKey('base_version')) {
+      context.handle(
+        _baseVersionMeta,
+        baseVersion.isAcceptableOrUnknown(
+          data['base_version']!,
+          _baseVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('payload_json')) {
+      context.handle(
+        _payloadJsonMeta,
+        payloadJson.isAcceptableOrUnknown(
+          data['payload_json']!,
+          _payloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadJsonMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('failure_message')) {
+      context.handle(
+        _failureMessageMeta,
+        failureMessage.isAcceptableOrUnknown(
+          data['failure_message']!,
+          _failureMessageMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LocalParticipationOutboxRow map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalParticipationOutboxRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      eventParticipantId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}event_participant_id'],
+      )!,
+      baseVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}base_version'],
+      ),
+      payloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_json'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      failureMessage: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}failure_message'],
+      ),
+    );
+  }
+
+  @override
+  $ParticipationOutboxOperationsTable createAlias(String alias) {
+    return $ParticipationOutboxOperationsTable(attachedDatabase, alias);
+  }
+}
+
+class LocalParticipationOutboxRow extends DataClass
+    implements Insertable<LocalParticipationOutboxRow> {
+  final String id;
+  final String eventParticipantId;
+  final int? baseVersion;
+  final String payloadJson;
+  final DateTime createdAt;
+  final String status;
+  final String? failureMessage;
+  const LocalParticipationOutboxRow({
+    required this.id,
+    required this.eventParticipantId,
+    this.baseVersion,
+    required this.payloadJson,
+    required this.createdAt,
+    required this.status,
+    this.failureMessage,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['event_participant_id'] = Variable<String>(eventParticipantId);
+    if (!nullToAbsent || baseVersion != null) {
+      map['base_version'] = Variable<int>(baseVersion);
+    }
+    map['payload_json'] = Variable<String>(payloadJson);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || failureMessage != null) {
+      map['failure_message'] = Variable<String>(failureMessage);
+    }
+    return map;
+  }
+
+  ParticipationOutboxOperationsCompanion toCompanion(bool nullToAbsent) {
+    return ParticipationOutboxOperationsCompanion(
+      id: Value(id),
+      eventParticipantId: Value(eventParticipantId),
+      baseVersion: baseVersion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(baseVersion),
+      payloadJson: Value(payloadJson),
+      createdAt: Value(createdAt),
+      status: Value(status),
+      failureMessage: failureMessage == null && nullToAbsent
+          ? const Value.absent()
+          : Value(failureMessage),
+    );
+  }
+
+  factory LocalParticipationOutboxRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalParticipationOutboxRow(
+      id: serializer.fromJson<String>(json['id']),
+      eventParticipantId: serializer.fromJson<String>(
+        json['eventParticipantId'],
+      ),
+      baseVersion: serializer.fromJson<int?>(json['baseVersion']),
+      payloadJson: serializer.fromJson<String>(json['payloadJson']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      status: serializer.fromJson<String>(json['status']),
+      failureMessage: serializer.fromJson<String?>(json['failureMessage']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'eventParticipantId': serializer.toJson<String>(eventParticipantId),
+      'baseVersion': serializer.toJson<int?>(baseVersion),
+      'payloadJson': serializer.toJson<String>(payloadJson),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'status': serializer.toJson<String>(status),
+      'failureMessage': serializer.toJson<String?>(failureMessage),
+    };
+  }
+
+  LocalParticipationOutboxRow copyWith({
+    String? id,
+    String? eventParticipantId,
+    Value<int?> baseVersion = const Value.absent(),
+    String? payloadJson,
+    DateTime? createdAt,
+    String? status,
+    Value<String?> failureMessage = const Value.absent(),
+  }) => LocalParticipationOutboxRow(
+    id: id ?? this.id,
+    eventParticipantId: eventParticipantId ?? this.eventParticipantId,
+    baseVersion: baseVersion.present ? baseVersion.value : this.baseVersion,
+    payloadJson: payloadJson ?? this.payloadJson,
+    createdAt: createdAt ?? this.createdAt,
+    status: status ?? this.status,
+    failureMessage: failureMessage.present
+        ? failureMessage.value
+        : this.failureMessage,
+  );
+  LocalParticipationOutboxRow copyWithCompanion(
+    ParticipationOutboxOperationsCompanion data,
+  ) {
+    return LocalParticipationOutboxRow(
+      id: data.id.present ? data.id.value : this.id,
+      eventParticipantId: data.eventParticipantId.present
+          ? data.eventParticipantId.value
+          : this.eventParticipantId,
+      baseVersion: data.baseVersion.present
+          ? data.baseVersion.value
+          : this.baseVersion,
+      payloadJson: data.payloadJson.present
+          ? data.payloadJson.value
+          : this.payloadJson,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      status: data.status.present ? data.status.value : this.status,
+      failureMessage: data.failureMessage.present
+          ? data.failureMessage.value
+          : this.failureMessage,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalParticipationOutboxRow(')
+          ..write('id: $id, ')
+          ..write('eventParticipantId: $eventParticipantId, ')
+          ..write('baseVersion: $baseVersion, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('status: $status, ')
+          ..write('failureMessage: $failureMessage')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    eventParticipantId,
+    baseVersion,
+    payloadJson,
+    createdAt,
+    status,
+    failureMessage,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalParticipationOutboxRow &&
+          other.id == this.id &&
+          other.eventParticipantId == this.eventParticipantId &&
+          other.baseVersion == this.baseVersion &&
+          other.payloadJson == this.payloadJson &&
+          other.createdAt == this.createdAt &&
+          other.status == this.status &&
+          other.failureMessage == this.failureMessage);
+}
+
+class ParticipationOutboxOperationsCompanion
+    extends UpdateCompanion<LocalParticipationOutboxRow> {
+  final Value<String> id;
+  final Value<String> eventParticipantId;
+  final Value<int?> baseVersion;
+  final Value<String> payloadJson;
+  final Value<DateTime> createdAt;
+  final Value<String> status;
+  final Value<String?> failureMessage;
+  final Value<int> rowid;
+  const ParticipationOutboxOperationsCompanion({
+    this.id = const Value.absent(),
+    this.eventParticipantId = const Value.absent(),
+    this.baseVersion = const Value.absent(),
+    this.payloadJson = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.failureMessage = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ParticipationOutboxOperationsCompanion.insert({
+    required String id,
+    required String eventParticipantId,
+    this.baseVersion = const Value.absent(),
+    required String payloadJson,
+    required DateTime createdAt,
+    required String status,
+    this.failureMessage = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       eventParticipantId = Value(eventParticipantId),
+       payloadJson = Value(payloadJson),
+       createdAt = Value(createdAt),
+       status = Value(status);
+  static Insertable<LocalParticipationOutboxRow> custom({
+    Expression<String>? id,
+    Expression<String>? eventParticipantId,
+    Expression<int>? baseVersion,
+    Expression<String>? payloadJson,
+    Expression<DateTime>? createdAt,
+    Expression<String>? status,
+    Expression<String>? failureMessage,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (eventParticipantId != null)
+        'event_participant_id': eventParticipantId,
+      if (baseVersion != null) 'base_version': baseVersion,
+      if (payloadJson != null) 'payload_json': payloadJson,
+      if (createdAt != null) 'created_at': createdAt,
+      if (status != null) 'status': status,
+      if (failureMessage != null) 'failure_message': failureMessage,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ParticipationOutboxOperationsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? eventParticipantId,
+    Value<int?>? baseVersion,
+    Value<String>? payloadJson,
+    Value<DateTime>? createdAt,
+    Value<String>? status,
+    Value<String?>? failureMessage,
+    Value<int>? rowid,
+  }) {
+    return ParticipationOutboxOperationsCompanion(
+      id: id ?? this.id,
+      eventParticipantId: eventParticipantId ?? this.eventParticipantId,
+      baseVersion: baseVersion ?? this.baseVersion,
+      payloadJson: payloadJson ?? this.payloadJson,
+      createdAt: createdAt ?? this.createdAt,
+      status: status ?? this.status,
+      failureMessage: failureMessage ?? this.failureMessage,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (eventParticipantId.present) {
+      map['event_participant_id'] = Variable<String>(eventParticipantId.value);
+    }
+    if (baseVersion.present) {
+      map['base_version'] = Variable<int>(baseVersion.value);
+    }
+    if (payloadJson.present) {
+      map['payload_json'] = Variable<String>(payloadJson.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (failureMessage.present) {
+      map['failure_message'] = Variable<String>(failureMessage.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ParticipationOutboxOperationsCompanion(')
+          ..write('id: $id, ')
+          ..write('eventParticipantId: $eventParticipantId, ')
+          ..write('baseVersion: $baseVersion, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('status: $status, ')
+          ..write('failureMessage: $failureMessage, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ParticipationPullCheckpointsTable extends ParticipationPullCheckpoints
+    with
+        TableInfo<
+          $ParticipationPullCheckpointsTable,
+          LocalParticipationCheckpointRow
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ParticipationPullCheckpointsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _singletonMeta = const VerificationMeta(
+    'singleton',
+  );
+  @override
+  late final GeneratedColumn<int> singleton = GeneratedColumn<int>(
+    'singleton',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _cursorUpdatedAtMeta = const VerificationMeta(
+    'cursorUpdatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> cursorUpdatedAt =
+      GeneratedColumn<DateTime>(
+        'cursor_updated_at',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _cursorParticipantIdMeta =
+      const VerificationMeta('cursorParticipantId');
+  @override
+  late final GeneratedColumn<String> cursorParticipantId =
+      GeneratedColumn<String>(
+        'cursor_participant_id',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES event_participants (id) ON DELETE RESTRICT',
+        ),
+      );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    singleton,
+    cursorUpdatedAt,
+    cursorParticipantId,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'participation_pull_checkpoints';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalParticipationCheckpointRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('singleton')) {
+      context.handle(
+        _singletonMeta,
+        singleton.isAcceptableOrUnknown(data['singleton']!, _singletonMeta),
+      );
+    }
+    if (data.containsKey('cursor_updated_at')) {
+      context.handle(
+        _cursorUpdatedAtMeta,
+        cursorUpdatedAt.isAcceptableOrUnknown(
+          data['cursor_updated_at']!,
+          _cursorUpdatedAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_cursorUpdatedAtMeta);
+    }
+    if (data.containsKey('cursor_participant_id')) {
+      context.handle(
+        _cursorParticipantIdMeta,
+        cursorParticipantId.isAcceptableOrUnknown(
+          data['cursor_participant_id']!,
+          _cursorParticipantIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_cursorParticipantIdMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {singleton};
+  @override
+  LocalParticipationCheckpointRow map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalParticipationCheckpointRow(
+      singleton: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}singleton'],
+      )!,
+      cursorUpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}cursor_updated_at'],
+      )!,
+      cursorParticipantId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}cursor_participant_id'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ParticipationPullCheckpointsTable createAlias(String alias) {
+    return $ParticipationPullCheckpointsTable(attachedDatabase, alias);
+  }
+}
+
+class LocalParticipationCheckpointRow extends DataClass
+    implements Insertable<LocalParticipationCheckpointRow> {
+  final int singleton;
+  final DateTime cursorUpdatedAt;
+  final String cursorParticipantId;
+  final DateTime updatedAt;
+  const LocalParticipationCheckpointRow({
+    required this.singleton,
+    required this.cursorUpdatedAt,
+    required this.cursorParticipantId,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['singleton'] = Variable<int>(singleton);
+    map['cursor_updated_at'] = Variable<DateTime>(cursorUpdatedAt);
+    map['cursor_participant_id'] = Variable<String>(cursorParticipantId);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  ParticipationPullCheckpointsCompanion toCompanion(bool nullToAbsent) {
+    return ParticipationPullCheckpointsCompanion(
+      singleton: Value(singleton),
+      cursorUpdatedAt: Value(cursorUpdatedAt),
+      cursorParticipantId: Value(cursorParticipantId),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory LocalParticipationCheckpointRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalParticipationCheckpointRow(
+      singleton: serializer.fromJson<int>(json['singleton']),
+      cursorUpdatedAt: serializer.fromJson<DateTime>(json['cursorUpdatedAt']),
+      cursorParticipantId: serializer.fromJson<String>(
+        json['cursorParticipantId'],
+      ),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'singleton': serializer.toJson<int>(singleton),
+      'cursorUpdatedAt': serializer.toJson<DateTime>(cursorUpdatedAt),
+      'cursorParticipantId': serializer.toJson<String>(cursorParticipantId),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  LocalParticipationCheckpointRow copyWith({
+    int? singleton,
+    DateTime? cursorUpdatedAt,
+    String? cursorParticipantId,
+    DateTime? updatedAt,
+  }) => LocalParticipationCheckpointRow(
+    singleton: singleton ?? this.singleton,
+    cursorUpdatedAt: cursorUpdatedAt ?? this.cursorUpdatedAt,
+    cursorParticipantId: cursorParticipantId ?? this.cursorParticipantId,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  LocalParticipationCheckpointRow copyWithCompanion(
+    ParticipationPullCheckpointsCompanion data,
+  ) {
+    return LocalParticipationCheckpointRow(
+      singleton: data.singleton.present ? data.singleton.value : this.singleton,
+      cursorUpdatedAt: data.cursorUpdatedAt.present
+          ? data.cursorUpdatedAt.value
+          : this.cursorUpdatedAt,
+      cursorParticipantId: data.cursorParticipantId.present
+          ? data.cursorParticipantId.value
+          : this.cursorParticipantId,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalParticipationCheckpointRow(')
+          ..write('singleton: $singleton, ')
+          ..write('cursorUpdatedAt: $cursorUpdatedAt, ')
+          ..write('cursorParticipantId: $cursorParticipantId, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(singleton, cursorUpdatedAt, cursorParticipantId, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalParticipationCheckpointRow &&
+          other.singleton == this.singleton &&
+          other.cursorUpdatedAt == this.cursorUpdatedAt &&
+          other.cursorParticipantId == this.cursorParticipantId &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ParticipationPullCheckpointsCompanion
+    extends UpdateCompanion<LocalParticipationCheckpointRow> {
+  final Value<int> singleton;
+  final Value<DateTime> cursorUpdatedAt;
+  final Value<String> cursorParticipantId;
+  final Value<DateTime> updatedAt;
+  const ParticipationPullCheckpointsCompanion({
+    this.singleton = const Value.absent(),
+    this.cursorUpdatedAt = const Value.absent(),
+    this.cursorParticipantId = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  ParticipationPullCheckpointsCompanion.insert({
+    this.singleton = const Value.absent(),
+    required DateTime cursorUpdatedAt,
+    required String cursorParticipantId,
+    required DateTime updatedAt,
+  }) : cursorUpdatedAt = Value(cursorUpdatedAt),
+       cursorParticipantId = Value(cursorParticipantId),
+       updatedAt = Value(updatedAt);
+  static Insertable<LocalParticipationCheckpointRow> custom({
+    Expression<int>? singleton,
+    Expression<DateTime>? cursorUpdatedAt,
+    Expression<String>? cursorParticipantId,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (singleton != null) 'singleton': singleton,
+      if (cursorUpdatedAt != null) 'cursor_updated_at': cursorUpdatedAt,
+      if (cursorParticipantId != null)
+        'cursor_participant_id': cursorParticipantId,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  ParticipationPullCheckpointsCompanion copyWith({
+    Value<int>? singleton,
+    Value<DateTime>? cursorUpdatedAt,
+    Value<String>? cursorParticipantId,
+    Value<DateTime>? updatedAt,
+  }) {
+    return ParticipationPullCheckpointsCompanion(
+      singleton: singleton ?? this.singleton,
+      cursorUpdatedAt: cursorUpdatedAt ?? this.cursorUpdatedAt,
+      cursorParticipantId: cursorParticipantId ?? this.cursorParticipantId,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (singleton.present) {
+      map['singleton'] = Variable<int>(singleton.value);
+    }
+    if (cursorUpdatedAt.present) {
+      map['cursor_updated_at'] = Variable<DateTime>(cursorUpdatedAt.value);
+    }
+    if (cursorParticipantId.present) {
+      map['cursor_participant_id'] = Variable<String>(
+        cursorParticipantId.value,
+      );
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ParticipationPullCheckpointsCompanion(')
+          ..write('singleton: $singleton, ')
+          ..write('cursorUpdatedAt: $cursorUpdatedAt, ')
+          ..write('cursorParticipantId: $cursorParticipantId, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ParticipationConflictsTable extends ParticipationConflicts
+    with
+        TableInfo<$ParticipationConflictsTable, LocalParticipationConflictRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ParticipationConflictsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _operationIdMeta = const VerificationMeta(
+    'operationId',
+  );
+  @override
+  late final GeneratedColumn<String> operationId = GeneratedColumn<String>(
+    'operation_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'UNIQUE REFERENCES participation_outbox_operations (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _eventParticipantIdMeta =
+      const VerificationMeta('eventParticipantId');
+  @override
+  late final GeneratedColumn<String> eventParticipantId =
+      GeneratedColumn<String>(
+        'event_participant_id',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES event_participants (id) ON DELETE RESTRICT',
+        ),
+      );
+  static const VerificationMeta _localPayloadJsonMeta = const VerificationMeta(
+    'localPayloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> localPayloadJson = GeneratedColumn<String>(
+    'local_payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK (json_valid(local_payload_json) AND json_type(local_payload_json) = \'object\')',
+  );
+  static const VerificationMeta _remotePayloadJsonMeta = const VerificationMeta(
+    'remotePayloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> remotePayloadJson =
+      GeneratedColumn<String>(
+        'remote_payload_json',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _detectedAtMeta = const VerificationMeta(
+    'detectedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> detectedAt = GeneratedColumn<DateTime>(
+    'detected_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints:
+        'NOT NULL CHECK (status IN (\'unresolved\', \'resolved\'))',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    operationId,
+    eventParticipantId,
+    localPayloadJson,
+    remotePayloadJson,
+    detectedAt,
+    status,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'participation_conflicts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalParticipationConflictRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('operation_id')) {
+      context.handle(
+        _operationIdMeta,
+        operationId.isAcceptableOrUnknown(
+          data['operation_id']!,
+          _operationIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_operationIdMeta);
+    }
+    if (data.containsKey('event_participant_id')) {
+      context.handle(
+        _eventParticipantIdMeta,
+        eventParticipantId.isAcceptableOrUnknown(
+          data['event_participant_id']!,
+          _eventParticipantIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_eventParticipantIdMeta);
+    }
+    if (data.containsKey('local_payload_json')) {
+      context.handle(
+        _localPayloadJsonMeta,
+        localPayloadJson.isAcceptableOrUnknown(
+          data['local_payload_json']!,
+          _localPayloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_localPayloadJsonMeta);
+    }
+    if (data.containsKey('remote_payload_json')) {
+      context.handle(
+        _remotePayloadJsonMeta,
+        remotePayloadJson.isAcceptableOrUnknown(
+          data['remote_payload_json']!,
+          _remotePayloadJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('detected_at')) {
+      context.handle(
+        _detectedAtMeta,
+        detectedAt.isAcceptableOrUnknown(data['detected_at']!, _detectedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_detectedAtMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LocalParticipationConflictRow map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalParticipationConflictRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      operationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}operation_id'],
+      )!,
+      eventParticipantId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}event_participant_id'],
+      )!,
+      localPayloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}local_payload_json'],
+      )!,
+      remotePayloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_payload_json'],
+      ),
+      detectedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}detected_at'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+    );
+  }
+
+  @override
+  $ParticipationConflictsTable createAlias(String alias) {
+    return $ParticipationConflictsTable(attachedDatabase, alias);
+  }
+}
+
+class LocalParticipationConflictRow extends DataClass
+    implements Insertable<LocalParticipationConflictRow> {
+  final String id;
+  final String operationId;
+  final String eventParticipantId;
+  final String localPayloadJson;
+  final String? remotePayloadJson;
+  final DateTime detectedAt;
+  final String status;
+  const LocalParticipationConflictRow({
+    required this.id,
+    required this.operationId,
+    required this.eventParticipantId,
+    required this.localPayloadJson,
+    this.remotePayloadJson,
+    required this.detectedAt,
+    required this.status,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['operation_id'] = Variable<String>(operationId);
+    map['event_participant_id'] = Variable<String>(eventParticipantId);
+    map['local_payload_json'] = Variable<String>(localPayloadJson);
+    if (!nullToAbsent || remotePayloadJson != null) {
+      map['remote_payload_json'] = Variable<String>(remotePayloadJson);
+    }
+    map['detected_at'] = Variable<DateTime>(detectedAt);
+    map['status'] = Variable<String>(status);
+    return map;
+  }
+
+  ParticipationConflictsCompanion toCompanion(bool nullToAbsent) {
+    return ParticipationConflictsCompanion(
+      id: Value(id),
+      operationId: Value(operationId),
+      eventParticipantId: Value(eventParticipantId),
+      localPayloadJson: Value(localPayloadJson),
+      remotePayloadJson: remotePayloadJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remotePayloadJson),
+      detectedAt: Value(detectedAt),
+      status: Value(status),
+    );
+  }
+
+  factory LocalParticipationConflictRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalParticipationConflictRow(
+      id: serializer.fromJson<String>(json['id']),
+      operationId: serializer.fromJson<String>(json['operationId']),
+      eventParticipantId: serializer.fromJson<String>(
+        json['eventParticipantId'],
+      ),
+      localPayloadJson: serializer.fromJson<String>(json['localPayloadJson']),
+      remotePayloadJson: serializer.fromJson<String?>(
+        json['remotePayloadJson'],
+      ),
+      detectedAt: serializer.fromJson<DateTime>(json['detectedAt']),
+      status: serializer.fromJson<String>(json['status']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'operationId': serializer.toJson<String>(operationId),
+      'eventParticipantId': serializer.toJson<String>(eventParticipantId),
+      'localPayloadJson': serializer.toJson<String>(localPayloadJson),
+      'remotePayloadJson': serializer.toJson<String?>(remotePayloadJson),
+      'detectedAt': serializer.toJson<DateTime>(detectedAt),
+      'status': serializer.toJson<String>(status),
+    };
+  }
+
+  LocalParticipationConflictRow copyWith({
+    String? id,
+    String? operationId,
+    String? eventParticipantId,
+    String? localPayloadJson,
+    Value<String?> remotePayloadJson = const Value.absent(),
+    DateTime? detectedAt,
+    String? status,
+  }) => LocalParticipationConflictRow(
+    id: id ?? this.id,
+    operationId: operationId ?? this.operationId,
+    eventParticipantId: eventParticipantId ?? this.eventParticipantId,
+    localPayloadJson: localPayloadJson ?? this.localPayloadJson,
+    remotePayloadJson: remotePayloadJson.present
+        ? remotePayloadJson.value
+        : this.remotePayloadJson,
+    detectedAt: detectedAt ?? this.detectedAt,
+    status: status ?? this.status,
+  );
+  LocalParticipationConflictRow copyWithCompanion(
+    ParticipationConflictsCompanion data,
+  ) {
+    return LocalParticipationConflictRow(
+      id: data.id.present ? data.id.value : this.id,
+      operationId: data.operationId.present
+          ? data.operationId.value
+          : this.operationId,
+      eventParticipantId: data.eventParticipantId.present
+          ? data.eventParticipantId.value
+          : this.eventParticipantId,
+      localPayloadJson: data.localPayloadJson.present
+          ? data.localPayloadJson.value
+          : this.localPayloadJson,
+      remotePayloadJson: data.remotePayloadJson.present
+          ? data.remotePayloadJson.value
+          : this.remotePayloadJson,
+      detectedAt: data.detectedAt.present
+          ? data.detectedAt.value
+          : this.detectedAt,
+      status: data.status.present ? data.status.value : this.status,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalParticipationConflictRow(')
+          ..write('id: $id, ')
+          ..write('operationId: $operationId, ')
+          ..write('eventParticipantId: $eventParticipantId, ')
+          ..write('localPayloadJson: $localPayloadJson, ')
+          ..write('remotePayloadJson: $remotePayloadJson, ')
+          ..write('detectedAt: $detectedAt, ')
+          ..write('status: $status')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    operationId,
+    eventParticipantId,
+    localPayloadJson,
+    remotePayloadJson,
+    detectedAt,
+    status,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalParticipationConflictRow &&
+          other.id == this.id &&
+          other.operationId == this.operationId &&
+          other.eventParticipantId == this.eventParticipantId &&
+          other.localPayloadJson == this.localPayloadJson &&
+          other.remotePayloadJson == this.remotePayloadJson &&
+          other.detectedAt == this.detectedAt &&
+          other.status == this.status);
+}
+
+class ParticipationConflictsCompanion
+    extends UpdateCompanion<LocalParticipationConflictRow> {
+  final Value<String> id;
+  final Value<String> operationId;
+  final Value<String> eventParticipantId;
+  final Value<String> localPayloadJson;
+  final Value<String?> remotePayloadJson;
+  final Value<DateTime> detectedAt;
+  final Value<String> status;
+  final Value<int> rowid;
+  const ParticipationConflictsCompanion({
+    this.id = const Value.absent(),
+    this.operationId = const Value.absent(),
+    this.eventParticipantId = const Value.absent(),
+    this.localPayloadJson = const Value.absent(),
+    this.remotePayloadJson = const Value.absent(),
+    this.detectedAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ParticipationConflictsCompanion.insert({
+    required String id,
+    required String operationId,
+    required String eventParticipantId,
+    required String localPayloadJson,
+    this.remotePayloadJson = const Value.absent(),
+    required DateTime detectedAt,
+    required String status,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       operationId = Value(operationId),
+       eventParticipantId = Value(eventParticipantId),
+       localPayloadJson = Value(localPayloadJson),
+       detectedAt = Value(detectedAt),
+       status = Value(status);
+  static Insertable<LocalParticipationConflictRow> custom({
+    Expression<String>? id,
+    Expression<String>? operationId,
+    Expression<String>? eventParticipantId,
+    Expression<String>? localPayloadJson,
+    Expression<String>? remotePayloadJson,
+    Expression<DateTime>? detectedAt,
+    Expression<String>? status,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (operationId != null) 'operation_id': operationId,
+      if (eventParticipantId != null)
+        'event_participant_id': eventParticipantId,
+      if (localPayloadJson != null) 'local_payload_json': localPayloadJson,
+      if (remotePayloadJson != null) 'remote_payload_json': remotePayloadJson,
+      if (detectedAt != null) 'detected_at': detectedAt,
+      if (status != null) 'status': status,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ParticipationConflictsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? operationId,
+    Value<String>? eventParticipantId,
+    Value<String>? localPayloadJson,
+    Value<String?>? remotePayloadJson,
+    Value<DateTime>? detectedAt,
+    Value<String>? status,
+    Value<int>? rowid,
+  }) {
+    return ParticipationConflictsCompanion(
+      id: id ?? this.id,
+      operationId: operationId ?? this.operationId,
+      eventParticipantId: eventParticipantId ?? this.eventParticipantId,
+      localPayloadJson: localPayloadJson ?? this.localPayloadJson,
+      remotePayloadJson: remotePayloadJson ?? this.remotePayloadJson,
+      detectedAt: detectedAt ?? this.detectedAt,
+      status: status ?? this.status,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (operationId.present) {
+      map['operation_id'] = Variable<String>(operationId.value);
+    }
+    if (eventParticipantId.present) {
+      map['event_participant_id'] = Variable<String>(eventParticipantId.value);
+    }
+    if (localPayloadJson.present) {
+      map['local_payload_json'] = Variable<String>(localPayloadJson.value);
+    }
+    if (remotePayloadJson.present) {
+      map['remote_payload_json'] = Variable<String>(remotePayloadJson.value);
+    }
+    if (detectedAt.present) {
+      map['detected_at'] = Variable<DateTime>(detectedAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ParticipationConflictsCompanion(')
+          ..write('id: $id, ')
+          ..write('operationId: $operationId, ')
+          ..write('eventParticipantId: $eventParticipantId, ')
+          ..write('localPayloadJson: $localPayloadJson, ')
+          ..write('remotePayloadJson: $remotePayloadJson, ')
+          ..write('detectedAt: $detectedAt, ')
+          ..write('status: $status, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -9939,6 +11300,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $EventSetupPullCheckpointsTable(this);
   late final $EventSetupConflictsTable eventSetupConflicts =
       $EventSetupConflictsTable(this);
+  late final $ParticipationOutboxOperationsTable participationOutboxOperations =
+      $ParticipationOutboxOperationsTable(this);
+  late final $ParticipationPullCheckpointsTable participationPullCheckpoints =
+      $ParticipationPullCheckpointsTable(this);
+  late final $ParticipationConflictsTable participationConflicts =
+      $ParticipationConflictsTable(this);
   late final Index playersDisplayNameIdx = Index(
     'players_display_name_idx',
     'CREATE INDEX players_display_name_idx ON players (display_name)',
@@ -10039,6 +11406,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'event_setup_conflicts_event_idx',
     'CREATE INDEX event_setup_conflicts_event_idx ON event_setup_conflicts (event_id)',
   );
+  late final Index participationOutboxEligibilityIdx = Index(
+    'participation_outbox_eligibility_idx',
+    'CREATE INDEX participation_outbox_eligibility_idx ON participation_outbox_operations (status, created_at, id)',
+  );
+  late final Index participationConflictsParticipantIdx = Index(
+    'participation_conflicts_participant_idx',
+    'CREATE INDEX participation_conflicts_participant_idx ON participation_conflicts (event_participant_id)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -10062,6 +11437,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     eventSetupOutboxOperations,
     eventSetupPullCheckpoints,
     eventSetupConflicts,
+    participationOutboxOperations,
+    participationPullCheckpoints,
+    participationConflicts,
     playersDisplayNameIdx,
     eventsStatusScheduledAtIdx,
     eventDivisionsEventIdIdx,
@@ -10087,6 +11465,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     syncConflictsEntityIdx,
     eventSetupOutboxEligibilityIdx,
     eventSetupConflictsEventIdx,
+    participationOutboxEligibilityIdx,
+    participationConflictsParticipantIdx,
   ];
   @override
   DriftDatabaseOptions get options =>
@@ -12891,6 +14271,93 @@ final class $$EventParticipantsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<
+    $ParticipationOutboxOperationsTable,
+    List<LocalParticipationOutboxRow>
+  >
+  _participationOutboxOperationsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.participationOutboxOperations,
+        aliasName: 'event_participants__id__participation_outbox_operations__event_participant_id',
+      );
+
+  $$ParticipationOutboxOperationsTableProcessedTableManager
+  get participationOutboxOperationsRefs {
+    final manager =
+        $$ParticipationOutboxOperationsTableTableManager(
+          $_db,
+          $_db.participationOutboxOperations,
+        ).filter(
+          (f) => f.eventParticipantId.id.sqlEquals($_itemColumn<String>('id')!),
+        );
+
+    final cache = $_typedResult.readTableOrNull(
+      _participationOutboxOperationsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $ParticipationPullCheckpointsTable,
+    List<LocalParticipationCheckpointRow>
+  >
+  _participationPullCheckpointsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.participationPullCheckpoints,
+        aliasName: 'event_participants__id__participation_pull_checkpoints__cursor_participant_id',
+      );
+
+  $$ParticipationPullCheckpointsTableProcessedTableManager
+  get participationPullCheckpointsRefs {
+    final manager =
+        $$ParticipationPullCheckpointsTableTableManager(
+          $_db,
+          $_db.participationPullCheckpoints,
+        ).filter(
+          (f) =>
+              f.cursorParticipantId.id.sqlEquals($_itemColumn<String>('id')!),
+        );
+
+    final cache = $_typedResult.readTableOrNull(
+      _participationPullCheckpointsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $ParticipationConflictsTable,
+    List<LocalParticipationConflictRow>
+  >
+  _participationConflictsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.participationConflicts,
+    aliasName:
+        'event_participants__id__participation_conflicts__event_participant_id',
+  );
+
+  $$ParticipationConflictsTableProcessedTableManager
+  get participationConflictsRefs {
+    final manager =
+        $$ParticipationConflictsTableTableManager(
+          $_db,
+          $_db.participationConflicts,
+        ).filter(
+          (f) => f.eventParticipantId.id.sqlEquals($_itemColumn<String>('id')!),
+        );
+
+    final cache = $_typedResult.readTableOrNull(
+      _participationConflictsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$EventParticipantsTableFilterComposer
@@ -13025,6 +14492,90 @@ class $$EventParticipantsTableFilterComposer
                 $removeJoinBuilderFromRootComposer,
           ),
     );
+    return f(composer);
+  }
+
+  Expression<bool> participationOutboxOperationsRefs(
+    Expression<bool> Function(
+      $$ParticipationOutboxOperationsTableFilterComposer f,
+    )
+    f,
+  ) {
+    final $$ParticipationOutboxOperationsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.participationOutboxOperations,
+          getReferencedColumn: (t) => t.eventParticipantId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ParticipationOutboxOperationsTableFilterComposer(
+                $db: $db,
+                $table: $db.participationOutboxOperations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<bool> participationPullCheckpointsRefs(
+    Expression<bool> Function(
+      $$ParticipationPullCheckpointsTableFilterComposer f,
+    )
+    f,
+  ) {
+    final $$ParticipationPullCheckpointsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.participationPullCheckpoints,
+          getReferencedColumn: (t) => t.cursorParticipantId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ParticipationPullCheckpointsTableFilterComposer(
+                $db: $db,
+                $table: $db.participationPullCheckpoints,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<bool> participationConflictsRefs(
+    Expression<bool> Function($$ParticipationConflictsTableFilterComposer f) f,
+  ) {
+    final $$ParticipationConflictsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.participationConflicts,
+          getReferencedColumn: (t) => t.eventParticipantId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ParticipationConflictsTableFilterComposer(
+                $db: $db,
+                $table: $db.participationConflicts,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
@@ -13241,6 +14792,90 @@ class $$EventParticipantsTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> participationOutboxOperationsRefs<T extends Object>(
+    Expression<T> Function(
+      $$ParticipationOutboxOperationsTableAnnotationComposer a,
+    )
+    f,
+  ) {
+    final $$ParticipationOutboxOperationsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.participationOutboxOperations,
+          getReferencedColumn: (t) => t.eventParticipantId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ParticipationOutboxOperationsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.participationOutboxOperations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> participationPullCheckpointsRefs<T extends Object>(
+    Expression<T> Function(
+      $$ParticipationPullCheckpointsTableAnnotationComposer a,
+    )
+    f,
+  ) {
+    final $$ParticipationPullCheckpointsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.participationPullCheckpoints,
+          getReferencedColumn: (t) => t.cursorParticipantId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ParticipationPullCheckpointsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.participationPullCheckpoints,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> participationConflictsRefs<T extends Object>(
+    Expression<T> Function($$ParticipationConflictsTableAnnotationComposer a) f,
+  ) {
+    final $$ParticipationConflictsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.participationConflicts,
+          getReferencedColumn: (t) => t.eventParticipantId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ParticipationConflictsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.participationConflicts,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$EventParticipantsTableTableManager
@@ -13261,6 +14896,9 @@ class $$EventParticipantsTableTableManager
             bool playerId,
             bool divisionParticipantsRefs,
             bool participantPaymentsRefs,
+            bool participationOutboxOperationsRefs,
+            bool participationPullCheckpointsRefs,
+            bool participationConflictsRefs,
           })
         > {
   $$EventParticipantsTableTableManager(
@@ -13337,12 +14975,20 @@ class $$EventParticipantsTableTableManager
                 playerId = false,
                 divisionParticipantsRefs = false,
                 participantPaymentsRefs = false,
+                participationOutboxOperationsRefs = false,
+                participationPullCheckpointsRefs = false,
+                participationConflictsRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (divisionParticipantsRefs) db.divisionParticipants,
                     if (participantPaymentsRefs) db.participantPayments,
+                    if (participationOutboxOperationsRefs)
+                      db.participationOutboxOperations,
+                    if (participationPullCheckpointsRefs)
+                      db.participationPullCheckpoints,
+                    if (participationConflictsRefs) db.participationConflicts,
                   ],
                   addJoins:
                       <
@@ -13429,6 +15075,69 @@ class $$EventParticipantsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (participationOutboxOperationsRefs)
+                        await $_getPrefetchedData<
+                          LocalEventParticipantRow,
+                          $EventParticipantsTable,
+                          LocalParticipationOutboxRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$EventParticipantsTableReferences
+                              ._participationOutboxOperationsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$EventParticipantsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).participationOutboxOperationsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.eventParticipantId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (participationPullCheckpointsRefs)
+                        await $_getPrefetchedData<
+                          LocalEventParticipantRow,
+                          $EventParticipantsTable,
+                          LocalParticipationCheckpointRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$EventParticipantsTableReferences
+                              ._participationPullCheckpointsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$EventParticipantsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).participationPullCheckpointsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.cursorParticipantId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (participationConflictsRefs)
+                        await $_getPrefetchedData<
+                          LocalEventParticipantRow,
+                          $EventParticipantsTable,
+                          LocalParticipationConflictRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$EventParticipantsTableReferences
+                              ._participationConflictsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$EventParticipantsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).participationConflictsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.eventParticipantId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -13454,6 +15163,9 @@ typedef $$EventParticipantsTableProcessedTableManager =
         bool playerId,
         bool divisionParticipantsRefs,
         bool participantPaymentsRefs,
+        bool participationOutboxOperationsRefs,
+        bool participationPullCheckpointsRefs,
+        bool participationConflictsRefs,
       })
     >;
 typedef $$DivisionParticipantsTableCreateCompanionBuilder =
@@ -20962,6 +22674,1311 @@ typedef $$EventSetupConflictsTableProcessedTableManager =
       LocalEventSetupConflictRow,
       PrefetchHooks Function({bool operationId, bool eventId})
     >;
+typedef $$ParticipationOutboxOperationsTableCreateCompanionBuilder =
+    ParticipationOutboxOperationsCompanion Function({
+      required String id,
+      required String eventParticipantId,
+      Value<int?> baseVersion,
+      required String payloadJson,
+      required DateTime createdAt,
+      required String status,
+      Value<String?> failureMessage,
+      Value<int> rowid,
+    });
+typedef $$ParticipationOutboxOperationsTableUpdateCompanionBuilder =
+    ParticipationOutboxOperationsCompanion Function({
+      Value<String> id,
+      Value<String> eventParticipantId,
+      Value<int?> baseVersion,
+      Value<String> payloadJson,
+      Value<DateTime> createdAt,
+      Value<String> status,
+      Value<String?> failureMessage,
+      Value<int> rowid,
+    });
+
+final class $$ParticipationOutboxOperationsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $ParticipationOutboxOperationsTable,
+          LocalParticipationOutboxRow
+        > {
+  $$ParticipationOutboxOperationsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $EventParticipantsTable _eventParticipantIdTable(_$AppDatabase db) =>
+      db.eventParticipants.createAlias(
+        'participation_outbox_operations__event_participant_id__event_participants__id',
+      );
+
+  $$EventParticipantsTableProcessedTableManager get eventParticipantId {
+    final $_column = $_itemColumn<String>('event_participant_id')!;
+
+    final manager = $$EventParticipantsTableTableManager(
+      $_db,
+      $_db.eventParticipants,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_eventParticipantIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $ParticipationConflictsTable,
+    List<LocalParticipationConflictRow>
+  >
+  _participationConflictsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.participationConflicts,
+        aliasName: 'participation_outbox_operations__id__participation_conflicts__operation_id',
+      );
+
+  $$ParticipationConflictsTableProcessedTableManager
+  get participationConflictsRefs {
+    final manager = $$ParticipationConflictsTableTableManager(
+      $_db,
+      $_db.participationConflicts,
+    ).filter((f) => f.operationId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _participationConflictsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$ParticipationOutboxOperationsTableFilterComposer
+    extends Composer<_$AppDatabase, $ParticipationOutboxOperationsTable> {
+  $$ParticipationOutboxOperationsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get baseVersion => $composableBuilder(
+    column: $table.baseVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get failureMessage => $composableBuilder(
+    column: $table.failureMessage,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$EventParticipantsTableFilterComposer get eventParticipantId {
+    final $$EventParticipantsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.eventParticipantId,
+      referencedTable: $db.eventParticipants,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventParticipantsTableFilterComposer(
+            $db: $db,
+            $table: $db.eventParticipants,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> participationConflictsRefs(
+    Expression<bool> Function($$ParticipationConflictsTableFilterComposer f) f,
+  ) {
+    final $$ParticipationConflictsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.participationConflicts,
+          getReferencedColumn: (t) => t.operationId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ParticipationConflictsTableFilterComposer(
+                $db: $db,
+                $table: $db.participationConflicts,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$ParticipationOutboxOperationsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ParticipationOutboxOperationsTable> {
+  $$ParticipationOutboxOperationsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get baseVersion => $composableBuilder(
+    column: $table.baseVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get failureMessage => $composableBuilder(
+    column: $table.failureMessage,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$EventParticipantsTableOrderingComposer get eventParticipantId {
+    final $$EventParticipantsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.eventParticipantId,
+      referencedTable: $db.eventParticipants,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventParticipantsTableOrderingComposer(
+            $db: $db,
+            $table: $db.eventParticipants,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ParticipationOutboxOperationsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ParticipationOutboxOperationsTable> {
+  $$ParticipationOutboxOperationsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get baseVersion => $composableBuilder(
+    column: $table.baseVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get failureMessage => $composableBuilder(
+    column: $table.failureMessage,
+    builder: (column) => column,
+  );
+
+  $$EventParticipantsTableAnnotationComposer get eventParticipantId {
+    final $$EventParticipantsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.eventParticipantId,
+          referencedTable: $db.eventParticipants,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$EventParticipantsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.eventParticipants,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+
+  Expression<T> participationConflictsRefs<T extends Object>(
+    Expression<T> Function($$ParticipationConflictsTableAnnotationComposer a) f,
+  ) {
+    final $$ParticipationConflictsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.participationConflicts,
+          getReferencedColumn: (t) => t.operationId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ParticipationConflictsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.participationConflicts,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$ParticipationOutboxOperationsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ParticipationOutboxOperationsTable,
+          LocalParticipationOutboxRow,
+          $$ParticipationOutboxOperationsTableFilterComposer,
+          $$ParticipationOutboxOperationsTableOrderingComposer,
+          $$ParticipationOutboxOperationsTableAnnotationComposer,
+          $$ParticipationOutboxOperationsTableCreateCompanionBuilder,
+          $$ParticipationOutboxOperationsTableUpdateCompanionBuilder,
+          (
+            LocalParticipationOutboxRow,
+            $$ParticipationOutboxOperationsTableReferences,
+          ),
+          LocalParticipationOutboxRow,
+          PrefetchHooks Function({
+            bool eventParticipantId,
+            bool participationConflictsRefs,
+          })
+        > {
+  $$ParticipationOutboxOperationsTableTableManager(
+    _$AppDatabase db,
+    $ParticipationOutboxOperationsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ParticipationOutboxOperationsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$ParticipationOutboxOperationsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$ParticipationOutboxOperationsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> eventParticipantId = const Value.absent(),
+                Value<int?> baseVersion = const Value.absent(),
+                Value<String> payloadJson = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> failureMessage = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ParticipationOutboxOperationsCompanion(
+                id: id,
+                eventParticipantId: eventParticipantId,
+                baseVersion: baseVersion,
+                payloadJson: payloadJson,
+                createdAt: createdAt,
+                status: status,
+                failureMessage: failureMessage,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String eventParticipantId,
+                Value<int?> baseVersion = const Value.absent(),
+                required String payloadJson,
+                required DateTime createdAt,
+                required String status,
+                Value<String?> failureMessage = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ParticipationOutboxOperationsCompanion.insert(
+                id: id,
+                eventParticipantId: eventParticipantId,
+                baseVersion: baseVersion,
+                payloadJson: payloadJson,
+                createdAt: createdAt,
+                status: status,
+                failureMessage: failureMessage,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$ParticipationOutboxOperationsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                eventParticipantId = false,
+                participationConflictsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (participationConflictsRefs) db.participationConflicts,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (eventParticipantId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.eventParticipantId,
+                            referencedTable:
+                                $$ParticipationOutboxOperationsTableReferences
+                                    ._eventParticipantIdTable(db),
+                            referencedColumn:
+                                $$ParticipationOutboxOperationsTableReferences
+                                    ._eventParticipantIdTable(db)
+                                    .id,
+                          ) as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (participationConflictsRefs)
+                        await $_getPrefetchedData<
+                          LocalParticipationOutboxRow,
+                          $ParticipationOutboxOperationsTable,
+                          LocalParticipationConflictRow
+                        >(
+                          currentTable: table,
+                          referencedTable:
+                              $$ParticipationOutboxOperationsTableReferences
+                                  ._participationConflictsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ParticipationOutboxOperationsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).participationConflictsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.operationId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$ParticipationOutboxOperationsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ParticipationOutboxOperationsTable,
+      LocalParticipationOutboxRow,
+      $$ParticipationOutboxOperationsTableFilterComposer,
+      $$ParticipationOutboxOperationsTableOrderingComposer,
+      $$ParticipationOutboxOperationsTableAnnotationComposer,
+      $$ParticipationOutboxOperationsTableCreateCompanionBuilder,
+      $$ParticipationOutboxOperationsTableUpdateCompanionBuilder,
+      (
+        LocalParticipationOutboxRow,
+        $$ParticipationOutboxOperationsTableReferences,
+      ),
+      LocalParticipationOutboxRow,
+      PrefetchHooks Function({
+        bool eventParticipantId,
+        bool participationConflictsRefs,
+      })
+    >;
+typedef $$ParticipationPullCheckpointsTableCreateCompanionBuilder =
+    ParticipationPullCheckpointsCompanion Function({
+      Value<int> singleton,
+      required DateTime cursorUpdatedAt,
+      required String cursorParticipantId,
+      required DateTime updatedAt,
+    });
+typedef $$ParticipationPullCheckpointsTableUpdateCompanionBuilder =
+    ParticipationPullCheckpointsCompanion Function({
+      Value<int> singleton,
+      Value<DateTime> cursorUpdatedAt,
+      Value<String> cursorParticipantId,
+      Value<DateTime> updatedAt,
+    });
+
+final class $$ParticipationPullCheckpointsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $ParticipationPullCheckpointsTable,
+          LocalParticipationCheckpointRow
+        > {
+  $$ParticipationPullCheckpointsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $EventParticipantsTable _cursorParticipantIdTable(_$AppDatabase db) =>
+      db.eventParticipants.createAlias(
+        'participation_pull_checkpoints__cursor_participant_id__event_participants__id',
+      );
+
+  $$EventParticipantsTableProcessedTableManager get cursorParticipantId {
+    final $_column = $_itemColumn<String>('cursor_participant_id')!;
+
+    final manager = $$EventParticipantsTableTableManager(
+      $_db,
+      $_db.eventParticipants,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_cursorParticipantIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ParticipationPullCheckpointsTableFilterComposer
+    extends Composer<_$AppDatabase, $ParticipationPullCheckpointsTable> {
+  $$ParticipationPullCheckpointsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get singleton => $composableBuilder(
+    column: $table.singleton,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get cursorUpdatedAt => $composableBuilder(
+    column: $table.cursorUpdatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$EventParticipantsTableFilterComposer get cursorParticipantId {
+    final $$EventParticipantsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cursorParticipantId,
+      referencedTable: $db.eventParticipants,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventParticipantsTableFilterComposer(
+            $db: $db,
+            $table: $db.eventParticipants,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ParticipationPullCheckpointsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ParticipationPullCheckpointsTable> {
+  $$ParticipationPullCheckpointsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get singleton => $composableBuilder(
+    column: $table.singleton,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get cursorUpdatedAt => $composableBuilder(
+    column: $table.cursorUpdatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$EventParticipantsTableOrderingComposer get cursorParticipantId {
+    final $$EventParticipantsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.cursorParticipantId,
+      referencedTable: $db.eventParticipants,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventParticipantsTableOrderingComposer(
+            $db: $db,
+            $table: $db.eventParticipants,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ParticipationPullCheckpointsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ParticipationPullCheckpointsTable> {
+  $$ParticipationPullCheckpointsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get singleton =>
+      $composableBuilder(column: $table.singleton, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get cursorUpdatedAt => $composableBuilder(
+    column: $table.cursorUpdatedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$EventParticipantsTableAnnotationComposer get cursorParticipantId {
+    final $$EventParticipantsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.cursorParticipantId,
+          referencedTable: $db.eventParticipants,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$EventParticipantsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.eventParticipants,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+}
+
+class $$ParticipationPullCheckpointsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ParticipationPullCheckpointsTable,
+          LocalParticipationCheckpointRow,
+          $$ParticipationPullCheckpointsTableFilterComposer,
+          $$ParticipationPullCheckpointsTableOrderingComposer,
+          $$ParticipationPullCheckpointsTableAnnotationComposer,
+          $$ParticipationPullCheckpointsTableCreateCompanionBuilder,
+          $$ParticipationPullCheckpointsTableUpdateCompanionBuilder,
+          (
+            LocalParticipationCheckpointRow,
+            $$ParticipationPullCheckpointsTableReferences,
+          ),
+          LocalParticipationCheckpointRow,
+          PrefetchHooks Function({bool cursorParticipantId})
+        > {
+  $$ParticipationPullCheckpointsTableTableManager(
+    _$AppDatabase db,
+    $ParticipationPullCheckpointsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ParticipationPullCheckpointsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$ParticipationPullCheckpointsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$ParticipationPullCheckpointsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> singleton = const Value.absent(),
+                Value<DateTime> cursorUpdatedAt = const Value.absent(),
+                Value<String> cursorParticipantId = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => ParticipationPullCheckpointsCompanion(
+                singleton: singleton,
+                cursorUpdatedAt: cursorUpdatedAt,
+                cursorParticipantId: cursorParticipantId,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> singleton = const Value.absent(),
+                required DateTime cursorUpdatedAt,
+                required String cursorParticipantId,
+                required DateTime updatedAt,
+              }) => ParticipationPullCheckpointsCompanion.insert(
+                singleton: singleton,
+                cursorUpdatedAt: cursorUpdatedAt,
+                cursorParticipantId: cursorParticipantId,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$ParticipationPullCheckpointsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({cursorParticipantId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (cursorParticipantId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.cursorParticipantId,
+                        referencedTable:
+                            $$ParticipationPullCheckpointsTableReferences
+                                ._cursorParticipantIdTable(db),
+                        referencedColumn:
+                            $$ParticipationPullCheckpointsTableReferences
+                                ._cursorParticipantIdTable(db)
+                                .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ParticipationPullCheckpointsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ParticipationPullCheckpointsTable,
+      LocalParticipationCheckpointRow,
+      $$ParticipationPullCheckpointsTableFilterComposer,
+      $$ParticipationPullCheckpointsTableOrderingComposer,
+      $$ParticipationPullCheckpointsTableAnnotationComposer,
+      $$ParticipationPullCheckpointsTableCreateCompanionBuilder,
+      $$ParticipationPullCheckpointsTableUpdateCompanionBuilder,
+      (
+        LocalParticipationCheckpointRow,
+        $$ParticipationPullCheckpointsTableReferences,
+      ),
+      LocalParticipationCheckpointRow,
+      PrefetchHooks Function({bool cursorParticipantId})
+    >;
+typedef $$ParticipationConflictsTableCreateCompanionBuilder =
+    ParticipationConflictsCompanion Function({
+      required String id,
+      required String operationId,
+      required String eventParticipantId,
+      required String localPayloadJson,
+      Value<String?> remotePayloadJson,
+      required DateTime detectedAt,
+      required String status,
+      Value<int> rowid,
+    });
+typedef $$ParticipationConflictsTableUpdateCompanionBuilder =
+    ParticipationConflictsCompanion Function({
+      Value<String> id,
+      Value<String> operationId,
+      Value<String> eventParticipantId,
+      Value<String> localPayloadJson,
+      Value<String?> remotePayloadJson,
+      Value<DateTime> detectedAt,
+      Value<String> status,
+      Value<int> rowid,
+    });
+
+final class $$ParticipationConflictsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $ParticipationConflictsTable,
+          LocalParticipationConflictRow
+        > {
+  $$ParticipationConflictsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $ParticipationOutboxOperationsTable _operationIdTable(
+    _$AppDatabase db,
+  ) => db.participationOutboxOperations.createAlias(
+    'participation_conflicts__operation_id__participation_outbox_operations__id',
+  );
+
+  $$ParticipationOutboxOperationsTableProcessedTableManager get operationId {
+    final $_column = $_itemColumn<String>('operation_id')!;
+
+    final manager = $$ParticipationOutboxOperationsTableTableManager(
+      $_db,
+      $_db.participationOutboxOperations,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_operationIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $EventParticipantsTable _eventParticipantIdTable(_$AppDatabase db) =>
+      db.eventParticipants.createAlias(
+        'participation_conflicts__event_participant_id__event_participants__id',
+      );
+
+  $$EventParticipantsTableProcessedTableManager get eventParticipantId {
+    final $_column = $_itemColumn<String>('event_participant_id')!;
+
+    final manager = $$EventParticipantsTableTableManager(
+      $_db,
+      $_db.eventParticipants,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_eventParticipantIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ParticipationConflictsTableFilterComposer
+    extends Composer<_$AppDatabase, $ParticipationConflictsTable> {
+  $$ParticipationConflictsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get localPayloadJson => $composableBuilder(
+    column: $table.localPayloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get remotePayloadJson => $composableBuilder(
+    column: $table.remotePayloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get detectedAt => $composableBuilder(
+    column: $table.detectedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ParticipationOutboxOperationsTableFilterComposer get operationId {
+    final $$ParticipationOutboxOperationsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.operationId,
+          referencedTable: $db.participationOutboxOperations,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ParticipationOutboxOperationsTableFilterComposer(
+                $db: $db,
+                $table: $db.participationOutboxOperations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+
+  $$EventParticipantsTableFilterComposer get eventParticipantId {
+    final $$EventParticipantsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.eventParticipantId,
+      referencedTable: $db.eventParticipants,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventParticipantsTableFilterComposer(
+            $db: $db,
+            $table: $db.eventParticipants,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ParticipationConflictsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ParticipationConflictsTable> {
+  $$ParticipationConflictsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get localPayloadJson => $composableBuilder(
+    column: $table.localPayloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get remotePayloadJson => $composableBuilder(
+    column: $table.remotePayloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get detectedAt => $composableBuilder(
+    column: $table.detectedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ParticipationOutboxOperationsTableOrderingComposer get operationId {
+    final $$ParticipationOutboxOperationsTableOrderingComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.operationId,
+          referencedTable: $db.participationOutboxOperations,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ParticipationOutboxOperationsTableOrderingComposer(
+                $db: $db,
+                $table: $db.participationOutboxOperations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+
+  $$EventParticipantsTableOrderingComposer get eventParticipantId {
+    final $$EventParticipantsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.eventParticipantId,
+      referencedTable: $db.eventParticipants,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventParticipantsTableOrderingComposer(
+            $db: $db,
+            $table: $db.eventParticipants,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ParticipationConflictsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ParticipationConflictsTable> {
+  $$ParticipationConflictsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get localPayloadJson => $composableBuilder(
+    column: $table.localPayloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get remotePayloadJson => $composableBuilder(
+    column: $table.remotePayloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get detectedAt => $composableBuilder(
+    column: $table.detectedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  $$ParticipationOutboxOperationsTableAnnotationComposer get operationId {
+    final $$ParticipationOutboxOperationsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.operationId,
+          referencedTable: $db.participationOutboxOperations,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ParticipationOutboxOperationsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.participationOutboxOperations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+
+  $$EventParticipantsTableAnnotationComposer get eventParticipantId {
+    final $$EventParticipantsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.eventParticipantId,
+          referencedTable: $db.eventParticipants,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$EventParticipantsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.eventParticipants,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+}
+
+class $$ParticipationConflictsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ParticipationConflictsTable,
+          LocalParticipationConflictRow,
+          $$ParticipationConflictsTableFilterComposer,
+          $$ParticipationConflictsTableOrderingComposer,
+          $$ParticipationConflictsTableAnnotationComposer,
+          $$ParticipationConflictsTableCreateCompanionBuilder,
+          $$ParticipationConflictsTableUpdateCompanionBuilder,
+          (
+            LocalParticipationConflictRow,
+            $$ParticipationConflictsTableReferences,
+          ),
+          LocalParticipationConflictRow,
+          PrefetchHooks Function({bool operationId, bool eventParticipantId})
+        > {
+  $$ParticipationConflictsTableTableManager(
+    _$AppDatabase db,
+    $ParticipationConflictsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ParticipationConflictsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$ParticipationConflictsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$ParticipationConflictsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> operationId = const Value.absent(),
+                Value<String> eventParticipantId = const Value.absent(),
+                Value<String> localPayloadJson = const Value.absent(),
+                Value<String?> remotePayloadJson = const Value.absent(),
+                Value<DateTime> detectedAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ParticipationConflictsCompanion(
+                id: id,
+                operationId: operationId,
+                eventParticipantId: eventParticipantId,
+                localPayloadJson: localPayloadJson,
+                remotePayloadJson: remotePayloadJson,
+                detectedAt: detectedAt,
+                status: status,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String operationId,
+                required String eventParticipantId,
+                required String localPayloadJson,
+                Value<String?> remotePayloadJson = const Value.absent(),
+                required DateTime detectedAt,
+                required String status,
+                Value<int> rowid = const Value.absent(),
+              }) => ParticipationConflictsCompanion.insert(
+                id: id,
+                operationId: operationId,
+                eventParticipantId: eventParticipantId,
+                localPayloadJson: localPayloadJson,
+                remotePayloadJson: remotePayloadJson,
+                detectedAt: detectedAt,
+                status: status,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$ParticipationConflictsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({operationId = false, eventParticipantId = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (operationId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.operationId,
+                            referencedTable:
+                                $$ParticipationConflictsTableReferences
+                                    ._operationIdTable(db),
+                            referencedColumn:
+                                $$ParticipationConflictsTableReferences
+                                    ._operationIdTable(db)
+                                    .id,
+                          ) as T;
+                        }
+                        if (eventParticipantId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.eventParticipantId,
+                            referencedTable:
+                                $$ParticipationConflictsTableReferences
+                                    ._eventParticipantIdTable(db),
+                            referencedColumn:
+                                $$ParticipationConflictsTableReferences
+                                    ._eventParticipantIdTable(db)
+                                    .id,
+                          ) as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$ParticipationConflictsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ParticipationConflictsTable,
+      LocalParticipationConflictRow,
+      $$ParticipationConflictsTableFilterComposer,
+      $$ParticipationConflictsTableOrderingComposer,
+      $$ParticipationConflictsTableAnnotationComposer,
+      $$ParticipationConflictsTableCreateCompanionBuilder,
+      $$ParticipationConflictsTableUpdateCompanionBuilder,
+      (LocalParticipationConflictRow, $$ParticipationConflictsTableReferences),
+      LocalParticipationConflictRow,
+      PrefetchHooks Function({bool operationId, bool eventParticipantId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -21009,4 +24026,21 @@ class $AppDatabaseManager {
       );
   $$EventSetupConflictsTableTableManager get eventSetupConflicts =>
       $$EventSetupConflictsTableTableManager(_db, _db.eventSetupConflicts);
+  $$ParticipationOutboxOperationsTableTableManager
+  get participationOutboxOperations =>
+      $$ParticipationOutboxOperationsTableTableManager(
+        _db,
+        _db.participationOutboxOperations,
+      );
+  $$ParticipationPullCheckpointsTableTableManager
+  get participationPullCheckpoints =>
+      $$ParticipationPullCheckpointsTableTableManager(
+        _db,
+        _db.participationPullCheckpoints,
+      );
+  $$ParticipationConflictsTableTableManager get participationConflicts =>
+      $$ParticipationConflictsTableTableManager(
+        _db,
+        _db.participationConflicts,
+      );
 }

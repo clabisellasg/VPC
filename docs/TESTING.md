@@ -435,3 +435,18 @@ not run because Docker was unavailable; the SQL assertions remain committed.
 Manual conflict injection and later lifecycle advancement were not performed
 because M9 provides no safe conflict control or tournament-format selector;
 deterministic tests cover both boundaries without changing accepted fixtures.
+
+## Milestone 10 participation coverage
+
+M10 adds deterministic service tests for registration, division scope,
+lifecycle locks, check-in correction, and Paid/Unpaid correction. In-memory
+Drift tests cover aggregate/outbox atomicity, rollback, active duplicate
+rejection, UTC/version/status round trips, and the v3→v4 migration. SQL pgTAP
+assertions cover fixed RPC privileges, private payments/receipts, active
+uniqueness, and anonymous mutation denial. Ordinary Flutter tests use no live
+network or credentials. The final suite passed all 183 tests, formatting,
+analysis, Web production build, and Android debug APK build. Linked migration
+history, linked database lint, hosted anonymous read/privacy/write-denial
+smoke checks, and the mandatory Web and physical-Android walkthroughs also
+passed. Local pgTAP was not run because the installed Docker client had no
+available daemon; its SQL assertions remain committed.

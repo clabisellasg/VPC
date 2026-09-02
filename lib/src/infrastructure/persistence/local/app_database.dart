@@ -596,6 +596,79 @@ class EventSetupConflicts extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
+@DataClassName('LocalParticipationOutboxRow')
+@TableIndex(
+  name: 'participation_outbox_eligibility_idx',
+  columns: {#status, #createdAt, #id},
+)
+class ParticipationOutboxOperations extends Table {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+  TextColumn get eventParticipantId =>
+      text().references(EventParticipants, #id, onDelete: KeyAction.restrict)();
+  IntColumn get baseVersion => integer().nullable()();
+  TextColumn get payloadJson => text().customConstraint(
+    "NOT NULL CHECK (json_valid(payload_json) AND json_type(payload_json) = 'object')",
+  )();
+  DateTimeColumn get createdAt => dateTime()();
+  TextColumn get status => text().customConstraint(
+    "NOT NULL CHECK (status IN ('pending', 'blocked', 'conflicted', 'failed'))",
+  )();
+  TextColumn get failureMessage => text().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (base_version IS NULL OR base_version >= 0)',
+    'CHECK (failure_message IS NULL OR length(failure_message) <= 240)',
+  ];
+}
+
+@DataClassName('LocalParticipationCheckpointRow')
+class ParticipationPullCheckpoints extends Table {
+  IntColumn get singleton => integer().withDefault(const Constant(1))();
+  DateTimeColumn get cursorUpdatedAt => dateTime()();
+  TextColumn get cursorParticipantId =>
+      text().references(EventParticipants, #id, onDelete: KeyAction.restrict)();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {singleton};
+
+  @override
+  List<String> get customConstraints => ['CHECK (singleton = 1)'];
+}
+
+@DataClassName('LocalParticipationConflictRow')
+@TableIndex(
+  name: 'participation_conflicts_participant_idx',
+  columns: {#eventParticipantId},
+)
+class ParticipationConflicts extends Table {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+  TextColumn get operationId => text()
+      .references(
+        ParticipationOutboxOperations,
+        #id,
+        onDelete: KeyAction.restrict,
+      )
+      .unique()();
+  TextColumn get eventParticipantId =>
+      text().references(EventParticipants, #id, onDelete: KeyAction.restrict)();
+  TextColumn get localPayloadJson => text().customConstraint(
+    "NOT NULL CHECK (json_valid(local_payload_json) AND json_type(local_payload_json) = 'object')",
+  )();
+  TextColumn get remotePayloadJson => text().nullable()();
+  DateTimeColumn get detectedAt => dateTime()();
+  TextColumn get status => text().customConstraint(
+    "NOT NULL CHECK (status IN ('unresolved', 'resolved'))",
+  )();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
 @DriftDatabase(
   tables: [
     Players,
@@ -616,6 +689,9 @@ class EventSetupConflicts extends Table {
     EventSetupOutboxOperations,
     EventSetupPullCheckpoints,
     EventSetupConflicts,
+    ParticipationOutboxOperations,
+    ParticipationPullCheckpoints,
+    ParticipationConflicts,
   ],
 )
 final class AppDatabase extends _$AppDatabase {
@@ -626,7 +702,7 @@ final class AppDatabase extends _$AppDatabase {
   AppDatabase.inMemory() : super(openInMemoryDatabaseConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -649,7 +725,7 @@ final class AppDatabase extends _$AppDatabase {
           return;
         }
       }
-      if (from <= 2 && to == 3) {
+      if (from <= 2 && to >= 3) {
         await migrator.alterTable(TableMigration(eventDivisions));
         await migrator.createTable(eventSetupOutboxOperations);
         await migrator.createTable(eventSetupPullCheckpoints);
@@ -659,6 +735,16 @@ final class AppDatabase extends _$AppDatabase {
         for (final statement in _m09IntegrityTriggers) {
           await customStatement(statement);
         }
+        if (to == 3) {
+          return;
+        }
+      }
+      if (from <= 3 && to == 4) {
+        await migrator.createTable(participationOutboxOperations);
+        await migrator.createTable(participationPullCheckpoints);
+        await migrator.createTable(participationConflicts);
+        await migrator.createIndex(participationOutboxEligibilityIdx);
+        await migrator.createIndex(participationConflictsParticipantIdx);
         return;
       }
       throw StateError(

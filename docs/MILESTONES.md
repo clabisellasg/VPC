@@ -99,7 +99,7 @@ authorized proceeding.
 - **Purpose:** Add players to events, manage attendance, and track Paid/Unpaid
   status and totals.
 - **Dependencies:** M9.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED.
 
 ### M11 — Team Formation
 

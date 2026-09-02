@@ -208,3 +208,17 @@ work and preserves pending/blocked/conflicted local intent.
 Anonymous M6 refresh detects pending event setup and preserves it. Realtime is
 still a refetch hint. No participant, payment, team, match, queue, placement,
 profile, role, or claim synchronization was added. `OPEN-009` remains open.
+
+## M10 bounded participation aggregate slice
+
+Android atomically stores an event participant, active/tombstoned division
+assignments, one event-scoped Paid/Unpaid record, and a stable operation UUID.
+The fixed cloud command validates organizer authority, lifecycle, player/event/
+division scope, versions, and idempotency in one transaction. Identical replay
+returns the original result; changed-payload reuse and stale versions fail.
+
+Checkpointed pull preserves UUIDs, UTC metadata, versions, and tombstones and
+never enqueues a local operation. Pending/blocked/conflicted local intent is not
+overwritten. Existing Realtime publication entries remain refresh hints; M10
+does not trust notification payloads or synchronize teams, matches, queues,
+profiles, roles, or claims. `OPEN-009` remains unresolved.

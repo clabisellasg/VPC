@@ -125,6 +125,12 @@ class _EventCard extends ConsumerWidget {
               spacing: 8,
               runSpacing: 8,
               children: [
+                OutlinedButton(
+                  onPressed: () => context.push(
+                    '/organizer/events/${setup.event.id.value}/participants',
+                  ),
+                  child: const Text('Manage participants'),
+                ),
                 if (setup.event.status == EventStatus.upcoming)
                   OutlinedButton(
                     onPressed: () => context.push(

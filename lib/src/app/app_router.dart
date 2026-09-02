@@ -14,9 +14,15 @@ import 'package:vpc/src/presentation/players/public_player_directory_page.dart';
 import 'package:vpc/src/presentation/players/public_player_profile_page.dart';
 import 'package:vpc/src/presentation/events/organizer_events_page.dart';
 import 'package:vpc/src/presentation/events/organizer_event_setup_page.dart';
+import 'package:vpc/src/presentation/participation/add_participant_page.dart';
+import 'package:vpc/src/presentation/participation/organizer_participants_page.dart';
 import 'package:vpc/src/domain/common/domain_enums.dart';
 
 GoRouter createAppRouter() {
+  // Organizer drill-downs use push so Android system back returns through the
+  // account stack. Reflect those imperative routes in the Web URL as well so
+  // refresh and browser back/forward preserve the visible page.
+  GoRouter.optionURLReflectsImperativeAPIs = true;
   return GoRouter(
     initialLocation: '/',
     routes: <RouteBase>[
@@ -104,6 +110,20 @@ GoRouter createAppRouter() {
                   type: EventType.formal,
                   eventId: state.pathParameters['eventId'],
                 ),
+              ),
+              GoRoute(
+                path: ':eventId/participants',
+                builder: (context, state) => OrganizerParticipantsPage(
+                  eventId: state.pathParameters['eventId'] ?? '',
+                ),
+                routes: [
+                  GoRoute(
+                    path: 'add',
+                    builder: (context, state) => AddParticipantPage(
+                      eventId: state.pathParameters['eventId'] ?? '',
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

@@ -6,10 +6,10 @@ single-court community. It will eventually manage reusable community players,
 participation, check-in, payment status, temporary teams, approved tournament
 formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 9 — Event and Division Lifecycle (`COMPLETED`).
-The accepted M0–M9 baseline is intact. M9 adds organizer casual/formal
-setup, divisions, quick casual creation, and adjacent lifecycle controls without
-adding participation, payments, teams, or tournament operation.
+**Current status:** Milestone 10 — Participation, Check-In, and Payment Status
+(`COMPLETED`). The accepted M0–M10 baseline includes
+organizer-managed registration, division assignment, check-in, and private
+Paid/Unpaid recording without payment processing or team formation.
 
 ## Version 1 technology stack
 
@@ -52,6 +52,7 @@ scope, replace the stack, or begin a later milestone.
 - [Milestone 7 implementation record](docs/milestones/M07_ACCOUNTS_ROLES_PLAYER_CLAIMING.md)
 - [Milestone 8 implementation record](docs/milestones/M08_PERMANENT_COMMUNITY_PLAYER_DIRECTORY.md)
 - [Milestone 9 implementation record](docs/milestones/M09_EVENT_DIVISION_SETUP.md)
+- [Milestone 10 implementation record](docs/milestones/M10_EVENT_PARTICIPATION.md)
 
 ## Development setup
 
@@ -153,7 +154,7 @@ supabase db lint --linked
 
 The Web output is written to `build/web`. The Android debug APK is written to
 `build/app/outputs/flutter-apk/app-debug.apk`. These are local build artifacts,
-not deployments or releases. The M5 coordinator requires both Android local
-persistence and configured Supabase; without an authenticated organizer
-session, queued uploads remain pending. Organizer tournament administration
-and permanent-player directory editing remain future milestone work.
+not deployments or releases. Android participant changes commit with a durable
+local outbox and may remain pending until a confirmed organizer session and
+connectivity are available. Web organizer operations require an online,
+configured Supabase client. Payment status is administrative Paid/Unpaid only.

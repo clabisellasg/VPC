@@ -95,4 +95,55 @@ void main() {
     await database.close();
     schema.close();
   });
+
+  test(
+    'v3 to v4 preserves participation and adds bounded sync tables',
+    () async {
+      final verifier = SchemaVerifier(GeneratedHelper());
+      final schema = await verifier.schemaAt(3);
+      schema.rawDatabase.execute('''
+      INSERT INTO players (
+        id,display_name,created_at,updated_at,version,deleted_at
+      ) VALUES (
+        '30000000-0000-4000-8000-000000000001','Existing Player',
+        '2026-09-01T00:00:00.000Z','2026-09-01T00:00:00.000Z',0,NULL
+      );
+      INSERT INTO events (
+        id,name,scheduled_at,event_type,status,court_label,
+        created_at,updated_at,version,deleted_at
+      ) VALUES (
+        '30000000-0000-4000-8000-000000000002','Existing Event',
+        '2026-09-02T00:00:00.000Z','formal','registration','Community Court',
+        '2026-09-01T00:00:00.000Z','2026-09-01T00:00:00.000Z',1,NULL
+      );
+      INSERT INTO event_participants (
+        id,event_id,player_id,check_in_status,created_at,updated_at,version,deleted_at
+      ) VALUES (
+        '30000000-0000-4000-8000-000000000003',
+        '30000000-0000-4000-8000-000000000002',
+        '30000000-0000-4000-8000-000000000001','notPresent',
+        '2026-09-01T00:00:00.000Z','2026-09-01T00:00:00.000Z',0,NULL
+      );
+    ''');
+
+      final database = AppDatabase(schema.newConnection());
+      await verifier.migrateAndValidate(database, 4);
+      expect(
+        await database.select(database.eventParticipants).get(),
+        hasLength(1),
+      );
+      final tables = await database
+          .customSelect(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'participation_%' ORDER BY name",
+          )
+          .get();
+      expect(tables.map((row) => row.read<String>('name')), [
+        'participation_conflicts',
+        'participation_outbox_operations',
+        'participation_pull_checkpoints',
+      ]);
+      await database.close();
+      schema.close();
+    },
+  );
 }

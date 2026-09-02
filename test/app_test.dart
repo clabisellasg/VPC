@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vpc/src/app/app.dart';
 import 'package:vpc/src/core/config/app_environment.dart';
 import 'package:vpc/src/infrastructure/persistence/local/local_persistence_providers.dart';
@@ -33,6 +34,7 @@ void main() {
       findsNothing,
     );
     expect(find.byIcon(Icons.add), findsNothing);
+    expect(GoRouter.optionURLReflectsImperativeAPIs, isTrue);
   });
 
   testWidgets('renders an unknown route safely and visibly', (tester) async {

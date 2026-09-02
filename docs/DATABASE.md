@@ -331,3 +331,18 @@ Android adds separate event-aggregate outbox, checkpoint, and conflict tables.
 The hosted private receipt table supports fixed idempotent application and is
 denied to client roles. Records retain UUID, UTC, version, tombstone,
 foreign-key, active-name uniqueness, and restrictive-delete constraints.
+
+## M10 participation mapping
+
+`event_participants` links one permanent `players` row to one `events` row and
+stores the approved check-in enum. The active `(event_id, player_id)` index
+prevents duplicate registration. `division_participants` links that participant
+to one or more active divisions belonging to the same event; its active unique
+index prevents duplicate assignments. `participant_payments` remains private,
+and M10 creates one event-scoped row (`division_id` null) containing only
+`unpaid` or `paid`. There is no amount or payment-processing column to migrate.
+
+Android schema version 4 adds only `participation_outbox_operations`,
+`participation_pull_checkpoints`, and `participation_conflicts`. PostgreSQL adds
+a private receipt table and fixed aggregate apply/pull functions; it adds no
+Auth identity, team, match, or sync columns to public domain rows.

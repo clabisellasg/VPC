@@ -268,3 +268,17 @@ also confirmed immediate local pending feedback, persistence across restart,
 reconnect reconciliation, and gesture-back navigation. Conflict injection and
 post-registration lifecycle checks remain deterministic-test-only because M9
 has no safe production conflict fixture or tournament-format selector.
+
+## M10 participation acceptance
+
+Use only clearly synthetic events and players. Verify organizer registration,
+multiple division assignment, duplicate rejection, check-in/uncheck,
+Paid/Unpaid correction, offline pending persistence, reconnect idempotency, and
+lifecycle locks. Never enter real payment information: the application records
+only administrative status. Payment rows and private operation receipts must
+remain unavailable to guests and ordinary members. The physical Android and
+Web walkthroughs passed on 2026-09-02 using synthetic records. Web validation
+also confirmed reflected organizer URLs, direct-route refresh, and browser
+back/forward behavior; Android validation confirmed pending work survives a
+restart, reconnect is idempotent, and conflicts remain visible without an
+automatic winner.
