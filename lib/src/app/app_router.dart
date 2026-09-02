@@ -12,6 +12,8 @@ import 'package:vpc/src/presentation/accounts/player_claim_page.dart';
 import 'package:vpc/src/presentation/players/organizer_player_creation_page.dart';
 import 'package:vpc/src/presentation/players/public_player_directory_page.dart';
 import 'package:vpc/src/presentation/players/public_player_profile_page.dart';
+import 'package:vpc/src/presentation/players/organizer_player_skill_page.dart';
+import 'package:vpc/src/presentation/teams/organizer_team_formation_page.dart';
 import 'package:vpc/src/presentation/events/organizer_events_page.dart';
 import 'package:vpc/src/presentation/events/organizer_event_setup_page.dart';
 import 'package:vpc/src/presentation/participation/add_participant_page.dart';
@@ -93,6 +95,12 @@ GoRouter createAppRouter() {
             builder: (context, state) => const OrganizerPlayerCreationPage(),
           ),
           GoRoute(
+            path: '/organizer/players/:playerId/skill',
+            builder: (context, state) => OrganizerPlayerSkillPage(
+              playerId: state.pathParameters['playerId'] ?? '',
+            ),
+          ),
+          GoRoute(
             path: '/organizer/events',
             builder: (context, state) => const OrganizerEventsPage(),
             routes: [
@@ -124,6 +132,13 @@ GoRouter createAppRouter() {
                     ),
                   ),
                 ],
+              ),
+              GoRoute(
+                path: ':eventId/divisions/:divisionId/teams',
+                builder: (context, state) => OrganizerTeamFormationPage(
+                  eventId: state.pathParameters['eventId'] ?? '',
+                  divisionId: state.pathParameters['divisionId'] ?? '',
+                ),
               ),
             ],
           ),

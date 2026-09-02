@@ -346,3 +346,18 @@ Android schema version 4 adds only `participation_outbox_operations`,
 `participation_pull_checkpoints`, and `participation_conflicts`. PostgreSQL adds
 a private receipt table and fixed aggregate apply/pull functions; it adds no
 Auth identity, team, match, or sync columns to public domain rows.
+
+## M11 player-skill and team mapping
+
+`players.skill_level` is nullable and constrained to integers 1 through 5.
+Existing rows remain null/Unrated; labels are presentation values, not stored
+authority. PostgreSQL and Drift preserve the field through public reads and the
+existing player synchronization protocol.
+
+`teams` remain division-scoped temporary identities and `team_members` retain
+permanent `player_id` references. M11 persists only complete two-member teams;
+an odd eligible participant has no fake team row. Active membership must be a
+checked-in, active event and division participant, and one player may have only
+one active team in a division. Android schema version 5 adds bounded
+`team_formation_outbox_operations`, `team_formation_pull_checkpoints`, and
+`team_formation_conflicts`; they do not change the cloud domain tables.

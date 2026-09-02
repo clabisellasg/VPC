@@ -9,6 +9,7 @@ import '../../../domain/events/event.dart' as domain;
 import '../../../domain/events/event_division.dart';
 import '../../../domain/matches/match.dart' as domain;
 import '../../../domain/players/permanent_player.dart';
+import '../../../domain/players/player_skill.dart';
 import 'app_database.dart';
 
 RecordMetadata metadataFromValues({
@@ -27,6 +28,7 @@ PermanentPlayer playerFromRow(LocalPlayerRow row) => PermanentPlayer(
   id: PlayerId(row.id),
   displayName: row.displayName,
   accountId: null,
+  skill: row.skillLevel == null ? null : PlayerSkill(row.skillLevel!),
   metadata: metadataFromValues(
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
@@ -38,6 +40,7 @@ PermanentPlayer playerFromRow(LocalPlayerRow row) => PermanentPlayer(
 PlayersCompanion playerToCompanion(PermanentPlayer player) => PlayersCompanion(
   id: Value(player.id.value),
   displayName: Value(player.displayName),
+  skillLevel: Value(player.skill?.value),
   createdAt: Value(player.metadata.createdAt),
   updatedAt: Value(player.metadata.updatedAt),
   version: Value(player.metadata.recordVersion),

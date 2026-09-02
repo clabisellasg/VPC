@@ -2,6 +2,7 @@ import '../../domain/common/domain_failure.dart';
 import '../../domain/common/entity_id.dart';
 import '../../domain/common/record_metadata.dart';
 import '../../domain/players/permanent_player.dart';
+import '../../domain/players/player_skill.dart';
 
 enum SyncEntityType { player }
 
@@ -31,6 +32,7 @@ final class PlayerSyncPayload {
       id: player.id,
       displayName: player.displayName,
       metadata: player.metadata,
+      skill: player.skill,
     );
   }
 
@@ -38,14 +40,20 @@ final class PlayerSyncPayload {
     required this.id,
     required this.displayName,
     required this.metadata,
+    required this.skill,
   });
 
   final PlayerId id;
   final String displayName;
   final RecordMetadata metadata;
+  final PlayerSkill? skill;
 
-  PermanentPlayer toPlayer() =>
-      PermanentPlayer(id: id, displayName: displayName, metadata: metadata);
+  PermanentPlayer toPlayer() => PermanentPlayer(
+    id: id,
+    displayName: displayName,
+    metadata: metadata,
+    skill: skill,
+  );
 }
 
 final class SyncOperation {

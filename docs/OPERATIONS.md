@@ -282,3 +282,13 @@ also confirmed reflected organizer URLs, direct-route refresh, and browser
 back/forward behavior; Android validation confirmed pending work survives a
 restart, reconnect is idempotent, and conflicts remain visible without an
 automatic winner.
+
+## M11 team-formation acceptance
+
+Before forming teams, an organizer confirms the event is in REGISTRATION,
+division participants are checked in, and every player intended for balanced
+generation has a community skill. Preview does not save. Confirmation replaces
+the draft aggregate; Android may show Pending until the organizer-authorized
+upload succeeds. Unrated and odd players remain plainly visible. Conflicts must
+be preserved for later handling, never silently resolved. The Android and Web
+walkthrough in the M11 record is mandatory before marking M11 complete.

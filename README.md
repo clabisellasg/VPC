@@ -6,10 +6,9 @@ single-court community. It will eventually manage reusable community players,
 participation, check-in, payment status, temporary teams, approved tournament
 formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 10 — Participation, Check-In, and Payment Status
-(`COMPLETED`). The accepted M0–M10 baseline includes
-organizer-managed registration, division assignment, check-in, and private
-Paid/Unpaid recording without payment processing or team formation.
+**Current status:** Milestone 11 — Team Formation (`COMPLETED`). M11 adds the
+organizer-maintained 1–5/null community skill scale and preview-first manual,
+random, and simple balanced doubles formation without tournament generation.
 
 ## Version 1 technology stack
 
@@ -53,6 +52,7 @@ scope, replace the stack, or begin a later milestone.
 - [Milestone 8 implementation record](docs/milestones/M08_PERMANENT_COMMUNITY_PLAYER_DIRECTORY.md)
 - [Milestone 9 implementation record](docs/milestones/M09_EVENT_DIVISION_SETUP.md)
 - [Milestone 10 implementation record](docs/milestones/M10_EVENT_PARTICIPATION.md)
+- [Milestone 11 implementation record](docs/milestones/M11_TEAM_FORMATION.md)
 
 ## Development setup
 

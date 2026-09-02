@@ -78,6 +78,10 @@ explicit planner/architect approval, with the approval and date recorded.
 | V1-068 | M10 permits one event participant to hold multiple active division assignments in the same event; teams, partners, seeds, and tournament positions remain M11+ concerns. | ACCEPTED |
 | V1-069 | M10 registration creates one event-scoped administrative Paid/Unpaid record. The existing nullable division scope remains structurally compatible; M10 processes no money. | ACCEPTED |
 | V1-070 | Android local schema version 4 adds a bounded participation aggregate outbox, pull checkpoint, and preserved-conflict slice; Web uses the organizer-authorized cloud command online without SQLite. | ACCEPTED |
+| V1-071 | Community player skill is organizer-maintained integer level 1 Beginner, 2 Developing, 3 Intermediate, 4 Advanced, or 5 Competitive; null is Unrated and is never silently treated as level 3. | ACCEPTED |
+| V1-072 | M11 teams are complete pickleball doubles pairs of exactly two checked-in division participants. An odd eligible player remains explicitly Unassigned; no incomplete team row is created. | ACCEPTED |
+| V1-073 | Random formation shuffles once using an injectable source and pairs sequentially. Balanced formation deterministically sorts skill descending with PlayerId tie-breaks and pairs strongest with weakest; spread is maximum minus minimum team-strength sum. | ACCEPTED |
+| V1-074 | Android local schema version 5 adds nullable player skill and a bounded team-formation outbox/checkpoint/conflict slice. Team replacement is one aggregate; Web applies it online without SQLite. | ACCEPTED |
 
 ## Open decisions
 
@@ -86,14 +90,12 @@ decision is required before affected implementation proceeds.
 
 | ID | Open question | Resolve by | Status |
 | --- | --- | --- | --- |
-| OPEN-002 | What player skill scale is approved for balanced team generation? | Before M11 implementation | OPEN |
 | OPEN-003 | What are the exact score validation rules? | Before M12 implementation | OPEN |
 | OPEN-004 | How may a completed result be corrected after bracket progression? | Before M13 implementation | OPEN |
 | OPEN-005 | What is the round-robin tie-breaker order? | Before M14 implementation | OPEN |
 | OPEN-006 | Does double elimination use a grand-final bracket reset? | Before M15 implementation | OPEN |
 | OPEN-009 | What is the exact simultaneous-organizer conflict/control policy? | Before M5 implementation | OPEN |
 | OPEN-010 | Which free static hosting provider will serve the Flutter Web/PWA? | Before M19 implementation | OPEN |
-| OPEN-012 | Is Version 1 team size fixed at two or configurable? | Before M11 implementation | OPEN |
 
 ## Explicitly approved changes
 
@@ -103,6 +105,8 @@ decision is required before affected implementation proceeds.
 | OPEN-011 | M7 planner specification, 2026-08-28 | Resolved by V1-054: initial V1 authentication is email/password with hosted confirmation preserved. Other providers remain deferred, not accepted. | RESOLVED |
 | OPEN-007 | M10 planner specification, 2026-09-01 | Resolved by V1-068: an event participant may be assigned to multiple divisions in the same event. | RESOLVED |
 | OPEN-008 | M10 planner specification, 2026-09-01 | Resolved by V1-069 for M10: registration uses one event-scoped Paid/Unpaid record; division-scoped rows are not created by the M10 UI. | RESOLVED |
+| OPEN-002 | M11 planner specification, 2026-09-02 | Resolved by V1-071 with the permanent 1–5/null community scale. | RESOLVED |
+| OPEN-012 | M11 planner specification, 2026-09-02 | Resolved by V1-072: Version 1 team formation creates complete two-player doubles teams. | RESOLVED |
 
 ## Future-version suggestions
 

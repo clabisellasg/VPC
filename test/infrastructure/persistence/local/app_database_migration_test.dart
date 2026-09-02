@@ -146,4 +146,40 @@ void main() {
       schema.close();
     },
   );
+
+  test(
+    'v4 to v5 preserves players and adds nullable skill and team sync',
+    () async {
+      final verifier = SchemaVerifier(GeneratedHelper());
+      final schema = await verifier.schemaAt(4);
+      schema.rawDatabase.execute('''
+      INSERT INTO players (id,display_name,created_at,updated_at,version,deleted_at)
+      VALUES ('40000000-0000-4000-8000-000000000001','Existing Unrated Player',
+      '2026-09-01T00:00:00.000Z','2026-09-01T00:00:00.000Z',0,NULL)
+    ''');
+      final database = AppDatabase(schema.newConnection());
+      await verifier.migrateAndValidate(database, 5);
+      final player = await database.select(database.players).getSingle();
+      expect(player.skillLevel, isNull);
+      await (database.update(database.players)
+            ..where((row) => row.id.equals(player.id)))
+          .write(const PlayersCompanion(skillLevel: Value(5)));
+      expect(
+        (await database.select(database.players).getSingle()).skillLevel,
+        5,
+      );
+      final tables = await database
+          .customSelect(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'team_formation_%' ORDER BY name",
+          )
+          .get();
+      expect(tables.map((row) => row.read<String>('name')), [
+        'team_formation_conflicts',
+        'team_formation_outbox_operations',
+        'team_formation_pull_checkpoints',
+      ]);
+      await database.close();
+      schema.close();
+    },
+  );
 }

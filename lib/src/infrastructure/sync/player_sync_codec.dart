@@ -5,6 +5,7 @@ import '../../domain/common/domain_failure.dart';
 import '../../domain/common/entity_id.dart';
 import '../../domain/common/record_metadata.dart';
 import '../../domain/players/permanent_player.dart';
+import '../../domain/players/player_skill.dart';
 
 String encodePlayerPayload(PlayerSyncPayload payload) =>
     jsonEncode(<String, Object?>{
@@ -12,6 +13,7 @@ String encodePlayerPayload(PlayerSyncPayload payload) =>
       'deleted_at': payload.metadata.deletedAt?.toIso8601String(),
       'display_name': payload.displayName,
       'id': payload.id.value,
+      'skill_level': payload.skill?.value,
       'updated_at': payload.metadata.updatedAt.toIso8601String(),
       'version': payload.metadata.recordVersion,
     });
@@ -32,6 +34,11 @@ PermanentPlayer playerFromSyncMap(Map<String, dynamic> map) {
     return PermanentPlayer(
       id: PlayerId(map['id'] as String),
       displayName: map['display_name'] as String,
+      skill: switch (map['skill_level']) {
+        final num value => PlayerSkill(value.toInt()),
+        null => null,
+        _ => throw const FormatException(),
+      },
       metadata: RecordMetadata(
         createdAt: DateTime.parse(map['created_at'] as String).toUtc(),
         updatedAt: DateTime.parse(map['updated_at'] as String).toUtc(),

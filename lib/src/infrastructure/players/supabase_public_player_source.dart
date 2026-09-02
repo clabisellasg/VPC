@@ -6,6 +6,7 @@ import '../../domain/common/domain_failure.dart';
 import '../../domain/common/entity_id.dart';
 import '../../domain/common/record_metadata.dart';
 import '../../domain/common/repository_result.dart';
+import '../../domain/players/player_skill.dart';
 
 abstract interface class PublicPlayerRowsGateway {
   Future<List<Map<String, Object?>>> search(PlayerDirectoryQuery query);
@@ -19,7 +20,7 @@ final class SupabasePublicPlayerRowsGateway implements PublicPlayerRowsGateway {
   final SupabaseClient client;
 
   static const selectedColumns =
-      'id,display_name,created_at,updated_at,version,deleted_at';
+      'id,display_name,skill_level,created_at,updated_at,version,deleted_at';
 
   @override
   Future<List<Map<String, Object?>>> search(PlayerDirectoryQuery query) async {
@@ -137,6 +138,14 @@ PublicPlayerProfile publicPlayerFromRow(Map<String, Object?> row) {
   return PublicPlayerProfile(
     id: PlayerId(_requiredString(row, 'id')),
     displayName: _requiredString(row, 'display_name'),
+    skill: switch (row['skill_level']) {
+      final int value => PlayerSkill(value),
+      null => null,
+      _ => throw const ValidationFailure(
+        field: 'skill_level',
+        message: 'Public player skill must be an integer from 1 to 5.',
+      ),
+    },
     metadata: RecordMetadata(
       createdAt: _requiredTimestamp(row, 'created_at'),
       updatedAt: _requiredTimestamp(row, 'updated_at'),

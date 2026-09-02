@@ -316,3 +316,18 @@ authoritative tombstones without overwriting pending local intent. Web uses the
 same payload contract through an online Supabase adapter and initializes no
 SQLite. PostgreSQL RLS and fixed functions remain the final authorization
 boundary. Payment rows remain private and store only Paid/Unpaid.
+
+## M11 team-formation boundary
+
+M11 extends the pure Dart player model with nullable `PlayerSkill` and keeps
+formation algorithms in an application service with injected IDs and
+randomness. `null` means Unrated. Manual, seeded-random, and deterministic
+strongest-with-weakest balanced previews perform no persistence until explicit
+confirmation.
+
+Android reads eligible checked-in division participants from Drift and commits
+the complete replacement plus one outbox operation atomically. Web composes an
+online Supabase adapter and never initializes SQLite. A fixed organizer-only
+RPC validates and replaces the team aggregate transactionally. Realtime remains
+a refetch hint. Tournament formats, seeding, brackets, matches, and schedules
+remain M12+ concerns.

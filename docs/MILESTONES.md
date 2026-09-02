@@ -106,7 +106,8 @@ authorized proceeding.
 - **Purpose:** Implement manual, random, and simple balanced temporary team
   formation.
 - **Dependencies:** M10.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED (automated, hosted, Android, and Web acceptance passed;
+  authoritative metadata and durable team-pull checkpoints verified).
 
 ### M12 — Tournament Engine Foundation
 

@@ -56,15 +56,18 @@ void main() {
       );
     });
 
-    test('does not impose a fixed two-player team size', () {
-      expect(makeTeam([PlayerId(playerOneUuid)]).memberIds, hasLength(1));
+    test('requires exactly two players for M11 pickleball doubles', () {
       expect(
-        makeTeam([
+        () => makeTeam([PlayerId(playerOneUuid)]),
+        throwsA(isA<ValidationFailure>()),
+      );
+      expect(
+        () => makeTeam([
           PlayerId(playerOneUuid),
           PlayerId(playerTwoUuid),
           PlayerId(playerThreeUuid),
-        ]).memberIds,
-        hasLength(3),
+        ]),
+        throwsA(isA<ValidationFailure>()),
       );
     });
   });

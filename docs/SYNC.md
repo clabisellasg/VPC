@@ -222,3 +222,33 @@ never enqueues a local operation. Pending/blocked/conflicted local intent is not
 overwritten. Existing Realtime publication entries remain refresh hints; M10
 does not trust notification payloads or synchronize teams, matches, queues,
 profiles, roles, or claims. `OPEN-009` remains unresolved.
+
+## M11 bounded team-formation slice
+
+Confirmed Android team replacement tombstones superseded draft teams/members,
+inserts complete replacement teams, and queues one fixed JSON operation in the
+same Drift transaction. Pending work survives restart and is never described as
+synchronized. The organizer-authorized cloud command validates eligibility,
+lifecycle, two-member completeness, duplicate membership, operation identity,
+and applies the aggregate with its private receipt transactionally. Web invokes
+the same command online. Player skill continues through the existing player
+sync payload. Conflicts are surfaced without choosing local-wins or
+remote-wins; M17 still owns full offline hardening.
+
+Team pull uses the existing `team_formation_pull_checkpoints` singleton (scope:
+all organizer-visible division/team aggregates). Pages contain at most 50
+aggregates, ordered strictly by `(updated_at, division_id)` after the committed
+cursor. Each aggregate carries complete team/member records including tombstones.
+Cloud `created_at`, `updated_at`, `deleted_at`, and versions are authoritative;
+UTC normalization preserves the instant and PostgreSQL microsecond precision.
+No local/device time is substituted, and absent rows are not inferred deleted.
+
+The complete page and its checkpoint commit in one Drift transaction. Invalid
+mapping, relationships, constraints, or checkpoint writes roll back the page.
+Pending/conflicting local work blocks the page without advancing past it; this
+can intentionally delay later divisions until that work is reconciled. Restart
+loads the persisted cursor. Repeated pages do not rewrite records or enqueue
+operations. Formation-only SQLite triggers are suspended/restored within this
+transaction for authoritative historical imports; foreign keys and table checks
+remain enforced. Web never constructs this Drift puller or checkpoint store.
+Realtime only requests the same authoritative pull, never applies payloads.

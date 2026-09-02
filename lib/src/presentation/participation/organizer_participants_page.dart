@@ -151,6 +151,25 @@ class _OrganizerParticipantsPageState
               icon: const Icon(Icons.person_add_alt_1),
               label: const Text('Add participant'),
             ),
+          if (setup.divisions.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Text(
+              'Division teams',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            for (final division in setup.divisions.where(
+              (item) => !item.metadata.isDeleted,
+            ))
+              ListTile(
+                leading: const Icon(Icons.groups_outlined),
+                title: Text(division.name),
+                subtitle: const Text('Checked-in division participants only'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push(
+                  '/organizer/events/${widget.eventId}/divisions/${division.id.value}/teams',
+                ),
+              ),
+          ],
           if (_records.isEmpty)
             const Padding(
               padding: EdgeInsets.all(32),

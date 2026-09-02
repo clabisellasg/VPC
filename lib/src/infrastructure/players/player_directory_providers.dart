@@ -11,6 +11,8 @@ import 'drift_player_directory_cache.dart';
 import 'player_creation_writers.dart';
 import 'player_directory_primitives.dart';
 import 'supabase_public_player_source.dart';
+import '../../application/players/player_skill_editor.dart';
+import 'player_skill_editors.dart';
 
 final playerDirectoryClockProvider = Provider<PlayerDirectoryClock>(
   (ref) => const SystemPlayerDirectoryClock(),
@@ -77,4 +79,29 @@ final playerCreationServiceProvider = Provider<PlayerCreationService>((ref) {
     idFactory: ref.watch(playerIdFactoryProvider),
     clock: ref.watch(playerDirectoryClockProvider),
   );
+});
+
+final playerSkillEditorProvider = Provider<PlayerSkillEditor>((ref) {
+  final platform = ref.watch(localPersistencePlatformProvider);
+  if (platform == LocalPersistencePlatform.android) {
+    final repository = ref.watch(playerRepositoryProvider);
+    if (repository != null) {
+      return AndroidPlayerSkillEditor(
+        repository,
+        ref.watch(playerSyncCoordinatorProvider),
+      );
+    }
+  }
+  if (platform == LocalPersistencePlatform.web) {
+    final remote = ref.watch(syncRemoteGatewayProvider);
+    if (remote != null) {
+      return WebPlayerSkillEditor(
+        ref.watch(playerDirectoryReaderProvider),
+        remote,
+        ref.watch(syncIdFactoryProvider),
+        ref.watch(syncClockProvider),
+      );
+    }
+  }
+  return const UnavailablePlayerSkillEditor();
 });

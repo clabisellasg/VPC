@@ -15,10 +15,10 @@ final class TemporaryTeam {
     String? displayLabel,
   }) {
     final immutableMembers = List<PlayerId>.unmodifiable(memberIds);
-    if (immutableMembers.isEmpty) {
+    if (immutableMembers.length != 2) {
       throw const ValidationFailure(
         field: 'memberIds',
-        message: 'A team must contain at least one player.',
+        message: 'A complete pickleball team must contain exactly two players.',
       );
     }
     if (immutableMembers.toSet().length != immutableMembers.length) {

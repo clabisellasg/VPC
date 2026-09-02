@@ -450,3 +450,30 @@ history, linked database lint, hosted anonymous read/privacy/write-denial
 smoke checks, and the mandatory Web and physical-Android walkthroughs also
 passed. Local pgTAP was not run because the installed Docker client had no
 available daemon; its SQL assertions remain committed.
+
+## Milestone 11 team-formation coverage
+
+M11 adds pure Dart tests for the 1–5/null skill boundary, exact doubles teams,
+manual formation, deterministic seeded random pairing, deterministic
+strongest-with-weakest balancing, strength spread, odd-player handling,
+unrated blocking, and preview-without-persistence. Drift tests cover eligible
+checked-in selection and atomic team/member/outbox persistence. Schema migration
+tests preserve existing Unrated players through v4-to-v5 and verify skill round
+trips and the three bounded team synchronization tables. Full validation and
+manual device/browser evidence are recorded in the M11 milestone record.
+
+The final suite now includes 201 tests. Nine dedicated team-pull regressions
+cover exact cloud microseconds and UTC conversion for teams/members, null and
+tombstoned metadata, repeated-pull idempotence, actual file-backed SQLite restart,
+strict equal-time cursor ordering, pending/conflicted protection, mapping/FK
+failures, and atomic rollback when checkpoint writing fails. Cloud metadata
+and durable checkpoint gaps are corrected; no UI behavior changed, so the
+previous user-confirmed Android/Web walkthroughs are retained.
+
+Migration `20260903120000_m11_authoritative_team_pull.sql` applied successfully;
+its read-only assertions compare cloud metadata and test pagination against
+existing records without modifying them. Anonymous team pull returns 401,
+public player/event reads return 200, and private profile/role reads return 401.
+Local pgTAP remains skipped because the Docker daemon is unavailable. Final
+command outcomes are recorded in the M11 milestone record; no remote CI run is
+claimed.

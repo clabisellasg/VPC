@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../application/accounts/account_models.dart';
 import '../../application/players/player_directory_models.dart';
 import '../../domain/common/entity_id.dart';
 import '../../domain/common/repository_result.dart';
+import '../../domain/players/player_skill.dart';
 import '../../infrastructure/players/player_directory_providers.dart';
 import '../accounts/account_controller.dart';
 
@@ -70,6 +72,18 @@ class _Profile extends ConsumerWidget {
               'Permanent community player record',
               semanticsLabel: 'Permanent community player profile',
             ),
+            const SizedBox(height: 8),
+            Text('Community skill: ${playerSkillLabel(entry.profile.skill)}'),
+            if (organizer) ...[
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () => context.push(
+                  '/organizer/players/${entry.profile.id.value}/skill',
+                ),
+                icon: const Icon(Icons.tune),
+                label: const Text('Edit community skill'),
+              ),
+            ],
             if (organizer &&
                 entry.syncState != PlayerSyncPresentation.synchronized) ...[
               const Divider(height: 32),

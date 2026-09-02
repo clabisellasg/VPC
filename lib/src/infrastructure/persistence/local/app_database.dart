@@ -23,6 +23,12 @@ class Players extends Table with RecordMetadataColumns {
   TextColumn get displayName =>
       text().customConstraint("NOT NULL CHECK (trim(display_name) <> '')")();
 
+  IntColumn get skillLevel => integer()
+      .customConstraint(
+        'CHECK (skill_level IS NULL OR skill_level BETWEEN 1 AND 5)',
+      )
+      .nullable()();
+
   @override
   Set<Column<Object>> get primaryKey => {id};
 
@@ -669,6 +675,65 @@ class ParticipationConflicts extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
+@DataClassName('LocalTeamFormationOutboxRow')
+@TableIndex(
+  name: 'team_formation_outbox_eligibility_idx',
+  columns: {#status, #createdAt, #id},
+)
+class TeamFormationOutboxOperations extends Table {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+  TextColumn get eventId =>
+      text().references(Events, #id, onDelete: KeyAction.restrict)();
+  TextColumn get divisionId =>
+      text().references(EventDivisions, #id, onDelete: KeyAction.restrict)();
+  TextColumn get payloadJson => text().customConstraint(
+    "NOT NULL CHECK (json_valid(payload_json) AND json_type(payload_json) = 'object')",
+  )();
+  DateTimeColumn get createdAt => dateTime()();
+  TextColumn get status => text().customConstraint(
+    "NOT NULL CHECK (status IN ('pending', 'blocked', 'conflicted', 'failed'))",
+  )();
+  TextColumn get failureMessage => text().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+@DataClassName('LocalTeamFormationCheckpointRow')
+class TeamFormationPullCheckpoints extends Table {
+  IntColumn get singleton => integer().withDefault(const Constant(1))();
+  DateTimeColumn get cursorUpdatedAt => dateTime()();
+  TextColumn get cursorDivisionId =>
+      text().references(EventDivisions, #id, onDelete: KeyAction.restrict)();
+  DateTimeColumn get updatedAt => dateTime()();
+  @override
+  Set<Column<Object>> get primaryKey => {singleton};
+  @override
+  List<String> get customConstraints => ['CHECK (singleton = 1)'];
+}
+
+@DataClassName('LocalTeamFormationConflictRow')
+class TeamFormationConflicts extends Table {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+  TextColumn get operationId => text()
+      .references(
+        TeamFormationOutboxOperations,
+        #id,
+        onDelete: KeyAction.restrict,
+      )
+      .unique()();
+  TextColumn get divisionId =>
+      text().references(EventDivisions, #id, onDelete: KeyAction.restrict)();
+  TextColumn get localPayloadJson => text()();
+  TextColumn get remotePayloadJson => text().nullable()();
+  DateTimeColumn get detectedAt => dateTime()();
+  TextColumn get status => text().customConstraint(
+    "NOT NULL CHECK (status IN ('unresolved', 'resolved'))",
+  )();
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
 @DriftDatabase(
   tables: [
     Players,
@@ -692,6 +757,9 @@ class ParticipationConflicts extends Table {
     ParticipationOutboxOperations,
     ParticipationPullCheckpoints,
     ParticipationConflicts,
+    TeamFormationOutboxOperations,
+    TeamFormationPullCheckpoints,
+    TeamFormationConflicts,
   ],
 )
 final class AppDatabase extends _$AppDatabase {
@@ -702,7 +770,7 @@ final class AppDatabase extends _$AppDatabase {
   AppDatabase.inMemory() : super(openInMemoryDatabaseConnection());
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -739,12 +807,26 @@ final class AppDatabase extends _$AppDatabase {
           return;
         }
       }
-      if (from <= 3 && to == 4) {
+      if (from <= 3 && to >= 4) {
         await migrator.createTable(participationOutboxOperations);
         await migrator.createTable(participationPullCheckpoints);
         await migrator.createTable(participationConflicts);
         await migrator.createIndex(participationOutboxEligibilityIdx);
         await migrator.createIndex(participationConflictsParticipantIdx);
+        if (to == 4) return;
+      }
+      if (from <= 4 && to == 5) {
+        await customStatement(
+          'ALTER TABLE players ADD COLUMN skill_level INTEGER '
+          'CHECK (skill_level IS NULL OR skill_level BETWEEN 1 AND 5)',
+        );
+        await migrator.createTable(teamFormationOutboxOperations);
+        await migrator.createTable(teamFormationPullCheckpoints);
+        await migrator.createTable(teamFormationConflicts);
+        await migrator.createIndex(teamFormationOutboxEligibilityIdx);
+        for (final statement in _m11IntegrityTriggers) {
+          await customStatement(statement);
+        }
         return;
       }
       throw StateError(
@@ -915,6 +997,42 @@ BEGIN
 END
 ''',
   ..._m09IntegrityTriggers,
+  ..._m11IntegrityTriggers,
+];
+
+const _m11IntegrityTriggers = <String>[
+  '''
+CREATE TRIGGER team_members_eligibility_guard
+BEFORE INSERT ON team_members
+WHEN NOT EXISTS (
+  SELECT 1
+  FROM teams t
+  JOIN event_divisions d ON d.id = t.division_id AND d.deleted_at IS NULL
+  JOIN events e ON e.id = d.event_id AND e.deleted_at IS NULL
+  JOIN event_participants ep ON ep.event_id = e.id AND ep.player_id = NEW.player_id
+    AND ep.deleted_at IS NULL AND ep.check_in_status = 'checkedIn'
+  JOIN division_participants dp ON dp.event_participant_id = ep.id
+    AND dp.division_id = d.id AND dp.deleted_at IS NULL
+  WHERE t.id = NEW.team_id AND t.deleted_at IS NULL AND e.status = 'registration'
+)
+BEGIN
+  SELECT RAISE(ABORT, 'team member is not eligible');
+END
+''',
+  '''
+CREATE TRIGGER team_members_unique_division_guard
+BEFORE INSERT ON team_members
+WHEN EXISTS (
+  SELECT 1 FROM team_members tm
+  JOIN teams existing_team ON existing_team.id = tm.team_id AND existing_team.deleted_at IS NULL
+  JOIN teams new_team ON new_team.id = NEW.team_id
+  WHERE tm.player_id = NEW.player_id AND tm.deleted_at IS NULL
+    AND existing_team.division_id = new_team.division_id
+)
+BEGIN
+  SELECT RAISE(ABORT, 'player already belongs to an active team in this division');
+END
+''',
 ];
 
 const _m09IntegrityTriggers = <String>[

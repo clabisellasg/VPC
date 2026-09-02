@@ -19,7 +19,7 @@ void main() {
   });
 
   test(
-    'fresh schema creates operational and bounded sync tables at version 4',
+    'fresh schema creates operational and bounded sync tables at version 5',
     () async {
       final rows = await database
           .customSelect(
@@ -28,7 +28,7 @@ void main() {
           )
           .get();
 
-      expect(database.schemaVersion, 4);
+      expect(database.schemaVersion, 5);
       expect(rows.map((row) => row.read<String>('name')).toSet(), {
         'court_queue_entries',
         'division_participants',
@@ -51,6 +51,9 @@ void main() {
         'participation_outbox_operations',
         'participation_pull_checkpoints',
         'participation_conflicts',
+        'team_formation_outbox_operations',
+        'team_formation_pull_checkpoints',
+        'team_formation_conflicts',
       });
     },
   );
@@ -155,7 +158,7 @@ void main() {
       final triggers = await database
           .customSelect("SELECT name FROM sqlite_master WHERE type = 'trigger'")
           .get();
-      expect(triggers, hasLength(16));
+      expect(triggers, hasLength(18));
     },
   );
 
@@ -218,12 +221,49 @@ void main() {
 
   test('successful multi-table transaction commits every record', () async {
     await insertEventGraph(database);
+    await database
+        .into(database.players)
+        .insert(playerCompanion(id: playerTwoId, displayName: 'Second Player'));
+    await (database.update(database.events)
+          ..where((row) => row.id.equals(eventOneId)))
+        .write(const EventsCompanion(status: Value('registration')));
+    for (final entry in [
+      (participantOneId, playerOneId),
+      (participantTwoId, playerTwoId),
+    ]) {
+      await database
+          .into(database.eventParticipants)
+          .insert(
+            EventParticipantsCompanion.insert(
+              id: entry.$1,
+              eventId: eventOneId,
+              playerId: entry.$2,
+              checkInStatus: 'checkedIn',
+              createdAt: createdAt,
+              updatedAt: updatedAt,
+              version: 0,
+            ),
+          );
+      await database
+          .into(database.divisionParticipants)
+          .insert(
+            DivisionParticipantsCompanion.insert(
+              id: '00000000-0000-4000-8000-0000000000${entry.$1 == participantOneId ? '61' : '62'}',
+              divisionId: divisionOneId,
+              eventParticipantId: entry.$1,
+              createdAt: createdAt,
+              updatedAt: updatedAt,
+              version: 0,
+            ),
+          );
+    }
     await database.insertTeamWithMembers(teamCompanion(), [
       teamMemberCompanion(),
+      teamMemberCompanion(playerId: playerTwoId),
     ]);
 
     expect(await database.select(database.teams).get(), hasLength(1));
-    expect(await database.select(database.teamMembers).get(), hasLength(1));
+    expect(await database.select(database.teamMembers).get(), hasLength(2));
   });
 
   test('failed multi-table transaction rolls back every record', () async {

@@ -4,6 +4,7 @@ import '../../domain/common/domain_failure.dart';
 import '../../domain/common/entity_id.dart';
 import '../../domain/common/record_metadata.dart';
 import '../../domain/players/permanent_player.dart';
+import '../../domain/players/player_skill.dart';
 
 const playerDirectoryPageSize = 50;
 
@@ -75,6 +76,7 @@ final class PublicPlayerProfile {
     required PlayerId id,
     required String displayName,
     required RecordMetadata metadata,
+    PlayerSkill? skill,
   }) {
     if (metadata.isDeleted) {
       throw const ValidationFailure(
@@ -86,6 +88,7 @@ final class PublicPlayerProfile {
       id: id,
       displayName: preparePlayerDisplayName(displayName),
       metadata: metadata,
+      skill: skill,
     );
   }
 
@@ -100,6 +103,7 @@ final class PublicPlayerProfile {
       id: player.id,
       displayName: player.displayName,
       metadata: player.metadata,
+      skill: player.skill,
     );
   }
 
@@ -107,14 +111,20 @@ final class PublicPlayerProfile {
     required this.id,
     required this.displayName,
     required this.metadata,
+    required this.skill,
   });
 
   final PlayerId id;
   final String displayName;
   final RecordMetadata metadata;
+  final PlayerSkill? skill;
 
-  PermanentPlayer toPlayer() =>
-      PermanentPlayer(id: id, displayName: displayName, metadata: metadata);
+  PermanentPlayer toPlayer() => PermanentPlayer(
+    id: id,
+    displayName: displayName,
+    metadata: metadata,
+    skill: skill,
+  );
 }
 
 enum PlayerSyncPresentation {
