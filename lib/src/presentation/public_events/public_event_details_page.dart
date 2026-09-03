@@ -103,6 +103,16 @@ class _Details extends StatelessWidget {
                             : _formatLabel(division.format!),
                       ),
                       leading: const Icon(Icons.groups_outlined),
+                      trailing:
+                          division.format == TournamentFormat.singleElimination
+                          ? const Icon(Icons.account_tree_outlined)
+                          : null,
+                      onTap:
+                          division.format == TournamentFormat.singleElimination
+                          ? () => context.push(
+                              '/events/${event.id.value}/divisions/${division.id.value}/bracket',
+                            )
+                          : null,
                     ),
                   ),
                 ),

@@ -1,5 +1,15 @@
 # Architecture Baseline
 
+## M13 Single Elimination
+
+A pure deterministic generator and immutable bracket state reuse M12 contracts.
+Application commands separate previews from confirmed writes. Android commits
+normalized matches, dependencies, placements, revisions and outbox atomically;
+Web calls fixed organizer RPCs without SQLite. Public bracket reads omit private
+account/payment data. See [M13](milestones/M13_SINGLE_ELIMINATION.md) for current
+validation and acceptance evidence. Reorder controls edit a local preview;
+only confirmed generation persists and synchronizes the seed order.
+
 ## M12 tournament foundation
 
 Pure Dart tournament contracts/invariants are inward of application adapters.

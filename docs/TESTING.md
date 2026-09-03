@@ -1,5 +1,24 @@
 # Testing Strategy
 
+## M13 validation
+
+Hosted repair and rollback assertions passed for 2–8-team generation, correction
+traversal, winner propagation, started/completed downstream rejection, final
+placements, immutable audit, unauthorized/stale rejection and replay identity.
+Histories agree through 20260904132000; linked lint has no errors and three
+non-blocking warnings described in [M13](milestones/M13_SINGLE_ELIMINATION.md).
+Focused engine/local/migration regressions passed (34 tests), plus two responsive
+bracket layout tests. Final static analysis, formatting and all 275 Flutter tests passed.
+Production Web and Android debug APK builds passed. Publishable-key anonymous
+public reads/private-data denial and tournament-command denial passed. Relative
+documentation links, credential-pattern scan and both Git diff checks passed.
+Docker CLI exists but its Linux engine is unavailable; local pgTAP was not run.
+The user confirmed mandatory M13 physical Android and Web walkthroughs after
+the dialog-lifecycle, persistent-preview, and horizontal-navigation fixes.
+Additional regressions cover those fixes and the user-requested exclusion of
+already registered players from the add-participant picker. No remote CI run
+is claimed.
+
 ## M12 validation
 
 M12 adds score/winner, generic tournament invariant/conformance, format-selection

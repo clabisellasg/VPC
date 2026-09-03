@@ -7,6 +7,7 @@ import '../../application/events/event_setup_models.dart';
 import '../../application/players/player_directory_models.dart';
 import '../../application/participation/participation_models.dart';
 import '../../domain/common/entity_id.dart';
+import '../../domain/common/domain_failure.dart';
 import '../../domain/common/repository_result.dart';
 import '../../infrastructure/events/event_setup_providers.dart';
 import '../../infrastructure/participation/participation_providers.dart';
@@ -28,6 +29,9 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
   final _divisions = <DivisionId>{};
   String? _message;
   bool _working = false;
+  bool _finding = false;
+  int _searchRequest = 0;
+  PlayerDirectoryCursor? _nextCursor;
 
   @override
   void initState() {
@@ -37,6 +41,7 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
 
   @override
   void dispose() {
+    _searchRequest++;
     _search.dispose();
     super.dispose();
   }
@@ -52,21 +57,59 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
     }
   }
 
-  Future<void> _find() async {
-    final result = await ref
-        .read(playerDirectoryReaderProvider)
-        .readPage(PlayerDirectoryQuery(searchText: _search.text));
-    if (!mounted) return;
+  Future<void> _find({bool more = false}) async {
+    final request = ++_searchRequest;
+    final reader = ref.read(playerDirectoryReaderProvider);
+    final store = ref.read(participationStoreProvider);
+    final query = PlayerDirectoryQuery(
+      searchText: _search.text,
+      after: more ? _nextCursor : null,
+    );
     setState(() {
-      _players = switch (result) {
-        RepositorySuccess(:final value) => value.entries,
-        RepositoryFailure() => const [],
-      };
-      _message = switch (result) {
-        RepositoryFailure(:final failure) => failure.message,
-        RepositorySuccess() => null,
-      };
+      _finding = true;
+      _selected = null;
     });
+    try {
+      if (store == null) {
+        throw const PersistenceUnavailableFailure(
+          message: 'Participation unavailable',
+        );
+      }
+      final roster = (await store.listForEvent(EventId(widget.eventId)))
+          .when(success: (value) => value, failure: (failure) => throw failure);
+      final registered = roster
+          .where(
+            (r) =>
+                r.participant.eventId == EventId(widget.eventId) &&
+                !r.participant.metadata.isDeleted,
+          )
+          .map((r) => r.participant.playerId)
+          .toSet();
+      final page = (await reader.readPage(query))
+          .when(success: (value) => value, failure: (failure) => throw failure);
+      if (!mounted || request != _searchRequest) return;
+      setState(() {
+        _players = [
+          if (more) ..._players,
+          ...page.entries,
+        ].where((p) => !registered.contains(p.profile.id)).toList();
+        // Continue from the unfiltered page so registered entries cannot hide
+        // eligible players on later pages.
+        _nextCursor = page.nextCursor;
+        _message = null;
+      });
+    } on Exception {
+      if (!mounted || request != _searchRequest) return;
+      setState(() {
+        _players = const [];
+        _nextCursor = null;
+        _message = 'Unable to check the event roster. Please search again.';
+      });
+    } finally {
+      if (mounted && request == _searchRequest) {
+        setState(() => _finding = false);
+      }
+    }
   }
 
   @override
@@ -84,7 +127,9 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         const SizedBox(height: 8),
-        const Text('Select an existing permanent community player.'),
+        const Text(
+          'Select an existing permanent community player. Players already registered in this event are hidden.',
+        ),
         const SizedBox(height: 16),
         TextField(
           controller: _search,
@@ -97,9 +142,21 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
             ),
           ),
           onSubmitted: (_) => _find(),
+          onChanged: (_) => setState(() {
+            _searchRequest++;
+            _finding = false;
+            _players = const [];
+            _selected = null;
+            _nextCursor = null;
+          }),
         ),
         if (_message != null)
           Padding(padding: const EdgeInsets.all(12), child: Text(_message!)),
+        if (_finding) const LinearProgressIndicator(),
+        if (!_finding && _players.isEmpty && _message == null)
+          const Text(
+            'No unregistered players on this page. Search by name or load more.',
+          ),
         for (final player in _players)
           ListTile(
             leading: Icon(
@@ -108,7 +165,12 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
                   : Icons.radio_button_unchecked,
             ),
             title: Text(player.profile.displayName),
-            onTap: () => setState(() => _selected = player),
+            onTap: _finding ? null : () => setState(() => _selected = player),
+          ),
+        if (_nextCursor != null)
+          TextButton(
+            onPressed: _finding ? null : () => _find(more: true),
+            child: const Text('Load more players'),
           ),
         TextButton.icon(
           onPressed: () => context.push('/organizer/players/new'),
@@ -139,7 +201,7 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
           subtitle: Text('Not checked in • Unpaid'),
         ),
         FilledButton(
-          onPressed: _working ? null : _register,
+          onPressed: _working || _finding ? null : _register,
           child: _working
               ? const CircularProgressIndicator()
               : const Text('Review and register'),

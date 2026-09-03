@@ -6,9 +6,9 @@ single-court community. It will eventually manage reusable community players,
 participation, check-in, payment status, temporary teams, approved tournament
 formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 12 — Tournament Engine Foundation (`COMPLETED`).
-Pure tournament contracts, score/invariant rules and organizer format selection;
-no concrete tournament generation.
+**Current status:** Milestone 13 — Single Elimination (`COMPLETED`).
+M0–M12 are accepted. M13 automated/hosted validation and user-confirmed Android/Web
+walkthroughs passed. M14–M21 remain NOT STARTED.
 
 ## Version 1 technology stack
 
@@ -54,6 +54,7 @@ scope, replace the stack, or begin a later milestone.
 - [Milestone 10 implementation record](docs/milestones/M10_EVENT_PARTICIPATION.md)
 - [Milestone 11 implementation record](docs/milestones/M11_TEAM_FORMATION.md)
 - [Milestone 12 implementation record](docs/milestones/M12_TOURNAMENT_ENGINE_FOUNDATION.md)
+- [Milestone 13 implementation record](docs/milestones/M13_SINGLE_ELIMINATION.md)
 
 ## Development setup
 

@@ -137,6 +137,18 @@ class _EventCard extends ConsumerWidget {
                 ),
             ],
             const SizedBox(height: 12),
+            for (final division in setup.divisions.where(
+              (d) =>
+                  !d.metadata.isDeleted &&
+                  d.format == TournamentFormat.singleElimination,
+            ))
+              OutlinedButton.icon(
+                onPressed: () => context.push(
+                  '/organizer/events/${setup.event.id.value}/divisions/${division.id.value}/generate',
+                ),
+                icon: const Icon(Icons.account_tree_outlined),
+                label: Text('${division.name}: Single Elimination bracket'),
+              ),
             Wrap(
               spacing: 8,
               runSpacing: 8,

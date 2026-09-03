@@ -1,5 +1,18 @@
 # Android Synchronization Design
 
+## M13 bounded bracket slice
+
+Generation/regeneration, start, score and audited correction use fixed command
+payloads and stable operation UUIDs. Android stores local changes and outbox in
+one transaction. Cloud receipts reject changed-payload replay. Pull includes
+match/dependency/placement history, authoritative metadata and revisions, with
+a durable ordered checkpoint; unresolved local work is not overwritten.
+Realtime on the public bracket root only hints a debounced authoritative fetch.
+M13 automated/hosted validation and user-confirmed Android/Web walkthroughs passed,
+including offline generation/results surviving restart and reconnect. Conflicts
+remain explicit and are never resolved automatically.
+No round-robin, losers-bracket or queue synchronization is added.
+
 ## M12 format selection
 
 Registration-only format selection reuses M9 aggregate/outbox/idempotent RPCs.

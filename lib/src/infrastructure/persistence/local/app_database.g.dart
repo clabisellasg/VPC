@@ -12667,6 +12667,1408 @@ class TeamFormationConflictsCompanion
   }
 }
 
+class $SingleEliminationSnapshotsTable extends SingleEliminationSnapshots
+    with
+        TableInfo<$SingleEliminationSnapshotsTable, SingleEliminationSnapshot> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SingleEliminationSnapshotsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _divisionIdMeta = const VerificationMeta(
+    'divisionId',
+  );
+  @override
+  late final GeneratedColumn<String> divisionId = GeneratedColumn<String>(
+    'division_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES event_divisions (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _bracketJsonMeta = const VerificationMeta(
+    'bracketJson',
+  );
+  @override
+  late final GeneratedColumn<String> bracketJson = GeneratedColumn<String>(
+    'bracket_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK(json_valid(bracket_json))',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [divisionId, bracketJson];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'single_elimination_snapshots';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SingleEliminationSnapshot> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('division_id')) {
+      context.handle(
+        _divisionIdMeta,
+        divisionId.isAcceptableOrUnknown(data['division_id']!, _divisionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_divisionIdMeta);
+    }
+    if (data.containsKey('bracket_json')) {
+      context.handle(
+        _bracketJsonMeta,
+        bracketJson.isAcceptableOrUnknown(
+          data['bracket_json']!,
+          _bracketJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_bracketJsonMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {divisionId};
+  @override
+  SingleEliminationSnapshot map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SingleEliminationSnapshot(
+      divisionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}division_id'],
+      )!,
+      bracketJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bracket_json'],
+      )!,
+    );
+  }
+
+  @override
+  $SingleEliminationSnapshotsTable createAlias(String alias) {
+    return $SingleEliminationSnapshotsTable(attachedDatabase, alias);
+  }
+}
+
+class SingleEliminationSnapshot extends DataClass
+    implements Insertable<SingleEliminationSnapshot> {
+  final String divisionId;
+  final String bracketJson;
+  const SingleEliminationSnapshot({
+    required this.divisionId,
+    required this.bracketJson,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['division_id'] = Variable<String>(divisionId);
+    map['bracket_json'] = Variable<String>(bracketJson);
+    return map;
+  }
+
+  SingleEliminationSnapshotsCompanion toCompanion(bool nullToAbsent) {
+    return SingleEliminationSnapshotsCompanion(
+      divisionId: Value(divisionId),
+      bracketJson: Value(bracketJson),
+    );
+  }
+
+  factory SingleEliminationSnapshot.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SingleEliminationSnapshot(
+      divisionId: serializer.fromJson<String>(json['divisionId']),
+      bracketJson: serializer.fromJson<String>(json['bracketJson']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'divisionId': serializer.toJson<String>(divisionId),
+      'bracketJson': serializer.toJson<String>(bracketJson),
+    };
+  }
+
+  SingleEliminationSnapshot copyWith({
+    String? divisionId,
+    String? bracketJson,
+  }) => SingleEliminationSnapshot(
+    divisionId: divisionId ?? this.divisionId,
+    bracketJson: bracketJson ?? this.bracketJson,
+  );
+  SingleEliminationSnapshot copyWithCompanion(
+    SingleEliminationSnapshotsCompanion data,
+  ) {
+    return SingleEliminationSnapshot(
+      divisionId: data.divisionId.present
+          ? data.divisionId.value
+          : this.divisionId,
+      bracketJson: data.bracketJson.present
+          ? data.bracketJson.value
+          : this.bracketJson,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SingleEliminationSnapshot(')
+          ..write('divisionId: $divisionId, ')
+          ..write('bracketJson: $bracketJson')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(divisionId, bracketJson);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SingleEliminationSnapshot &&
+          other.divisionId == this.divisionId &&
+          other.bracketJson == this.bracketJson);
+}
+
+class SingleEliminationSnapshotsCompanion
+    extends UpdateCompanion<SingleEliminationSnapshot> {
+  final Value<String> divisionId;
+  final Value<String> bracketJson;
+  final Value<int> rowid;
+  const SingleEliminationSnapshotsCompanion({
+    this.divisionId = const Value.absent(),
+    this.bracketJson = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SingleEliminationSnapshotsCompanion.insert({
+    required String divisionId,
+    required String bracketJson,
+    this.rowid = const Value.absent(),
+  }) : divisionId = Value(divisionId),
+       bracketJson = Value(bracketJson);
+  static Insertable<SingleEliminationSnapshot> custom({
+    Expression<String>? divisionId,
+    Expression<String>? bracketJson,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (divisionId != null) 'division_id': divisionId,
+      if (bracketJson != null) 'bracket_json': bracketJson,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SingleEliminationSnapshotsCompanion copyWith({
+    Value<String>? divisionId,
+    Value<String>? bracketJson,
+    Value<int>? rowid,
+  }) {
+    return SingleEliminationSnapshotsCompanion(
+      divisionId: divisionId ?? this.divisionId,
+      bracketJson: bracketJson ?? this.bracketJson,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (divisionId.present) {
+      map['division_id'] = Variable<String>(divisionId.value);
+    }
+    if (bracketJson.present) {
+      map['bracket_json'] = Variable<String>(bracketJson.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SingleEliminationSnapshotsCompanion(')
+          ..write('divisionId: $divisionId, ')
+          ..write('bracketJson: $bracketJson, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SingleEliminationOutboxTable extends SingleEliminationOutbox
+    with TableInfo<$SingleEliminationOutboxTable, SingleEliminationOutboxData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SingleEliminationOutboxTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _divisionIdMeta = const VerificationMeta(
+    'divisionId',
+  );
+  @override
+  late final GeneratedColumn<String> divisionId = GeneratedColumn<String>(
+    'division_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES event_divisions (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
+    'payloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
+    'payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK(json_valid(payload_json))',
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK(status IN (\'pending\',\'blocked\',\'failed\',\'conflicted\',\'accepted\'))',
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _failureMeta = const VerificationMeta(
+    'failure',
+  );
+  @override
+  late final GeneratedColumn<String> failure = GeneratedColumn<String>(
+    'failure',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteJsonMeta = const VerificationMeta(
+    'remoteJson',
+  );
+  @override
+  late final GeneratedColumn<String> remoteJson = GeneratedColumn<String>(
+    'remote_json',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    divisionId,
+    payloadJson,
+    status,
+    createdAt,
+    failure,
+    remoteJson,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'single_elimination_outbox';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SingleEliminationOutboxData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('division_id')) {
+      context.handle(
+        _divisionIdMeta,
+        divisionId.isAcceptableOrUnknown(data['division_id']!, _divisionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_divisionIdMeta);
+    }
+    if (data.containsKey('payload_json')) {
+      context.handle(
+        _payloadJsonMeta,
+        payloadJson.isAcceptableOrUnknown(
+          data['payload_json']!,
+          _payloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadJsonMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('failure')) {
+      context.handle(
+        _failureMeta,
+        failure.isAcceptableOrUnknown(data['failure']!, _failureMeta),
+      );
+    }
+    if (data.containsKey('remote_json')) {
+      context.handle(
+        _remoteJsonMeta,
+        remoteJson.isAcceptableOrUnknown(data['remote_json']!, _remoteJsonMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SingleEliminationOutboxData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SingleEliminationOutboxData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      divisionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}division_id'],
+      )!,
+      payloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_json'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      failure: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}failure'],
+      ),
+      remoteJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_json'],
+      ),
+    );
+  }
+
+  @override
+  $SingleEliminationOutboxTable createAlias(String alias) {
+    return $SingleEliminationOutboxTable(attachedDatabase, alias);
+  }
+}
+
+class SingleEliminationOutboxData extends DataClass
+    implements Insertable<SingleEliminationOutboxData> {
+  final String id;
+  final String divisionId;
+  final String payloadJson;
+  final String status;
+  final DateTime createdAt;
+  final String? failure;
+  final String? remoteJson;
+  const SingleEliminationOutboxData({
+    required this.id,
+    required this.divisionId,
+    required this.payloadJson,
+    required this.status,
+    required this.createdAt,
+    this.failure,
+    this.remoteJson,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['division_id'] = Variable<String>(divisionId);
+    map['payload_json'] = Variable<String>(payloadJson);
+    map['status'] = Variable<String>(status);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || failure != null) {
+      map['failure'] = Variable<String>(failure);
+    }
+    if (!nullToAbsent || remoteJson != null) {
+      map['remote_json'] = Variable<String>(remoteJson);
+    }
+    return map;
+  }
+
+  SingleEliminationOutboxCompanion toCompanion(bool nullToAbsent) {
+    return SingleEliminationOutboxCompanion(
+      id: Value(id),
+      divisionId: Value(divisionId),
+      payloadJson: Value(payloadJson),
+      status: Value(status),
+      createdAt: Value(createdAt),
+      failure: failure == null && nullToAbsent
+          ? const Value.absent()
+          : Value(failure),
+      remoteJson: remoteJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteJson),
+    );
+  }
+
+  factory SingleEliminationOutboxData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SingleEliminationOutboxData(
+      id: serializer.fromJson<String>(json['id']),
+      divisionId: serializer.fromJson<String>(json['divisionId']),
+      payloadJson: serializer.fromJson<String>(json['payloadJson']),
+      status: serializer.fromJson<String>(json['status']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      failure: serializer.fromJson<String?>(json['failure']),
+      remoteJson: serializer.fromJson<String?>(json['remoteJson']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'divisionId': serializer.toJson<String>(divisionId),
+      'payloadJson': serializer.toJson<String>(payloadJson),
+      'status': serializer.toJson<String>(status),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'failure': serializer.toJson<String?>(failure),
+      'remoteJson': serializer.toJson<String?>(remoteJson),
+    };
+  }
+
+  SingleEliminationOutboxData copyWith({
+    String? id,
+    String? divisionId,
+    String? payloadJson,
+    String? status,
+    DateTime? createdAt,
+    Value<String?> failure = const Value.absent(),
+    Value<String?> remoteJson = const Value.absent(),
+  }) => SingleEliminationOutboxData(
+    id: id ?? this.id,
+    divisionId: divisionId ?? this.divisionId,
+    payloadJson: payloadJson ?? this.payloadJson,
+    status: status ?? this.status,
+    createdAt: createdAt ?? this.createdAt,
+    failure: failure.present ? failure.value : this.failure,
+    remoteJson: remoteJson.present ? remoteJson.value : this.remoteJson,
+  );
+  SingleEliminationOutboxData copyWithCompanion(
+    SingleEliminationOutboxCompanion data,
+  ) {
+    return SingleEliminationOutboxData(
+      id: data.id.present ? data.id.value : this.id,
+      divisionId: data.divisionId.present
+          ? data.divisionId.value
+          : this.divisionId,
+      payloadJson: data.payloadJson.present
+          ? data.payloadJson.value
+          : this.payloadJson,
+      status: data.status.present ? data.status.value : this.status,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      failure: data.failure.present ? data.failure.value : this.failure,
+      remoteJson: data.remoteJson.present
+          ? data.remoteJson.value
+          : this.remoteJson,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SingleEliminationOutboxData(')
+          ..write('id: $id, ')
+          ..write('divisionId: $divisionId, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('failure: $failure, ')
+          ..write('remoteJson: $remoteJson')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    divisionId,
+    payloadJson,
+    status,
+    createdAt,
+    failure,
+    remoteJson,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SingleEliminationOutboxData &&
+          other.id == this.id &&
+          other.divisionId == this.divisionId &&
+          other.payloadJson == this.payloadJson &&
+          other.status == this.status &&
+          other.createdAt == this.createdAt &&
+          other.failure == this.failure &&
+          other.remoteJson == this.remoteJson);
+}
+
+class SingleEliminationOutboxCompanion
+    extends UpdateCompanion<SingleEliminationOutboxData> {
+  final Value<String> id;
+  final Value<String> divisionId;
+  final Value<String> payloadJson;
+  final Value<String> status;
+  final Value<DateTime> createdAt;
+  final Value<String?> failure;
+  final Value<String?> remoteJson;
+  final Value<int> rowid;
+  const SingleEliminationOutboxCompanion({
+    this.id = const Value.absent(),
+    this.divisionId = const Value.absent(),
+    this.payloadJson = const Value.absent(),
+    this.status = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.failure = const Value.absent(),
+    this.remoteJson = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SingleEliminationOutboxCompanion.insert({
+    required String id,
+    required String divisionId,
+    required String payloadJson,
+    required String status,
+    required DateTime createdAt,
+    this.failure = const Value.absent(),
+    this.remoteJson = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       divisionId = Value(divisionId),
+       payloadJson = Value(payloadJson),
+       status = Value(status),
+       createdAt = Value(createdAt);
+  static Insertable<SingleEliminationOutboxData> custom({
+    Expression<String>? id,
+    Expression<String>? divisionId,
+    Expression<String>? payloadJson,
+    Expression<String>? status,
+    Expression<DateTime>? createdAt,
+    Expression<String>? failure,
+    Expression<String>? remoteJson,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (divisionId != null) 'division_id': divisionId,
+      if (payloadJson != null) 'payload_json': payloadJson,
+      if (status != null) 'status': status,
+      if (createdAt != null) 'created_at': createdAt,
+      if (failure != null) 'failure': failure,
+      if (remoteJson != null) 'remote_json': remoteJson,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SingleEliminationOutboxCompanion copyWith({
+    Value<String>? id,
+    Value<String>? divisionId,
+    Value<String>? payloadJson,
+    Value<String>? status,
+    Value<DateTime>? createdAt,
+    Value<String?>? failure,
+    Value<String?>? remoteJson,
+    Value<int>? rowid,
+  }) {
+    return SingleEliminationOutboxCompanion(
+      id: id ?? this.id,
+      divisionId: divisionId ?? this.divisionId,
+      payloadJson: payloadJson ?? this.payloadJson,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      failure: failure ?? this.failure,
+      remoteJson: remoteJson ?? this.remoteJson,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (divisionId.present) {
+      map['division_id'] = Variable<String>(divisionId.value);
+    }
+    if (payloadJson.present) {
+      map['payload_json'] = Variable<String>(payloadJson.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (failure.present) {
+      map['failure'] = Variable<String>(failure.value);
+    }
+    if (remoteJson.present) {
+      map['remote_json'] = Variable<String>(remoteJson.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SingleEliminationOutboxCompanion(')
+          ..write('id: $id, ')
+          ..write('divisionId: $divisionId, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('failure: $failure, ')
+          ..write('remoteJson: $remoteJson, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SingleEliminationCheckpointsTable extends SingleEliminationCheckpoints
+    with
+        TableInfo<
+          $SingleEliminationCheckpointsTable,
+          SingleEliminationCheckpoint
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SingleEliminationCheckpointsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _scopeMeta = const VerificationMeta('scope');
+  @override
+  late final GeneratedColumn<String> scope = GeneratedColumn<String>(
+    'scope',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bracketIdMeta = const VerificationMeta(
+    'bracketId',
+  );
+  @override
+  late final GeneratedColumn<String> bracketId = GeneratedColumn<String>(
+    'bracket_id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [scope, updatedAt, bracketId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'single_elimination_checkpoints';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SingleEliminationCheckpoint> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('scope')) {
+      context.handle(
+        _scopeMeta,
+        scope.isAcceptableOrUnknown(data['scope']!, _scopeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_scopeMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('bracket_id')) {
+      context.handle(
+        _bracketIdMeta,
+        bracketId.isAcceptableOrUnknown(data['bracket_id']!, _bracketIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bracketIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {scope};
+  @override
+  SingleEliminationCheckpoint map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SingleEliminationCheckpoint(
+      scope: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}scope'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      bracketId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bracket_id'],
+      )!,
+    );
+  }
+
+  @override
+  $SingleEliminationCheckpointsTable createAlias(String alias) {
+    return $SingleEliminationCheckpointsTable(attachedDatabase, alias);
+  }
+}
+
+class SingleEliminationCheckpoint extends DataClass
+    implements Insertable<SingleEliminationCheckpoint> {
+  final String scope;
+  final DateTime updatedAt;
+  final String bracketId;
+  const SingleEliminationCheckpoint({
+    required this.scope,
+    required this.updatedAt,
+    required this.bracketId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['scope'] = Variable<String>(scope);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['bracket_id'] = Variable<String>(bracketId);
+    return map;
+  }
+
+  SingleEliminationCheckpointsCompanion toCompanion(bool nullToAbsent) {
+    return SingleEliminationCheckpointsCompanion(
+      scope: Value(scope),
+      updatedAt: Value(updatedAt),
+      bracketId: Value(bracketId),
+    );
+  }
+
+  factory SingleEliminationCheckpoint.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SingleEliminationCheckpoint(
+      scope: serializer.fromJson<String>(json['scope']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      bracketId: serializer.fromJson<String>(json['bracketId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'scope': serializer.toJson<String>(scope),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'bracketId': serializer.toJson<String>(bracketId),
+    };
+  }
+
+  SingleEliminationCheckpoint copyWith({
+    String? scope,
+    DateTime? updatedAt,
+    String? bracketId,
+  }) => SingleEliminationCheckpoint(
+    scope: scope ?? this.scope,
+    updatedAt: updatedAt ?? this.updatedAt,
+    bracketId: bracketId ?? this.bracketId,
+  );
+  SingleEliminationCheckpoint copyWithCompanion(
+    SingleEliminationCheckpointsCompanion data,
+  ) {
+    return SingleEliminationCheckpoint(
+      scope: data.scope.present ? data.scope.value : this.scope,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      bracketId: data.bracketId.present ? data.bracketId.value : this.bracketId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SingleEliminationCheckpoint(')
+          ..write('scope: $scope, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('bracketId: $bracketId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(scope, updatedAt, bracketId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SingleEliminationCheckpoint &&
+          other.scope == this.scope &&
+          other.updatedAt == this.updatedAt &&
+          other.bracketId == this.bracketId);
+}
+
+class SingleEliminationCheckpointsCompanion
+    extends UpdateCompanion<SingleEliminationCheckpoint> {
+  final Value<String> scope;
+  final Value<DateTime> updatedAt;
+  final Value<String> bracketId;
+  final Value<int> rowid;
+  const SingleEliminationCheckpointsCompanion({
+    this.scope = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.bracketId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SingleEliminationCheckpointsCompanion.insert({
+    required String scope,
+    required DateTime updatedAt,
+    required String bracketId,
+    this.rowid = const Value.absent(),
+  }) : scope = Value(scope),
+       updatedAt = Value(updatedAt),
+       bracketId = Value(bracketId);
+  static Insertable<SingleEliminationCheckpoint> custom({
+    Expression<String>? scope,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? bracketId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (scope != null) 'scope': scope,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (bracketId != null) 'bracket_id': bracketId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SingleEliminationCheckpointsCompanion copyWith({
+    Value<String>? scope,
+    Value<DateTime>? updatedAt,
+    Value<String>? bracketId,
+    Value<int>? rowid,
+  }) {
+    return SingleEliminationCheckpointsCompanion(
+      scope: scope ?? this.scope,
+      updatedAt: updatedAt ?? this.updatedAt,
+      bracketId: bracketId ?? this.bracketId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (scope.present) {
+      map['scope'] = Variable<String>(scope.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (bracketId.present) {
+      map['bracket_id'] = Variable<String>(bracketId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SingleEliminationCheckpointsCompanion(')
+          ..write('scope: $scope, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('bracketId: $bracketId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $MatchResultRevisionsTable extends MatchResultRevisions
+    with TableInfo<$MatchResultRevisionsTable, MatchResultRevision> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MatchResultRevisionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _operationIdMeta = const VerificationMeta(
+    'operationId',
+  );
+  @override
+  late final GeneratedColumn<String> operationId = GeneratedColumn<String>(
+    'operation_id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _matchIdMeta = const VerificationMeta(
+    'matchId',
+  );
+  @override
+  late final GeneratedColumn<String> matchId = GeneratedColumn<String>(
+    'match_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES matches (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _previousResultMeta = const VerificationMeta(
+    'previousResult',
+  );
+  @override
+  late final GeneratedColumn<String> previousResult = GeneratedColumn<String>(
+    'previous_result',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK(json_valid(previous_result))',
+  );
+  static const VerificationMeta _reasonMeta = const VerificationMeta('reason');
+  @override
+  late final GeneratedColumn<String> reason = GeneratedColumn<String>(
+    'reason',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK(trim(reason)<>\'\')',
+  );
+  static const VerificationMeta _recordedAtMeta = const VerificationMeta(
+    'recordedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> recordedAt = GeneratedColumn<DateTime>(
+    'recorded_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    operationId,
+    matchId,
+    previousResult,
+    reason,
+    recordedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'match_result_revisions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MatchResultRevision> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('operation_id')) {
+      context.handle(
+        _operationIdMeta,
+        operationId.isAcceptableOrUnknown(
+          data['operation_id']!,
+          _operationIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_operationIdMeta);
+    }
+    if (data.containsKey('match_id')) {
+      context.handle(
+        _matchIdMeta,
+        matchId.isAcceptableOrUnknown(data['match_id']!, _matchIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_matchIdMeta);
+    }
+    if (data.containsKey('previous_result')) {
+      context.handle(
+        _previousResultMeta,
+        previousResult.isAcceptableOrUnknown(
+          data['previous_result']!,
+          _previousResultMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_previousResultMeta);
+    }
+    if (data.containsKey('reason')) {
+      context.handle(
+        _reasonMeta,
+        reason.isAcceptableOrUnknown(data['reason']!, _reasonMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_reasonMeta);
+    }
+    if (data.containsKey('recorded_at')) {
+      context.handle(
+        _recordedAtMeta,
+        recordedAt.isAcceptableOrUnknown(data['recorded_at']!, _recordedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_recordedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {operationId};
+  @override
+  MatchResultRevision map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MatchResultRevision(
+      operationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}operation_id'],
+      )!,
+      matchId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}match_id'],
+      )!,
+      previousResult: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}previous_result'],
+      )!,
+      reason: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reason'],
+      )!,
+      recordedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}recorded_at'],
+      )!,
+    );
+  }
+
+  @override
+  $MatchResultRevisionsTable createAlias(String alias) {
+    return $MatchResultRevisionsTable(attachedDatabase, alias);
+  }
+}
+
+class MatchResultRevision extends DataClass
+    implements Insertable<MatchResultRevision> {
+  final String operationId;
+  final String matchId;
+  final String previousResult;
+  final String reason;
+  final DateTime recordedAt;
+  const MatchResultRevision({
+    required this.operationId,
+    required this.matchId,
+    required this.previousResult,
+    required this.reason,
+    required this.recordedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['operation_id'] = Variable<String>(operationId);
+    map['match_id'] = Variable<String>(matchId);
+    map['previous_result'] = Variable<String>(previousResult);
+    map['reason'] = Variable<String>(reason);
+    map['recorded_at'] = Variable<DateTime>(recordedAt);
+    return map;
+  }
+
+  MatchResultRevisionsCompanion toCompanion(bool nullToAbsent) {
+    return MatchResultRevisionsCompanion(
+      operationId: Value(operationId),
+      matchId: Value(matchId),
+      previousResult: Value(previousResult),
+      reason: Value(reason),
+      recordedAt: Value(recordedAt),
+    );
+  }
+
+  factory MatchResultRevision.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MatchResultRevision(
+      operationId: serializer.fromJson<String>(json['operationId']),
+      matchId: serializer.fromJson<String>(json['matchId']),
+      previousResult: serializer.fromJson<String>(json['previousResult']),
+      reason: serializer.fromJson<String>(json['reason']),
+      recordedAt: serializer.fromJson<DateTime>(json['recordedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'operationId': serializer.toJson<String>(operationId),
+      'matchId': serializer.toJson<String>(matchId),
+      'previousResult': serializer.toJson<String>(previousResult),
+      'reason': serializer.toJson<String>(reason),
+      'recordedAt': serializer.toJson<DateTime>(recordedAt),
+    };
+  }
+
+  MatchResultRevision copyWith({
+    String? operationId,
+    String? matchId,
+    String? previousResult,
+    String? reason,
+    DateTime? recordedAt,
+  }) => MatchResultRevision(
+    operationId: operationId ?? this.operationId,
+    matchId: matchId ?? this.matchId,
+    previousResult: previousResult ?? this.previousResult,
+    reason: reason ?? this.reason,
+    recordedAt: recordedAt ?? this.recordedAt,
+  );
+  MatchResultRevision copyWithCompanion(MatchResultRevisionsCompanion data) {
+    return MatchResultRevision(
+      operationId: data.operationId.present
+          ? data.operationId.value
+          : this.operationId,
+      matchId: data.matchId.present ? data.matchId.value : this.matchId,
+      previousResult: data.previousResult.present
+          ? data.previousResult.value
+          : this.previousResult,
+      reason: data.reason.present ? data.reason.value : this.reason,
+      recordedAt: data.recordedAt.present
+          ? data.recordedAt.value
+          : this.recordedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MatchResultRevision(')
+          ..write('operationId: $operationId, ')
+          ..write('matchId: $matchId, ')
+          ..write('previousResult: $previousResult, ')
+          ..write('reason: $reason, ')
+          ..write('recordedAt: $recordedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(operationId, matchId, previousResult, reason, recordedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MatchResultRevision &&
+          other.operationId == this.operationId &&
+          other.matchId == this.matchId &&
+          other.previousResult == this.previousResult &&
+          other.reason == this.reason &&
+          other.recordedAt == this.recordedAt);
+}
+
+class MatchResultRevisionsCompanion
+    extends UpdateCompanion<MatchResultRevision> {
+  final Value<String> operationId;
+  final Value<String> matchId;
+  final Value<String> previousResult;
+  final Value<String> reason;
+  final Value<DateTime> recordedAt;
+  final Value<int> rowid;
+  const MatchResultRevisionsCompanion({
+    this.operationId = const Value.absent(),
+    this.matchId = const Value.absent(),
+    this.previousResult = const Value.absent(),
+    this.reason = const Value.absent(),
+    this.recordedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MatchResultRevisionsCompanion.insert({
+    required String operationId,
+    required String matchId,
+    required String previousResult,
+    required String reason,
+    required DateTime recordedAt,
+    this.rowid = const Value.absent(),
+  }) : operationId = Value(operationId),
+       matchId = Value(matchId),
+       previousResult = Value(previousResult),
+       reason = Value(reason),
+       recordedAt = Value(recordedAt);
+  static Insertable<MatchResultRevision> custom({
+    Expression<String>? operationId,
+    Expression<String>? matchId,
+    Expression<String>? previousResult,
+    Expression<String>? reason,
+    Expression<DateTime>? recordedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (operationId != null) 'operation_id': operationId,
+      if (matchId != null) 'match_id': matchId,
+      if (previousResult != null) 'previous_result': previousResult,
+      if (reason != null) 'reason': reason,
+      if (recordedAt != null) 'recorded_at': recordedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MatchResultRevisionsCompanion copyWith({
+    Value<String>? operationId,
+    Value<String>? matchId,
+    Value<String>? previousResult,
+    Value<String>? reason,
+    Value<DateTime>? recordedAt,
+    Value<int>? rowid,
+  }) {
+    return MatchResultRevisionsCompanion(
+      operationId: operationId ?? this.operationId,
+      matchId: matchId ?? this.matchId,
+      previousResult: previousResult ?? this.previousResult,
+      reason: reason ?? this.reason,
+      recordedAt: recordedAt ?? this.recordedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (operationId.present) {
+      map['operation_id'] = Variable<String>(operationId.value);
+    }
+    if (matchId.present) {
+      map['match_id'] = Variable<String>(matchId.value);
+    }
+    if (previousResult.present) {
+      map['previous_result'] = Variable<String>(previousResult.value);
+    }
+    if (reason.present) {
+      map['reason'] = Variable<String>(reason.value);
+    }
+    if (recordedAt.present) {
+      map['recorded_at'] = Variable<DateTime>(recordedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MatchResultRevisionsCompanion(')
+          ..write('operationId: $operationId, ')
+          ..write('matchId: $matchId, ')
+          ..write('previousResult: $previousResult, ')
+          ..write('reason: $reason, ')
+          ..write('recordedAt: $recordedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -12711,6 +14113,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $TeamFormationPullCheckpointsTable(this);
   late final $TeamFormationConflictsTable teamFormationConflicts =
       $TeamFormationConflictsTable(this);
+  late final $SingleEliminationSnapshotsTable singleEliminationSnapshots =
+      $SingleEliminationSnapshotsTable(this);
+  late final $SingleEliminationOutboxTable singleEliminationOutbox =
+      $SingleEliminationOutboxTable(this);
+  late final $SingleEliminationCheckpointsTable singleEliminationCheckpoints =
+      $SingleEliminationCheckpointsTable(this);
+  late final $MatchResultRevisionsTable matchResultRevisions =
+      $MatchResultRevisionsTable(this);
   late final Index playersDisplayNameIdx = Index(
     'players_display_name_idx',
     'CREATE INDEX players_display_name_idx ON players (display_name)',
@@ -12852,6 +14262,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     teamFormationOutboxOperations,
     teamFormationPullCheckpoints,
     teamFormationConflicts,
+    singleEliminationSnapshots,
+    singleEliminationOutbox,
+    singleEliminationCheckpoints,
+    matchResultRevisions,
     playersDisplayNameIdx,
     eventsStatusScheduledAtIdx,
     eventDivisionsEventIdIdx,
@@ -14970,6 +16384,58 @@ final class $$EventDivisionsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<
+    $SingleEliminationSnapshotsTable,
+    List<SingleEliminationSnapshot>
+  >
+  _singleEliminationSnapshotsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.singleEliminationSnapshots,
+        aliasName:
+            'event_divisions__id__single_elimination_snapshots__division_id',
+      );
+
+  $$SingleEliminationSnapshotsTableProcessedTableManager
+  get singleEliminationSnapshotsRefs {
+    final manager = $$SingleEliminationSnapshotsTableTableManager(
+      $_db,
+      $_db.singleEliminationSnapshots,
+    ).filter((f) => f.divisionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _singleEliminationSnapshotsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $SingleEliminationOutboxTable,
+    List<SingleEliminationOutboxData>
+  >
+  _singleEliminationOutboxRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.singleEliminationOutbox,
+        aliasName:
+            'event_divisions__id__single_elimination_outbox__division_id',
+      );
+
+  $$SingleEliminationOutboxTableProcessedTableManager
+  get singleEliminationOutboxRefs {
+    final manager = $$SingleEliminationOutboxTableTableManager(
+      $_db,
+      $_db.singleEliminationOutbox,
+    ).filter((f) => f.divisionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _singleEliminationOutboxRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$EventDivisionsTableFilterComposer
@@ -15264,6 +16730,59 @@ class $$EventDivisionsTableFilterComposer
               }) => $$TeamFormationConflictsTableFilterComposer(
                 $db: $db,
                 $table: $db.teamFormationConflicts,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<bool> singleEliminationSnapshotsRefs(
+    Expression<bool> Function($$SingleEliminationSnapshotsTableFilterComposer f)
+    f,
+  ) {
+    final $$SingleEliminationSnapshotsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.singleEliminationSnapshots,
+          getReferencedColumn: (t) => t.divisionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SingleEliminationSnapshotsTableFilterComposer(
+                $db: $db,
+                $table: $db.singleEliminationSnapshots,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<bool> singleEliminationOutboxRefs(
+    Expression<bool> Function($$SingleEliminationOutboxTableFilterComposer f) f,
+  ) {
+    final $$SingleEliminationOutboxTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.singleEliminationOutbox,
+          getReferencedColumn: (t) => t.divisionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SingleEliminationOutboxTableFilterComposer(
+                $db: $db,
+                $table: $db.singleEliminationOutbox,
                 $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
                 joinBuilder: joinBuilder,
                 $removeJoinBuilderFromRootComposer:
@@ -15634,6 +17153,62 @@ class $$EventDivisionsTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> singleEliminationSnapshotsRefs<T extends Object>(
+    Expression<T> Function(
+      $$SingleEliminationSnapshotsTableAnnotationComposer a,
+    )
+    f,
+  ) {
+    final $$SingleEliminationSnapshotsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.singleEliminationSnapshots,
+          getReferencedColumn: (t) => t.divisionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SingleEliminationSnapshotsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.singleEliminationSnapshots,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> singleEliminationOutboxRefs<T extends Object>(
+    Expression<T> Function($$SingleEliminationOutboxTableAnnotationComposer a)
+    f,
+  ) {
+    final $$SingleEliminationOutboxTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.singleEliminationOutbox,
+          getReferencedColumn: (t) => t.divisionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SingleEliminationOutboxTableAnnotationComposer(
+                $db: $db,
+                $table: $db.singleEliminationOutbox,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$EventDivisionsTableTableManager
@@ -15660,6 +17235,8 @@ class $$EventDivisionsTableTableManager
             bool teamFormationOutboxOperationsRefs,
             bool teamFormationPullCheckpointsRefs,
             bool teamFormationConflictsRefs,
+            bool singleEliminationSnapshotsRefs,
+            bool singleEliminationOutboxRefs,
           })
         > {
   $$EventDivisionsTableTableManager(
@@ -15739,6 +17316,8 @@ class $$EventDivisionsTableTableManager
                 teamFormationOutboxOperationsRefs = false,
                 teamFormationPullCheckpointsRefs = false,
                 teamFormationConflictsRefs = false,
+                singleEliminationSnapshotsRefs = false,
+                singleEliminationOutboxRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -15754,6 +17333,9 @@ class $$EventDivisionsTableTableManager
                     if (teamFormationPullCheckpointsRefs)
                       db.teamFormationPullCheckpoints,
                     if (teamFormationConflictsRefs) db.teamFormationConflicts,
+                    if (singleEliminationSnapshotsRefs)
+                      db.singleEliminationSnapshots,
+                    if (singleEliminationOutboxRefs) db.singleEliminationOutbox,
                   ],
                   addJoins:
                       <
@@ -15976,6 +17558,48 @@ class $$EventDivisionsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (singleEliminationSnapshotsRefs)
+                        await $_getPrefetchedData<
+                          LocalEventDivisionRow,
+                          $EventDivisionsTable,
+                          SingleEliminationSnapshot
+                        >(
+                          currentTable: table,
+                          referencedTable: $$EventDivisionsTableReferences
+                              ._singleEliminationSnapshotsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$EventDivisionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).singleEliminationSnapshotsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.divisionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (singleEliminationOutboxRefs)
+                        await $_getPrefetchedData<
+                          LocalEventDivisionRow,
+                          $EventDivisionsTable,
+                          SingleEliminationOutboxData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$EventDivisionsTableReferences
+                              ._singleEliminationOutboxRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$EventDivisionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).singleEliminationOutboxRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.divisionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -16007,6 +17631,8 @@ typedef $$EventDivisionsTableProcessedTableManager =
         bool teamFormationOutboxOperationsRefs,
         bool teamFormationPullCheckpointsRefs,
         bool teamFormationConflictsRefs,
+        bool singleEliminationSnapshotsRefs,
+        bool singleEliminationOutboxRefs,
       })
     >;
 typedef $$EventParticipantsTableCreateCompanionBuilder =
@@ -19433,6 +21059,31 @@ final class $$MatchesTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<
+    $MatchResultRevisionsTable,
+    List<MatchResultRevision>
+  >
+  _matchResultRevisionsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.matchResultRevisions,
+        aliasName: 'matches__id__match_result_revisions__match_id',
+      );
+
+  $$MatchResultRevisionsTableProcessedTableManager
+  get matchResultRevisionsRefs {
+    final manager = $$MatchResultRevisionsTableTableManager(
+      $_db,
+      $_db.matchResultRevisions,
+    ).filter((f) => f.matchId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _matchResultRevisionsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$MatchesTableFilterComposer
@@ -19652,6 +21303,31 @@ class $$MatchesTableFilterComposer
           }) => $$CourtQueueEntriesTableFilterComposer(
             $db: $db,
             $table: $db.courtQueueEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> matchResultRevisionsRefs(
+    Expression<bool> Function($$MatchResultRevisionsTableFilterComposer f) f,
+  ) {
+    final $$MatchResultRevisionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.matchResultRevisions,
+      getReferencedColumn: (t) => t.matchId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MatchResultRevisionsTableFilterComposer(
+            $db: $db,
+            $table: $db.matchResultRevisions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -20030,6 +21706,32 @@ class $$MatchesTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> matchResultRevisionsRefs<T extends Object>(
+    Expression<T> Function($$MatchResultRevisionsTableAnnotationComposer a) f,
+  ) {
+    final $$MatchResultRevisionsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.matchResultRevisions,
+          getReferencedColumn: (t) => t.matchId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$MatchResultRevisionsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.matchResultRevisions,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$MatchesTableTableManager
@@ -20053,6 +21755,7 @@ class $$MatchesTableTableManager
             bool dependenciesAsSource,
             bool dependenciesAsDestination,
             bool courtQueueEntriesRefs,
+            bool matchResultRevisionsRefs,
           })
         > {
   $$MatchesTableTableManager(_$AppDatabase db, $MatchesTable table)
@@ -20151,6 +21854,7 @@ class $$MatchesTableTableManager
                 dependenciesAsSource = false,
                 dependenciesAsDestination = false,
                 courtQueueEntriesRefs = false,
+                matchResultRevisionsRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -20158,6 +21862,7 @@ class $$MatchesTableTableManager
                     if (dependenciesAsSource) db.matchDependencies,
                     if (dependenciesAsDestination) db.matchDependencies,
                     if (courtQueueEntriesRefs) db.courtQueueEntries,
+                    if (matchResultRevisionsRefs) db.matchResultRevisions,
                   ],
                   addJoins:
                       <
@@ -20287,6 +21992,27 @@ class $$MatchesTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (matchResultRevisionsRefs)
+                        await $_getPrefetchedData<
+                          LocalMatchRow,
+                          $MatchesTable,
+                          MatchResultRevision
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MatchesTableReferences
+                              ._matchResultRevisionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MatchesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).matchResultRevisionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.matchId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -20315,6 +22041,7 @@ typedef $$MatchesTableProcessedTableManager =
         bool dependenciesAsSource,
         bool dependenciesAsDestination,
         bool courtQueueEntriesRefs,
+        bool matchResultRevisionsRefs,
       })
     >;
 typedef $$MatchDependenciesTableCreateCompanionBuilder =
@@ -27235,6 +28962,1196 @@ typedef $$TeamFormationConflictsTableProcessedTableManager =
       LocalTeamFormationConflictRow,
       PrefetchHooks Function({bool operationId, bool divisionId})
     >;
+typedef $$SingleEliminationSnapshotsTableCreateCompanionBuilder =
+    SingleEliminationSnapshotsCompanion Function({
+      required String divisionId,
+      required String bracketJson,
+      Value<int> rowid,
+    });
+typedef $$SingleEliminationSnapshotsTableUpdateCompanionBuilder =
+    SingleEliminationSnapshotsCompanion Function({
+      Value<String> divisionId,
+      Value<String> bracketJson,
+      Value<int> rowid,
+    });
+
+final class $$SingleEliminationSnapshotsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $SingleEliminationSnapshotsTable,
+          SingleEliminationSnapshot
+        > {
+  $$SingleEliminationSnapshotsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $EventDivisionsTable _divisionIdTable(_$AppDatabase db) =>
+      db.eventDivisions.createAlias(
+        'single_elimination_snapshots__division_id__event_divisions__id',
+      );
+
+  $$EventDivisionsTableProcessedTableManager get divisionId {
+    final $_column = $_itemColumn<String>('division_id')!;
+
+    final manager = $$EventDivisionsTableTableManager(
+      $_db,
+      $_db.eventDivisions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_divisionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$SingleEliminationSnapshotsTableFilterComposer
+    extends Composer<_$AppDatabase, $SingleEliminationSnapshotsTable> {
+  $$SingleEliminationSnapshotsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get bracketJson => $composableBuilder(
+    column: $table.bracketJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$EventDivisionsTableFilterComposer get divisionId {
+    final $$EventDivisionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableFilterComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SingleEliminationSnapshotsTableOrderingComposer
+    extends Composer<_$AppDatabase, $SingleEliminationSnapshotsTable> {
+  $$SingleEliminationSnapshotsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get bracketJson => $composableBuilder(
+    column: $table.bracketJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$EventDivisionsTableOrderingComposer get divisionId {
+    final $$EventDivisionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SingleEliminationSnapshotsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SingleEliminationSnapshotsTable> {
+  $$SingleEliminationSnapshotsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get bracketJson => $composableBuilder(
+    column: $table.bracketJson,
+    builder: (column) => column,
+  );
+
+  $$EventDivisionsTableAnnotationComposer get divisionId {
+    final $$EventDivisionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SingleEliminationSnapshotsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SingleEliminationSnapshotsTable,
+          SingleEliminationSnapshot,
+          $$SingleEliminationSnapshotsTableFilterComposer,
+          $$SingleEliminationSnapshotsTableOrderingComposer,
+          $$SingleEliminationSnapshotsTableAnnotationComposer,
+          $$SingleEliminationSnapshotsTableCreateCompanionBuilder,
+          $$SingleEliminationSnapshotsTableUpdateCompanionBuilder,
+          (
+            SingleEliminationSnapshot,
+            $$SingleEliminationSnapshotsTableReferences,
+          ),
+          SingleEliminationSnapshot,
+          PrefetchHooks Function({bool divisionId})
+        > {
+  $$SingleEliminationSnapshotsTableTableManager(
+    _$AppDatabase db,
+    $SingleEliminationSnapshotsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SingleEliminationSnapshotsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$SingleEliminationSnapshotsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$SingleEliminationSnapshotsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> divisionId = const Value.absent(),
+                Value<String> bracketJson = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SingleEliminationSnapshotsCompanion(
+                divisionId: divisionId,
+                bracketJson: bracketJson,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String divisionId,
+                required String bracketJson,
+                Value<int> rowid = const Value.absent(),
+              }) => SingleEliminationSnapshotsCompanion.insert(
+                divisionId: divisionId,
+                bracketJson: bracketJson,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SingleEliminationSnapshotsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({divisionId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (divisionId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.divisionId,
+                        referencedTable:
+                            $$SingleEliminationSnapshotsTableReferences
+                                ._divisionIdTable(db),
+                        referencedColumn:
+                            $$SingleEliminationSnapshotsTableReferences
+                                ._divisionIdTable(db)
+                                .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$SingleEliminationSnapshotsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SingleEliminationSnapshotsTable,
+      SingleEliminationSnapshot,
+      $$SingleEliminationSnapshotsTableFilterComposer,
+      $$SingleEliminationSnapshotsTableOrderingComposer,
+      $$SingleEliminationSnapshotsTableAnnotationComposer,
+      $$SingleEliminationSnapshotsTableCreateCompanionBuilder,
+      $$SingleEliminationSnapshotsTableUpdateCompanionBuilder,
+      (SingleEliminationSnapshot, $$SingleEliminationSnapshotsTableReferences),
+      SingleEliminationSnapshot,
+      PrefetchHooks Function({bool divisionId})
+    >;
+typedef $$SingleEliminationOutboxTableCreateCompanionBuilder =
+    SingleEliminationOutboxCompanion Function({
+      required String id,
+      required String divisionId,
+      required String payloadJson,
+      required String status,
+      required DateTime createdAt,
+      Value<String?> failure,
+      Value<String?> remoteJson,
+      Value<int> rowid,
+    });
+typedef $$SingleEliminationOutboxTableUpdateCompanionBuilder =
+    SingleEliminationOutboxCompanion Function({
+      Value<String> id,
+      Value<String> divisionId,
+      Value<String> payloadJson,
+      Value<String> status,
+      Value<DateTime> createdAt,
+      Value<String?> failure,
+      Value<String?> remoteJson,
+      Value<int> rowid,
+    });
+
+final class $$SingleEliminationOutboxTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $SingleEliminationOutboxTable,
+          SingleEliminationOutboxData
+        > {
+  $$SingleEliminationOutboxTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $EventDivisionsTable _divisionIdTable(_$AppDatabase db) =>
+      db.eventDivisions.createAlias(
+        'single_elimination_outbox__division_id__event_divisions__id',
+      );
+
+  $$EventDivisionsTableProcessedTableManager get divisionId {
+    final $_column = $_itemColumn<String>('division_id')!;
+
+    final manager = $$EventDivisionsTableTableManager(
+      $_db,
+      $_db.eventDivisions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_divisionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$SingleEliminationOutboxTableFilterComposer
+    extends Composer<_$AppDatabase, $SingleEliminationOutboxTable> {
+  $$SingleEliminationOutboxTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get failure => $composableBuilder(
+    column: $table.failure,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get remoteJson => $composableBuilder(
+    column: $table.remoteJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$EventDivisionsTableFilterComposer get divisionId {
+    final $$EventDivisionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableFilterComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SingleEliminationOutboxTableOrderingComposer
+    extends Composer<_$AppDatabase, $SingleEliminationOutboxTable> {
+  $$SingleEliminationOutboxTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get failure => $composableBuilder(
+    column: $table.failure,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get remoteJson => $composableBuilder(
+    column: $table.remoteJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$EventDivisionsTableOrderingComposer get divisionId {
+    final $$EventDivisionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SingleEliminationOutboxTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SingleEliminationOutboxTable> {
+  $$SingleEliminationOutboxTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get failure =>
+      $composableBuilder(column: $table.failure, builder: (column) => column);
+
+  GeneratedColumn<String> get remoteJson => $composableBuilder(
+    column: $table.remoteJson,
+    builder: (column) => column,
+  );
+
+  $$EventDivisionsTableAnnotationComposer get divisionId {
+    final $$EventDivisionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SingleEliminationOutboxTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SingleEliminationOutboxTable,
+          SingleEliminationOutboxData,
+          $$SingleEliminationOutboxTableFilterComposer,
+          $$SingleEliminationOutboxTableOrderingComposer,
+          $$SingleEliminationOutboxTableAnnotationComposer,
+          $$SingleEliminationOutboxTableCreateCompanionBuilder,
+          $$SingleEliminationOutboxTableUpdateCompanionBuilder,
+          (
+            SingleEliminationOutboxData,
+            $$SingleEliminationOutboxTableReferences,
+          ),
+          SingleEliminationOutboxData,
+          PrefetchHooks Function({bool divisionId})
+        > {
+  $$SingleEliminationOutboxTableTableManager(
+    _$AppDatabase db,
+    $SingleEliminationOutboxTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SingleEliminationOutboxTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$SingleEliminationOutboxTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$SingleEliminationOutboxTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> divisionId = const Value.absent(),
+                Value<String> payloadJson = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<String?> failure = const Value.absent(),
+                Value<String?> remoteJson = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SingleEliminationOutboxCompanion(
+                id: id,
+                divisionId: divisionId,
+                payloadJson: payloadJson,
+                status: status,
+                createdAt: createdAt,
+                failure: failure,
+                remoteJson: remoteJson,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String divisionId,
+                required String payloadJson,
+                required String status,
+                required DateTime createdAt,
+                Value<String?> failure = const Value.absent(),
+                Value<String?> remoteJson = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SingleEliminationOutboxCompanion.insert(
+                id: id,
+                divisionId: divisionId,
+                payloadJson: payloadJson,
+                status: status,
+                createdAt: createdAt,
+                failure: failure,
+                remoteJson: remoteJson,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SingleEliminationOutboxTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({divisionId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (divisionId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.divisionId,
+                        referencedTable:
+                            $$SingleEliminationOutboxTableReferences
+                                ._divisionIdTable(db),
+                        referencedColumn:
+                            $$SingleEliminationOutboxTableReferences
+                                ._divisionIdTable(db)
+                                .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$SingleEliminationOutboxTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SingleEliminationOutboxTable,
+      SingleEliminationOutboxData,
+      $$SingleEliminationOutboxTableFilterComposer,
+      $$SingleEliminationOutboxTableOrderingComposer,
+      $$SingleEliminationOutboxTableAnnotationComposer,
+      $$SingleEliminationOutboxTableCreateCompanionBuilder,
+      $$SingleEliminationOutboxTableUpdateCompanionBuilder,
+      (SingleEliminationOutboxData, $$SingleEliminationOutboxTableReferences),
+      SingleEliminationOutboxData,
+      PrefetchHooks Function({bool divisionId})
+    >;
+typedef $$SingleEliminationCheckpointsTableCreateCompanionBuilder =
+    SingleEliminationCheckpointsCompanion Function({
+      required String scope,
+      required DateTime updatedAt,
+      required String bracketId,
+      Value<int> rowid,
+    });
+typedef $$SingleEliminationCheckpointsTableUpdateCompanionBuilder =
+    SingleEliminationCheckpointsCompanion Function({
+      Value<String> scope,
+      Value<DateTime> updatedAt,
+      Value<String> bracketId,
+      Value<int> rowid,
+    });
+
+class $$SingleEliminationCheckpointsTableFilterComposer
+    extends Composer<_$AppDatabase, $SingleEliminationCheckpointsTable> {
+  $$SingleEliminationCheckpointsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get scope => $composableBuilder(
+    column: $table.scope,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bracketId => $composableBuilder(
+    column: $table.bracketId,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SingleEliminationCheckpointsTableOrderingComposer
+    extends Composer<_$AppDatabase, $SingleEliminationCheckpointsTable> {
+  $$SingleEliminationCheckpointsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get scope => $composableBuilder(
+    column: $table.scope,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bracketId => $composableBuilder(
+    column: $table.bracketId,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SingleEliminationCheckpointsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SingleEliminationCheckpointsTable> {
+  $$SingleEliminationCheckpointsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get scope =>
+      $composableBuilder(column: $table.scope, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get bracketId =>
+      $composableBuilder(column: $table.bracketId, builder: (column) => column);
+}
+
+class $$SingleEliminationCheckpointsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SingleEliminationCheckpointsTable,
+          SingleEliminationCheckpoint,
+          $$SingleEliminationCheckpointsTableFilterComposer,
+          $$SingleEliminationCheckpointsTableOrderingComposer,
+          $$SingleEliminationCheckpointsTableAnnotationComposer,
+          $$SingleEliminationCheckpointsTableCreateCompanionBuilder,
+          $$SingleEliminationCheckpointsTableUpdateCompanionBuilder,
+          (
+            SingleEliminationCheckpoint,
+            BaseReferences<
+              _$AppDatabase,
+              $SingleEliminationCheckpointsTable,
+              SingleEliminationCheckpoint
+            >,
+          ),
+          SingleEliminationCheckpoint,
+          PrefetchHooks Function()
+        > {
+  $$SingleEliminationCheckpointsTableTableManager(
+    _$AppDatabase db,
+    $SingleEliminationCheckpointsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SingleEliminationCheckpointsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$SingleEliminationCheckpointsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$SingleEliminationCheckpointsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> scope = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<String> bracketId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SingleEliminationCheckpointsCompanion(
+                scope: scope,
+                updatedAt: updatedAt,
+                bracketId: bracketId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String scope,
+                required DateTime updatedAt,
+                required String bracketId,
+                Value<int> rowid = const Value.absent(),
+              }) => SingleEliminationCheckpointsCompanion.insert(
+                scope: scope,
+                updatedAt: updatedAt,
+                bracketId: bracketId,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SingleEliminationCheckpointsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SingleEliminationCheckpointsTable,
+      SingleEliminationCheckpoint,
+      $$SingleEliminationCheckpointsTableFilterComposer,
+      $$SingleEliminationCheckpointsTableOrderingComposer,
+      $$SingleEliminationCheckpointsTableAnnotationComposer,
+      $$SingleEliminationCheckpointsTableCreateCompanionBuilder,
+      $$SingleEliminationCheckpointsTableUpdateCompanionBuilder,
+      (
+        SingleEliminationCheckpoint,
+        BaseReferences<
+          _$AppDatabase,
+          $SingleEliminationCheckpointsTable,
+          SingleEliminationCheckpoint
+        >,
+      ),
+      SingleEliminationCheckpoint,
+      PrefetchHooks Function()
+    >;
+typedef $$MatchResultRevisionsTableCreateCompanionBuilder =
+    MatchResultRevisionsCompanion Function({
+      required String operationId,
+      required String matchId,
+      required String previousResult,
+      required String reason,
+      required DateTime recordedAt,
+      Value<int> rowid,
+    });
+typedef $$MatchResultRevisionsTableUpdateCompanionBuilder =
+    MatchResultRevisionsCompanion Function({
+      Value<String> operationId,
+      Value<String> matchId,
+      Value<String> previousResult,
+      Value<String> reason,
+      Value<DateTime> recordedAt,
+      Value<int> rowid,
+    });
+
+final class $$MatchResultRevisionsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $MatchResultRevisionsTable,
+          MatchResultRevision
+        > {
+  $$MatchResultRevisionsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $MatchesTable _matchIdTable(_$AppDatabase db) =>
+      db.matches.createAlias('match_result_revisions__match_id__matches__id');
+
+  $$MatchesTableProcessedTableManager get matchId {
+    final $_column = $_itemColumn<String>('match_id')!;
+
+    final manager = $$MatchesTableTableManager(
+      $_db,
+      $_db.matches,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_matchIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$MatchResultRevisionsTableFilterComposer
+    extends Composer<_$AppDatabase, $MatchResultRevisionsTable> {
+  $$MatchResultRevisionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get operationId => $composableBuilder(
+    column: $table.operationId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get previousResult => $composableBuilder(
+    column: $table.previousResult,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get reason => $composableBuilder(
+    column: $table.reason,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$MatchesTableFilterComposer get matchId {
+    final $$MatchesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.matchId,
+      referencedTable: $db.matches,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MatchesTableFilterComposer(
+            $db: $db,
+            $table: $db.matches,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MatchResultRevisionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $MatchResultRevisionsTable> {
+  $$MatchResultRevisionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get operationId => $composableBuilder(
+    column: $table.operationId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get previousResult => $composableBuilder(
+    column: $table.previousResult,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get reason => $composableBuilder(
+    column: $table.reason,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$MatchesTableOrderingComposer get matchId {
+    final $$MatchesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.matchId,
+      referencedTable: $db.matches,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MatchesTableOrderingComposer(
+            $db: $db,
+            $table: $db.matches,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MatchResultRevisionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $MatchResultRevisionsTable> {
+  $$MatchResultRevisionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get operationId => $composableBuilder(
+    column: $table.operationId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get previousResult => $composableBuilder(
+    column: $table.previousResult,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get reason =>
+      $composableBuilder(column: $table.reason, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => column,
+  );
+
+  $$MatchesTableAnnotationComposer get matchId {
+    final $$MatchesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.matchId,
+      referencedTable: $db.matches,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MatchesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.matches,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MatchResultRevisionsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $MatchResultRevisionsTable,
+          MatchResultRevision,
+          $$MatchResultRevisionsTableFilterComposer,
+          $$MatchResultRevisionsTableOrderingComposer,
+          $$MatchResultRevisionsTableAnnotationComposer,
+          $$MatchResultRevisionsTableCreateCompanionBuilder,
+          $$MatchResultRevisionsTableUpdateCompanionBuilder,
+          (MatchResultRevision, $$MatchResultRevisionsTableReferences),
+          MatchResultRevision,
+          PrefetchHooks Function({bool matchId})
+        > {
+  $$MatchResultRevisionsTableTableManager(
+    _$AppDatabase db,
+    $MatchResultRevisionsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MatchResultRevisionsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MatchResultRevisionsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$MatchResultRevisionsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> operationId = const Value.absent(),
+                Value<String> matchId = const Value.absent(),
+                Value<String> previousResult = const Value.absent(),
+                Value<String> reason = const Value.absent(),
+                Value<DateTime> recordedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => MatchResultRevisionsCompanion(
+                operationId: operationId,
+                matchId: matchId,
+                previousResult: previousResult,
+                reason: reason,
+                recordedAt: recordedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String operationId,
+                required String matchId,
+                required String previousResult,
+                required String reason,
+                required DateTime recordedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => MatchResultRevisionsCompanion.insert(
+                operationId: operationId,
+                matchId: matchId,
+                previousResult: previousResult,
+                reason: reason,
+                recordedAt: recordedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$MatchResultRevisionsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({matchId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (matchId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.matchId,
+                        referencedTable: $$MatchResultRevisionsTableReferences
+                            ._matchIdTable(db),
+                        referencedColumn: $$MatchResultRevisionsTableReferences
+                            ._matchIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$MatchResultRevisionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $MatchResultRevisionsTable,
+      MatchResultRevision,
+      $$MatchResultRevisionsTableFilterComposer,
+      $$MatchResultRevisionsTableOrderingComposer,
+      $$MatchResultRevisionsTableAnnotationComposer,
+      $$MatchResultRevisionsTableCreateCompanionBuilder,
+      $$MatchResultRevisionsTableUpdateCompanionBuilder,
+      (MatchResultRevision, $$MatchResultRevisionsTableReferences),
+      MatchResultRevision,
+      PrefetchHooks Function({bool matchId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -27316,4 +30233,23 @@ class $AppDatabaseManager {
         _db,
         _db.teamFormationConflicts,
       );
+  $$SingleEliminationSnapshotsTableTableManager
+  get singleEliminationSnapshots =>
+      $$SingleEliminationSnapshotsTableTableManager(
+        _db,
+        _db.singleEliminationSnapshots,
+      );
+  $$SingleEliminationOutboxTableTableManager get singleEliminationOutbox =>
+      $$SingleEliminationOutboxTableTableManager(
+        _db,
+        _db.singleEliminationOutbox,
+      );
+  $$SingleEliminationCheckpointsTableTableManager
+  get singleEliminationCheckpoints =>
+      $$SingleEliminationCheckpointsTableTableManager(
+        _db,
+        _db.singleEliminationCheckpoints,
+      );
+  $$MatchResultRevisionsTableTableManager get matchResultRevisions =>
+      $$MatchResultRevisionsTableTableManager(_db, _db.matchResultRevisions);
 }

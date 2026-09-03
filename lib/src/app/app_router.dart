@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../presentation/tournament/single_elimination_page.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:vpc/src/presentation/public_events/public_app_shell.dart';
 import 'package:vpc/src/presentation/public_events/public_event_details_page.dart';
@@ -32,6 +35,21 @@ GoRouter createAppRouter() {
         builder: (context, state, child) =>
             PublicAppShell(location: state.uri.path, child: child),
         routes: [
+          GoRoute(
+            path: '/events/:eventId/divisions/:divisionId/bracket',
+            builder: (context, state) => SingleEliminationPage(
+              eventId: state.pathParameters['eventId']!,
+              divisionId: state.pathParameters['divisionId']!,
+            ),
+          ),
+          GoRoute(
+            path: '/organizer/events/:eventId/divisions/:divisionId/generate',
+            builder: (context, state) => SingleEliminationPage(
+              eventId: state.pathParameters['eventId']!,
+              divisionId: state.pathParameters['divisionId']!,
+              organizerRoute: true,
+            ),
+          ),
           GoRoute(
             path: '/',
             builder: (context, state) => const PublicHomePage(),

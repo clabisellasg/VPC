@@ -6,6 +6,27 @@ import 'package:vpc/src/infrastructure/persistence/local/app_database.dart';
 import '../../../generated_migrations/schema.dart';
 
 void main() {
+  test('v6 to v7 preserves M12 records and adds bracket durability', () async {
+    final verifier = SchemaVerifier(GeneratedHelper());
+    final schema = await verifier.schemaAt(6);
+    schema.rawDatabase.execute('''
+INSERT INTO players(id,display_name,skill_level,created_at,updated_at,version)
+VALUES('13000000-0000-4000-8000-000000000001','VPC M13 Migration Sample',4,
+'2026-09-03T00:00:00.000Z','2026-09-03T00:00:00.000Z',9);
+''');
+    final db = AppDatabase(schema.newConnection());
+    await verifier.migrateAndValidate(db, 7);
+    final player = await db.select(db.players).getSingle();
+    expect(player.version, 9);
+    expect(player.skillLevel, 4);
+    expect(player.id, '13000000-0000-4000-8000-000000000001');
+    expect(await db.select(db.singleEliminationSnapshots).get(), isEmpty);
+    expect(await db.select(db.singleEliminationOutbox).get(), isEmpty);
+    expect(await db.select(db.singleEliminationCheckpoints).get(), isEmpty);
+    expect(await db.select(db.matchResultRevisions).get(), isEmpty);
+    await db.close();
+    schema.close();
+  });
   test(
     'v5 to v6 preserves nullable formats and replaces format-lock triggers',
     () async {

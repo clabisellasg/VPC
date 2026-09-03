@@ -97,6 +97,17 @@ M12 planner approval (2026-09-03):
   valid complete teams and persisted active matches in every active division.
   M13–M15 own generation. No placeholder matches or match synchronization in M12.
 
+M13 planner approval:
+
+- **V1-078 — ACCEPTED (OPEN-004):** Single Elimination result correction requires
+  an In Progress event, a valid score, a non-empty organizer reason and current
+  optimistic versions. A changed winner may affect only unstarted downstream
+  matches with no completed score. Preserve the previous result in an immutable
+  audit revision, replace downstream winner slots atomically, and update final
+  champion/runner-up placements. Idempotent replay is allowed; changed-payload
+  reuse, played downstream matches, Completed/Archived events and force-rewind
+  are rejected. Exceptional post-progression administration is outside V1.
+
 ## Open decisions
 
 The “resolve by” milestone is the latest point at which an explicit accepted
@@ -104,7 +115,6 @@ decision is required before affected implementation proceeds.
 
 | ID | Open question | Resolve by | Status |
 | --- | --- | --- | --- |
-| OPEN-004 | How may a completed result be corrected after bracket progression? | Before M13 implementation | OPEN |
 | OPEN-005 | What is the round-robin tie-breaker order? | Before M14 implementation | OPEN |
 | OPEN-006 | Does double elimination use a grand-final bracket reset? | Before M15 implementation | OPEN |
 | OPEN-009 | What is the exact simultaneous-organizer conflict/control policy? | Before M5 implementation | OPEN |
@@ -114,6 +124,7 @@ decision is required before affected implementation proceeds.
 
 | ID | Approval | Result | Status |
 | --- | --- | --- | --- |
+| OPEN-004 | M13 planner specification | Resolved by V1-078: audited correction of an In Progress Single Elimination result only within the unstarted downstream boundary. | RESOLVED |
 | OPEN-003 | M12 planner specification, 2026-09-03 | Resolved by V1-075: one game to 11, win by two, no cap, score-derived winner. | RESOLVED |
 | OPEN-001 | M7 planner specification, 2026-08-28 | Resolved by V1-055: an authenticated member requests an existing player link and an organizer approves or rejects it. | RESOLVED |
 | OPEN-011 | M7 planner specification, 2026-08-28 | Resolved by V1-054: initial V1 authentication is email/password with hosted confirmation preserved. Other providers remain deferred, not accepted. | RESOLVED |

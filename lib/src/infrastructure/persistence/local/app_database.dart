@@ -734,6 +734,52 @@ class TeamFormationConflicts extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
+class SingleEliminationSnapshots extends Table {
+  TextColumn get divisionId =>
+      text().references(EventDivisions, #id, onDelete: KeyAction.restrict)();
+  TextColumn get bracketJson =>
+      text().customConstraint('NOT NULL CHECK(json_valid(bracket_json))')();
+  @override
+  Set<Column<Object>> get primaryKey => {divisionId};
+}
+
+class SingleEliminationOutbox extends Table {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+  TextColumn get divisionId =>
+      text().references(EventDivisions, #id, onDelete: KeyAction.restrict)();
+  TextColumn get payloadJson =>
+      text().customConstraint('NOT NULL CHECK(json_valid(payload_json))')();
+  TextColumn get status => text().customConstraint(
+    "NOT NULL CHECK(status IN ('pending','blocked','failed','conflicted','accepted'))",
+  )();
+  DateTimeColumn get createdAt => dateTime()();
+  TextColumn get failure => text().nullable()();
+  TextColumn get remoteJson => text().nullable()();
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class SingleEliminationCheckpoints extends Table {
+  TextColumn get scope => text()();
+  DateTimeColumn get updatedAt => dateTime()();
+  TextColumn get bracketId => text().withLength(min: 36, max: 36)();
+  @override
+  Set<Column<Object>> get primaryKey => {scope};
+}
+
+class MatchResultRevisions extends Table {
+  TextColumn get operationId => text().withLength(min: 36, max: 36)();
+  TextColumn get matchId =>
+      text().references(Matches, #id, onDelete: KeyAction.restrict)();
+  TextColumn get previousResult =>
+      text().customConstraint('NOT NULL CHECK(json_valid(previous_result))')();
+  TextColumn get reason =>
+      text().customConstraint("NOT NULL CHECK(trim(reason)<>'')")();
+  DateTimeColumn get recordedAt => dateTime()();
+  @override
+  Set<Column<Object>> get primaryKey => {operationId};
+}
+
 @DriftDatabase(
   tables: [
     Players,
@@ -760,6 +806,10 @@ class TeamFormationConflicts extends Table {
     TeamFormationOutboxOperations,
     TeamFormationPullCheckpoints,
     TeamFormationConflicts,
+    SingleEliminationSnapshots,
+    SingleEliminationOutbox,
+    SingleEliminationCheckpoints,
+    MatchResultRevisions,
   ],
 )
 final class AppDatabase extends _$AppDatabase {
@@ -769,14 +819,40 @@ final class AppDatabase extends _$AppDatabase {
 
   AppDatabase.inMemory() : super(openInMemoryDatabaseConnection());
 
+  /// Only authoritative, validated match imports may have missed transitions or
+  /// contain an already audited correction. Table checks and FKs remain active.
+  Future<T> importBracketHistory<T>(Future<T> Function() action) =>
+      transaction(() async {
+        await customStatement('DROP TRIGGER matches_status_transition_guard');
+        await customStatement('DROP TRIGGER matches_completed_result_lock');
+        try {
+          return await action();
+        } finally {
+          await customStatement(
+            _scopeAndTransitionTriggers.firstWhere(
+              (s) =>
+                  s.contains('CREATE TRIGGER matches_status_transition_guard'),
+            ),
+          );
+          await customStatement(
+            _m13IntegrityTriggers.firstWhere(
+              (s) => s.contains('CREATE TRIGGER matches_completed_result_lock'),
+            ),
+          );
+        }
+      });
+
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (migrator) async {
       await migrator.createAll();
       for (final statement in _scopeAndTransitionTriggers) {
+        await customStatement(statement);
+      }
+      for (final statement in _m13IntegrityTriggers) {
         await customStatement(statement);
       }
     },
@@ -829,11 +905,21 @@ final class AppDatabase extends _$AppDatabase {
         }
         if (to == 5) return;
       }
-      if (from <= 5 && to == 6) {
+      if (from <= 5 && to >= 6) {
         await customStatement(
           'DROP TRIGGER IF EXISTS event_divisions_setup_lock_guard',
         );
         for (final statement in _m12IntegrityTriggers) {
+          await customStatement(statement);
+        }
+        if (to == 6) return;
+      }
+      if (from <= 6 && to == 7) {
+        await migrator.createTable(singleEliminationSnapshots);
+        await migrator.createTable(singleEliminationOutbox);
+        await migrator.createTable(singleEliminationCheckpoints);
+        await migrator.createTable(matchResultRevisions);
+        for (final statement in _m13IntegrityTriggers) {
           await customStatement(statement);
         }
         return;
@@ -1048,6 +1134,24 @@ BEGIN
   SELECT RAISE(ABORT, 'completed result correction is not approved');
 END
 ''',
+];
+
+const _m13IntegrityTriggers = <String>[
+  'DROP TRIGGER IF EXISTS matches_completed_result_lock',
+  r'''CREATE TRIGGER matches_completed_result_lock BEFORE UPDATE ON matches
+WHEN OLD.status='completed' AND (NEW.side_one_score IS NOT OLD.side_one_score
+ OR NEW.side_two_score IS NOT OLD.side_two_score OR NEW.winner_team_id IS NOT OLD.winner_team_id
+ OR NEW.side_one_team_id IS NOT OLD.side_one_team_id OR NEW.side_two_team_id IS NOT OLD.side_two_team_id)
+ AND (NEW.side_one_team_id IS NOT OLD.side_one_team_id OR NEW.side_two_team_id IS NOT OLD.side_two_team_id
+ OR NOT EXISTS(SELECT 1 FROM match_result_revisions r WHERE r.match_id=OLD.id
+   AND json_extract(r.previous_result,'$.version')=OLD.version
+   AND json_extract(r.previous_result,'$.side_one_score')=OLD.side_one_score
+   AND json_extract(r.previous_result,'$.side_two_score')=OLD.side_two_score))
+BEGIN SELECT RAISE(ABORT,'audited result correction required'); END''',
+  '''CREATE TRIGGER match_result_revisions_update_lock BEFORE UPDATE ON match_result_revisions
+BEGIN SELECT RAISE(ABORT,'immutable result revision'); END''',
+  '''CREATE TRIGGER match_result_revisions_delete_lock BEFORE DELETE ON match_result_revisions
+BEGIN SELECT RAISE(ABORT,'immutable result revision'); END''',
 ];
 
 const _m11IntegrityTriggers = <String>[

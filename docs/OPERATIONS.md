@@ -1,5 +1,20 @@
 # Operations Outline
 
+## M13 validation and manual operations
+
+Use the existing configured Android/Web run commands and synthetic teams only.
+Generate previews in Registration; confirmation persists the bracket. Start
+matches explicitly only after the event enters In Progress. Corrections require
+a reason and cannot rewind played downstream matches. Do not delete immutable
+revisions or edit applied migration files. The hosted repair fixtures rolled
+back. The user confirmed Android and Web walkthroughs, including offline
+generation/results, correction guards, regeneration, permissions, scrolling,
+and accessibility. See [M13](milestones/M13_SINGLE_ELIMINATION.md).
+
+Seed-list arrows edit a local preview only. Confirm generation/regeneration to
+persist and synchronize that ordering. Another device reads the confirmed
+bracket, not the first device's unconfirmed draft ordering list.
+
 ## M12 manual acceptance — PASSED
 
 The user confirmed the physical Android M12 walkthrough, including offline

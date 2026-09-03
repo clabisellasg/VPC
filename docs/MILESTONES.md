@@ -121,7 +121,7 @@ authorized proceeding.
 - **Purpose:** Implement generation, byes, result progression, winner
   advancement, champion/runner-up, and visual bracket.
 - **Dependencies:** M12.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED; final automated/hosted validation and user-confirmed Android/Web walkthroughs passed.
 
 ### M14 — Single and Double Round Robin
 

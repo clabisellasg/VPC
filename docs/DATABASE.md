@@ -1,5 +1,16 @@
 # Conceptual Database Model
 
+## M13 schema addition
+
+PostgreSQL adds public single_elimination_brackets (plan/seed metadata),
+organizer-readable immutable match_result_revisions and private idempotency
+receipts. Existing matches, match_dependencies and division_placements carry
+playable state; byes never become scored records. Direct client match writes
+are revoked in favor of organizer-validated atomic commands. Drift schema 7
+adds bracket snapshots/outbox/checkpoints/revisions via a real v6 migration.
+The applied schema was preserved; the collision repair and regression migrations
+are recorded in [M13](milestones/M13_SINGLE_ELIMINATION.md).
+
 ## M12 integrity changes
 
 No new operational tables/enums. Drift v6 replaces format locks and adds final
