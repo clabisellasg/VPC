@@ -13680,6 +13680,1000 @@ class SingleEliminationCheckpointsCompanion
   }
 }
 
+class $RoundRobinSnapshotsTable extends RoundRobinSnapshots
+    with TableInfo<$RoundRobinSnapshotsTable, RoundRobinSnapshot> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RoundRobinSnapshotsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _divisionIdMeta = const VerificationMeta(
+    'divisionId',
+  );
+  @override
+  late final GeneratedColumn<String> divisionId = GeneratedColumn<String>(
+    'division_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES event_divisions (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _tournamentJsonMeta = const VerificationMeta(
+    'tournamentJson',
+  );
+  @override
+  late final GeneratedColumn<String> tournamentJson = GeneratedColumn<String>(
+    'tournament_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK(json_valid(tournament_json))',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [divisionId, tournamentJson];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'round_robin_snapshots';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<RoundRobinSnapshot> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('division_id')) {
+      context.handle(
+        _divisionIdMeta,
+        divisionId.isAcceptableOrUnknown(data['division_id']!, _divisionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_divisionIdMeta);
+    }
+    if (data.containsKey('tournament_json')) {
+      context.handle(
+        _tournamentJsonMeta,
+        tournamentJson.isAcceptableOrUnknown(
+          data['tournament_json']!,
+          _tournamentJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_tournamentJsonMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {divisionId};
+  @override
+  RoundRobinSnapshot map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RoundRobinSnapshot(
+      divisionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}division_id'],
+      )!,
+      tournamentJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tournament_json'],
+      )!,
+    );
+  }
+
+  @override
+  $RoundRobinSnapshotsTable createAlias(String alias) {
+    return $RoundRobinSnapshotsTable(attachedDatabase, alias);
+  }
+}
+
+class RoundRobinSnapshot extends DataClass
+    implements Insertable<RoundRobinSnapshot> {
+  final String divisionId;
+  final String tournamentJson;
+  const RoundRobinSnapshot({
+    required this.divisionId,
+    required this.tournamentJson,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['division_id'] = Variable<String>(divisionId);
+    map['tournament_json'] = Variable<String>(tournamentJson);
+    return map;
+  }
+
+  RoundRobinSnapshotsCompanion toCompanion(bool nullToAbsent) {
+    return RoundRobinSnapshotsCompanion(
+      divisionId: Value(divisionId),
+      tournamentJson: Value(tournamentJson),
+    );
+  }
+
+  factory RoundRobinSnapshot.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RoundRobinSnapshot(
+      divisionId: serializer.fromJson<String>(json['divisionId']),
+      tournamentJson: serializer.fromJson<String>(json['tournamentJson']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'divisionId': serializer.toJson<String>(divisionId),
+      'tournamentJson': serializer.toJson<String>(tournamentJson),
+    };
+  }
+
+  RoundRobinSnapshot copyWith({String? divisionId, String? tournamentJson}) =>
+      RoundRobinSnapshot(
+        divisionId: divisionId ?? this.divisionId,
+        tournamentJson: tournamentJson ?? this.tournamentJson,
+      );
+  RoundRobinSnapshot copyWithCompanion(RoundRobinSnapshotsCompanion data) {
+    return RoundRobinSnapshot(
+      divisionId: data.divisionId.present
+          ? data.divisionId.value
+          : this.divisionId,
+      tournamentJson: data.tournamentJson.present
+          ? data.tournamentJson.value
+          : this.tournamentJson,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RoundRobinSnapshot(')
+          ..write('divisionId: $divisionId, ')
+          ..write('tournamentJson: $tournamentJson')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(divisionId, tournamentJson);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RoundRobinSnapshot &&
+          other.divisionId == this.divisionId &&
+          other.tournamentJson == this.tournamentJson);
+}
+
+class RoundRobinSnapshotsCompanion extends UpdateCompanion<RoundRobinSnapshot> {
+  final Value<String> divisionId;
+  final Value<String> tournamentJson;
+  final Value<int> rowid;
+  const RoundRobinSnapshotsCompanion({
+    this.divisionId = const Value.absent(),
+    this.tournamentJson = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  RoundRobinSnapshotsCompanion.insert({
+    required String divisionId,
+    required String tournamentJson,
+    this.rowid = const Value.absent(),
+  }) : divisionId = Value(divisionId),
+       tournamentJson = Value(tournamentJson);
+  static Insertable<RoundRobinSnapshot> custom({
+    Expression<String>? divisionId,
+    Expression<String>? tournamentJson,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (divisionId != null) 'division_id': divisionId,
+      if (tournamentJson != null) 'tournament_json': tournamentJson,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  RoundRobinSnapshotsCompanion copyWith({
+    Value<String>? divisionId,
+    Value<String>? tournamentJson,
+    Value<int>? rowid,
+  }) {
+    return RoundRobinSnapshotsCompanion(
+      divisionId: divisionId ?? this.divisionId,
+      tournamentJson: tournamentJson ?? this.tournamentJson,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (divisionId.present) {
+      map['division_id'] = Variable<String>(divisionId.value);
+    }
+    if (tournamentJson.present) {
+      map['tournament_json'] = Variable<String>(tournamentJson.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RoundRobinSnapshotsCompanion(')
+          ..write('divisionId: $divisionId, ')
+          ..write('tournamentJson: $tournamentJson, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $RoundRobinOutboxTable extends RoundRobinOutbox
+    with TableInfo<$RoundRobinOutboxTable, RoundRobinOutboxData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RoundRobinOutboxTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _divisionIdMeta = const VerificationMeta(
+    'divisionId',
+  );
+  @override
+  late final GeneratedColumn<String> divisionId = GeneratedColumn<String>(
+    'division_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES event_divisions (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
+    'payloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
+    'payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK(json_valid(payload_json))',
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK(status IN (\'pending\',\'blocked\',\'failed\',\'conflicted\',\'accepted\'))',
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _failureMeta = const VerificationMeta(
+    'failure',
+  );
+  @override
+  late final GeneratedColumn<String> failure = GeneratedColumn<String>(
+    'failure',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteJsonMeta = const VerificationMeta(
+    'remoteJson',
+  );
+  @override
+  late final GeneratedColumn<String> remoteJson = GeneratedColumn<String>(
+    'remote_json',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    divisionId,
+    payloadJson,
+    status,
+    createdAt,
+    failure,
+    remoteJson,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'round_robin_outbox';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<RoundRobinOutboxData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('division_id')) {
+      context.handle(
+        _divisionIdMeta,
+        divisionId.isAcceptableOrUnknown(data['division_id']!, _divisionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_divisionIdMeta);
+    }
+    if (data.containsKey('payload_json')) {
+      context.handle(
+        _payloadJsonMeta,
+        payloadJson.isAcceptableOrUnknown(
+          data['payload_json']!,
+          _payloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadJsonMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('failure')) {
+      context.handle(
+        _failureMeta,
+        failure.isAcceptableOrUnknown(data['failure']!, _failureMeta),
+      );
+    }
+    if (data.containsKey('remote_json')) {
+      context.handle(
+        _remoteJsonMeta,
+        remoteJson.isAcceptableOrUnknown(data['remote_json']!, _remoteJsonMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  RoundRobinOutboxData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RoundRobinOutboxData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      divisionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}division_id'],
+      )!,
+      payloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_json'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      failure: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}failure'],
+      ),
+      remoteJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_json'],
+      ),
+    );
+  }
+
+  @override
+  $RoundRobinOutboxTable createAlias(String alias) {
+    return $RoundRobinOutboxTable(attachedDatabase, alias);
+  }
+}
+
+class RoundRobinOutboxData extends DataClass
+    implements Insertable<RoundRobinOutboxData> {
+  final String id;
+  final String divisionId;
+  final String payloadJson;
+  final String status;
+  final DateTime createdAt;
+  final String? failure;
+  final String? remoteJson;
+  const RoundRobinOutboxData({
+    required this.id,
+    required this.divisionId,
+    required this.payloadJson,
+    required this.status,
+    required this.createdAt,
+    this.failure,
+    this.remoteJson,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['division_id'] = Variable<String>(divisionId);
+    map['payload_json'] = Variable<String>(payloadJson);
+    map['status'] = Variable<String>(status);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || failure != null) {
+      map['failure'] = Variable<String>(failure);
+    }
+    if (!nullToAbsent || remoteJson != null) {
+      map['remote_json'] = Variable<String>(remoteJson);
+    }
+    return map;
+  }
+
+  RoundRobinOutboxCompanion toCompanion(bool nullToAbsent) {
+    return RoundRobinOutboxCompanion(
+      id: Value(id),
+      divisionId: Value(divisionId),
+      payloadJson: Value(payloadJson),
+      status: Value(status),
+      createdAt: Value(createdAt),
+      failure: failure == null && nullToAbsent
+          ? const Value.absent()
+          : Value(failure),
+      remoteJson: remoteJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteJson),
+    );
+  }
+
+  factory RoundRobinOutboxData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RoundRobinOutboxData(
+      id: serializer.fromJson<String>(json['id']),
+      divisionId: serializer.fromJson<String>(json['divisionId']),
+      payloadJson: serializer.fromJson<String>(json['payloadJson']),
+      status: serializer.fromJson<String>(json['status']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      failure: serializer.fromJson<String?>(json['failure']),
+      remoteJson: serializer.fromJson<String?>(json['remoteJson']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'divisionId': serializer.toJson<String>(divisionId),
+      'payloadJson': serializer.toJson<String>(payloadJson),
+      'status': serializer.toJson<String>(status),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'failure': serializer.toJson<String?>(failure),
+      'remoteJson': serializer.toJson<String?>(remoteJson),
+    };
+  }
+
+  RoundRobinOutboxData copyWith({
+    String? id,
+    String? divisionId,
+    String? payloadJson,
+    String? status,
+    DateTime? createdAt,
+    Value<String?> failure = const Value.absent(),
+    Value<String?> remoteJson = const Value.absent(),
+  }) => RoundRobinOutboxData(
+    id: id ?? this.id,
+    divisionId: divisionId ?? this.divisionId,
+    payloadJson: payloadJson ?? this.payloadJson,
+    status: status ?? this.status,
+    createdAt: createdAt ?? this.createdAt,
+    failure: failure.present ? failure.value : this.failure,
+    remoteJson: remoteJson.present ? remoteJson.value : this.remoteJson,
+  );
+  RoundRobinOutboxData copyWithCompanion(RoundRobinOutboxCompanion data) {
+    return RoundRobinOutboxData(
+      id: data.id.present ? data.id.value : this.id,
+      divisionId: data.divisionId.present
+          ? data.divisionId.value
+          : this.divisionId,
+      payloadJson: data.payloadJson.present
+          ? data.payloadJson.value
+          : this.payloadJson,
+      status: data.status.present ? data.status.value : this.status,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      failure: data.failure.present ? data.failure.value : this.failure,
+      remoteJson: data.remoteJson.present
+          ? data.remoteJson.value
+          : this.remoteJson,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RoundRobinOutboxData(')
+          ..write('id: $id, ')
+          ..write('divisionId: $divisionId, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('failure: $failure, ')
+          ..write('remoteJson: $remoteJson')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    divisionId,
+    payloadJson,
+    status,
+    createdAt,
+    failure,
+    remoteJson,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RoundRobinOutboxData &&
+          other.id == this.id &&
+          other.divisionId == this.divisionId &&
+          other.payloadJson == this.payloadJson &&
+          other.status == this.status &&
+          other.createdAt == this.createdAt &&
+          other.failure == this.failure &&
+          other.remoteJson == this.remoteJson);
+}
+
+class RoundRobinOutboxCompanion extends UpdateCompanion<RoundRobinOutboxData> {
+  final Value<String> id;
+  final Value<String> divisionId;
+  final Value<String> payloadJson;
+  final Value<String> status;
+  final Value<DateTime> createdAt;
+  final Value<String?> failure;
+  final Value<String?> remoteJson;
+  final Value<int> rowid;
+  const RoundRobinOutboxCompanion({
+    this.id = const Value.absent(),
+    this.divisionId = const Value.absent(),
+    this.payloadJson = const Value.absent(),
+    this.status = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.failure = const Value.absent(),
+    this.remoteJson = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  RoundRobinOutboxCompanion.insert({
+    required String id,
+    required String divisionId,
+    required String payloadJson,
+    required String status,
+    required DateTime createdAt,
+    this.failure = const Value.absent(),
+    this.remoteJson = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       divisionId = Value(divisionId),
+       payloadJson = Value(payloadJson),
+       status = Value(status),
+       createdAt = Value(createdAt);
+  static Insertable<RoundRobinOutboxData> custom({
+    Expression<String>? id,
+    Expression<String>? divisionId,
+    Expression<String>? payloadJson,
+    Expression<String>? status,
+    Expression<DateTime>? createdAt,
+    Expression<String>? failure,
+    Expression<String>? remoteJson,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (divisionId != null) 'division_id': divisionId,
+      if (payloadJson != null) 'payload_json': payloadJson,
+      if (status != null) 'status': status,
+      if (createdAt != null) 'created_at': createdAt,
+      if (failure != null) 'failure': failure,
+      if (remoteJson != null) 'remote_json': remoteJson,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  RoundRobinOutboxCompanion copyWith({
+    Value<String>? id,
+    Value<String>? divisionId,
+    Value<String>? payloadJson,
+    Value<String>? status,
+    Value<DateTime>? createdAt,
+    Value<String?>? failure,
+    Value<String?>? remoteJson,
+    Value<int>? rowid,
+  }) {
+    return RoundRobinOutboxCompanion(
+      id: id ?? this.id,
+      divisionId: divisionId ?? this.divisionId,
+      payloadJson: payloadJson ?? this.payloadJson,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      failure: failure ?? this.failure,
+      remoteJson: remoteJson ?? this.remoteJson,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (divisionId.present) {
+      map['division_id'] = Variable<String>(divisionId.value);
+    }
+    if (payloadJson.present) {
+      map['payload_json'] = Variable<String>(payloadJson.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (failure.present) {
+      map['failure'] = Variable<String>(failure.value);
+    }
+    if (remoteJson.present) {
+      map['remote_json'] = Variable<String>(remoteJson.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RoundRobinOutboxCompanion(')
+          ..write('id: $id, ')
+          ..write('divisionId: $divisionId, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('failure: $failure, ')
+          ..write('remoteJson: $remoteJson, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $RoundRobinCheckpointsTable extends RoundRobinCheckpoints
+    with TableInfo<$RoundRobinCheckpointsTable, RoundRobinCheckpoint> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RoundRobinCheckpointsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _scopeMeta = const VerificationMeta('scope');
+  @override
+  late final GeneratedColumn<String> scope = GeneratedColumn<String>(
+    'scope',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tournamentIdMeta = const VerificationMeta(
+    'tournamentId',
+  );
+  @override
+  late final GeneratedColumn<String> tournamentId = GeneratedColumn<String>(
+    'tournament_id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [scope, updatedAt, tournamentId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'round_robin_checkpoints';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<RoundRobinCheckpoint> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('scope')) {
+      context.handle(
+        _scopeMeta,
+        scope.isAcceptableOrUnknown(data['scope']!, _scopeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_scopeMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('tournament_id')) {
+      context.handle(
+        _tournamentIdMeta,
+        tournamentId.isAcceptableOrUnknown(
+          data['tournament_id']!,
+          _tournamentIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_tournamentIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {scope};
+  @override
+  RoundRobinCheckpoint map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RoundRobinCheckpoint(
+      scope: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}scope'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      tournamentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tournament_id'],
+      )!,
+    );
+  }
+
+  @override
+  $RoundRobinCheckpointsTable createAlias(String alias) {
+    return $RoundRobinCheckpointsTable(attachedDatabase, alias);
+  }
+}
+
+class RoundRobinCheckpoint extends DataClass
+    implements Insertable<RoundRobinCheckpoint> {
+  final String scope;
+  final DateTime updatedAt;
+  final String tournamentId;
+  const RoundRobinCheckpoint({
+    required this.scope,
+    required this.updatedAt,
+    required this.tournamentId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['scope'] = Variable<String>(scope);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['tournament_id'] = Variable<String>(tournamentId);
+    return map;
+  }
+
+  RoundRobinCheckpointsCompanion toCompanion(bool nullToAbsent) {
+    return RoundRobinCheckpointsCompanion(
+      scope: Value(scope),
+      updatedAt: Value(updatedAt),
+      tournamentId: Value(tournamentId),
+    );
+  }
+
+  factory RoundRobinCheckpoint.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RoundRobinCheckpoint(
+      scope: serializer.fromJson<String>(json['scope']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      tournamentId: serializer.fromJson<String>(json['tournamentId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'scope': serializer.toJson<String>(scope),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'tournamentId': serializer.toJson<String>(tournamentId),
+    };
+  }
+
+  RoundRobinCheckpoint copyWith({
+    String? scope,
+    DateTime? updatedAt,
+    String? tournamentId,
+  }) => RoundRobinCheckpoint(
+    scope: scope ?? this.scope,
+    updatedAt: updatedAt ?? this.updatedAt,
+    tournamentId: tournamentId ?? this.tournamentId,
+  );
+  RoundRobinCheckpoint copyWithCompanion(RoundRobinCheckpointsCompanion data) {
+    return RoundRobinCheckpoint(
+      scope: data.scope.present ? data.scope.value : this.scope,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      tournamentId: data.tournamentId.present
+          ? data.tournamentId.value
+          : this.tournamentId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RoundRobinCheckpoint(')
+          ..write('scope: $scope, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('tournamentId: $tournamentId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(scope, updatedAt, tournamentId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RoundRobinCheckpoint &&
+          other.scope == this.scope &&
+          other.updatedAt == this.updatedAt &&
+          other.tournamentId == this.tournamentId);
+}
+
+class RoundRobinCheckpointsCompanion
+    extends UpdateCompanion<RoundRobinCheckpoint> {
+  final Value<String> scope;
+  final Value<DateTime> updatedAt;
+  final Value<String> tournamentId;
+  final Value<int> rowid;
+  const RoundRobinCheckpointsCompanion({
+    this.scope = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.tournamentId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  RoundRobinCheckpointsCompanion.insert({
+    required String scope,
+    required DateTime updatedAt,
+    required String tournamentId,
+    this.rowid = const Value.absent(),
+  }) : scope = Value(scope),
+       updatedAt = Value(updatedAt),
+       tournamentId = Value(tournamentId);
+  static Insertable<RoundRobinCheckpoint> custom({
+    Expression<String>? scope,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? tournamentId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (scope != null) 'scope': scope,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (tournamentId != null) 'tournament_id': tournamentId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  RoundRobinCheckpointsCompanion copyWith({
+    Value<String>? scope,
+    Value<DateTime>? updatedAt,
+    Value<String>? tournamentId,
+    Value<int>? rowid,
+  }) {
+    return RoundRobinCheckpointsCompanion(
+      scope: scope ?? this.scope,
+      updatedAt: updatedAt ?? this.updatedAt,
+      tournamentId: tournamentId ?? this.tournamentId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (scope.present) {
+      map['scope'] = Variable<String>(scope.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (tournamentId.present) {
+      map['tournament_id'] = Variable<String>(tournamentId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RoundRobinCheckpointsCompanion(')
+          ..write('scope: $scope, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('tournamentId: $tournamentId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $MatchResultRevisionsTable extends MatchResultRevisions
     with TableInfo<$MatchResultRevisionsTable, MatchResultRevision> {
   @override
@@ -14119,6 +15113,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $SingleEliminationOutboxTable(this);
   late final $SingleEliminationCheckpointsTable singleEliminationCheckpoints =
       $SingleEliminationCheckpointsTable(this);
+  late final $RoundRobinSnapshotsTable roundRobinSnapshots =
+      $RoundRobinSnapshotsTable(this);
+  late final $RoundRobinOutboxTable roundRobinOutbox = $RoundRobinOutboxTable(
+    this,
+  );
+  late final $RoundRobinCheckpointsTable roundRobinCheckpoints =
+      $RoundRobinCheckpointsTable(this);
   late final $MatchResultRevisionsTable matchResultRevisions =
       $MatchResultRevisionsTable(this);
   late final Index playersDisplayNameIdx = Index(
@@ -14265,6 +15266,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     singleEliminationSnapshots,
     singleEliminationOutbox,
     singleEliminationCheckpoints,
+    roundRobinSnapshots,
+    roundRobinOutbox,
+    roundRobinCheckpoints,
     matchResultRevisions,
     playersDisplayNameIdx,
     eventsStatusScheduledAtIdx,
@@ -16436,6 +17440,50 @@ final class $$EventDivisionsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<
+    $RoundRobinSnapshotsTable,
+    List<RoundRobinSnapshot>
+  >
+  _roundRobinSnapshotsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.roundRobinSnapshots,
+        aliasName: 'event_divisions__id__round_robin_snapshots__division_id',
+      );
+
+  $$RoundRobinSnapshotsTableProcessedTableManager get roundRobinSnapshotsRefs {
+    final manager = $$RoundRobinSnapshotsTableTableManager(
+      $_db,
+      $_db.roundRobinSnapshots,
+    ).filter((f) => f.divisionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _roundRobinSnapshotsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$RoundRobinOutboxTable, List<RoundRobinOutboxData>>
+  _roundRobinOutboxRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.roundRobinOutbox,
+    aliasName: 'event_divisions__id__round_robin_outbox__division_id',
+  );
+
+  $$RoundRobinOutboxTableProcessedTableManager get roundRobinOutboxRefs {
+    final manager = $$RoundRobinOutboxTableTableManager(
+      $_db,
+      $_db.roundRobinOutbox,
+    ).filter((f) => f.divisionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _roundRobinOutboxRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$EventDivisionsTableFilterComposer
@@ -16789,6 +17837,56 @@ class $$EventDivisionsTableFilterComposer
                     $removeJoinBuilderFromRootComposer,
               ),
         );
+    return f(composer);
+  }
+
+  Expression<bool> roundRobinSnapshotsRefs(
+    Expression<bool> Function($$RoundRobinSnapshotsTableFilterComposer f) f,
+  ) {
+    final $$RoundRobinSnapshotsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.roundRobinSnapshots,
+      getReferencedColumn: (t) => t.divisionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RoundRobinSnapshotsTableFilterComposer(
+            $db: $db,
+            $table: $db.roundRobinSnapshots,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> roundRobinOutboxRefs(
+    Expression<bool> Function($$RoundRobinOutboxTableFilterComposer f) f,
+  ) {
+    final $$RoundRobinOutboxTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.roundRobinOutbox,
+      getReferencedColumn: (t) => t.divisionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RoundRobinOutboxTableFilterComposer(
+            $db: $db,
+            $table: $db.roundRobinOutbox,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return f(composer);
   }
 }
@@ -17209,6 +18307,57 @@ class $$EventDivisionsTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> roundRobinSnapshotsRefs<T extends Object>(
+    Expression<T> Function($$RoundRobinSnapshotsTableAnnotationComposer a) f,
+  ) {
+    final $$RoundRobinSnapshotsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.roundRobinSnapshots,
+          getReferencedColumn: (t) => t.divisionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$RoundRobinSnapshotsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.roundRobinSnapshots,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> roundRobinOutboxRefs<T extends Object>(
+    Expression<T> Function($$RoundRobinOutboxTableAnnotationComposer a) f,
+  ) {
+    final $$RoundRobinOutboxTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.roundRobinOutbox,
+      getReferencedColumn: (t) => t.divisionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RoundRobinOutboxTableAnnotationComposer(
+            $db: $db,
+            $table: $db.roundRobinOutbox,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$EventDivisionsTableTableManager
@@ -17237,6 +18386,8 @@ class $$EventDivisionsTableTableManager
             bool teamFormationConflictsRefs,
             bool singleEliminationSnapshotsRefs,
             bool singleEliminationOutboxRefs,
+            bool roundRobinSnapshotsRefs,
+            bool roundRobinOutboxRefs,
           })
         > {
   $$EventDivisionsTableTableManager(
@@ -17318,6 +18469,8 @@ class $$EventDivisionsTableTableManager
                 teamFormationConflictsRefs = false,
                 singleEliminationSnapshotsRefs = false,
                 singleEliminationOutboxRefs = false,
+                roundRobinSnapshotsRefs = false,
+                roundRobinOutboxRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -17336,6 +18489,8 @@ class $$EventDivisionsTableTableManager
                     if (singleEliminationSnapshotsRefs)
                       db.singleEliminationSnapshots,
                     if (singleEliminationOutboxRefs) db.singleEliminationOutbox,
+                    if (roundRobinSnapshotsRefs) db.roundRobinSnapshots,
+                    if (roundRobinOutboxRefs) db.roundRobinOutbox,
                   ],
                   addJoins:
                       <
@@ -17600,6 +18755,48 @@ class $$EventDivisionsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (roundRobinSnapshotsRefs)
+                        await $_getPrefetchedData<
+                          LocalEventDivisionRow,
+                          $EventDivisionsTable,
+                          RoundRobinSnapshot
+                        >(
+                          currentTable: table,
+                          referencedTable: $$EventDivisionsTableReferences
+                              ._roundRobinSnapshotsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$EventDivisionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).roundRobinSnapshotsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.divisionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (roundRobinOutboxRefs)
+                        await $_getPrefetchedData<
+                          LocalEventDivisionRow,
+                          $EventDivisionsTable,
+                          RoundRobinOutboxData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$EventDivisionsTableReferences
+                              ._roundRobinOutboxRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$EventDivisionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).roundRobinOutboxRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.divisionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -17633,6 +18830,8 @@ typedef $$EventDivisionsTableProcessedTableManager =
         bool teamFormationConflictsRefs,
         bool singleEliminationSnapshotsRefs,
         bool singleEliminationOutboxRefs,
+        bool roundRobinSnapshotsRefs,
+        bool roundRobinOutboxRefs,
       })
     >;
 typedef $$EventParticipantsTableCreateCompanionBuilder =
@@ -29814,6 +31013,836 @@ typedef $$SingleEliminationCheckpointsTableProcessedTableManager =
       SingleEliminationCheckpoint,
       PrefetchHooks Function()
     >;
+typedef $$RoundRobinSnapshotsTableCreateCompanionBuilder =
+    RoundRobinSnapshotsCompanion Function({
+      required String divisionId,
+      required String tournamentJson,
+      Value<int> rowid,
+    });
+typedef $$RoundRobinSnapshotsTableUpdateCompanionBuilder =
+    RoundRobinSnapshotsCompanion Function({
+      Value<String> divisionId,
+      Value<String> tournamentJson,
+      Value<int> rowid,
+    });
+
+final class $$RoundRobinSnapshotsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $RoundRobinSnapshotsTable,
+          RoundRobinSnapshot
+        > {
+  $$RoundRobinSnapshotsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $EventDivisionsTable _divisionIdTable(_$AppDatabase db) => db
+      .eventDivisions
+      .createAlias('round_robin_snapshots__division_id__event_divisions__id');
+
+  $$EventDivisionsTableProcessedTableManager get divisionId {
+    final $_column = $_itemColumn<String>('division_id')!;
+
+    final manager = $$EventDivisionsTableTableManager(
+      $_db,
+      $_db.eventDivisions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_divisionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$RoundRobinSnapshotsTableFilterComposer
+    extends Composer<_$AppDatabase, $RoundRobinSnapshotsTable> {
+  $$RoundRobinSnapshotsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get tournamentJson => $composableBuilder(
+    column: $table.tournamentJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$EventDivisionsTableFilterComposer get divisionId {
+    final $$EventDivisionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableFilterComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$RoundRobinSnapshotsTableOrderingComposer
+    extends Composer<_$AppDatabase, $RoundRobinSnapshotsTable> {
+  $$RoundRobinSnapshotsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get tournamentJson => $composableBuilder(
+    column: $table.tournamentJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$EventDivisionsTableOrderingComposer get divisionId {
+    final $$EventDivisionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$RoundRobinSnapshotsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $RoundRobinSnapshotsTable> {
+  $$RoundRobinSnapshotsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get tournamentJson => $composableBuilder(
+    column: $table.tournamentJson,
+    builder: (column) => column,
+  );
+
+  $$EventDivisionsTableAnnotationComposer get divisionId {
+    final $$EventDivisionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$RoundRobinSnapshotsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $RoundRobinSnapshotsTable,
+          RoundRobinSnapshot,
+          $$RoundRobinSnapshotsTableFilterComposer,
+          $$RoundRobinSnapshotsTableOrderingComposer,
+          $$RoundRobinSnapshotsTableAnnotationComposer,
+          $$RoundRobinSnapshotsTableCreateCompanionBuilder,
+          $$RoundRobinSnapshotsTableUpdateCompanionBuilder,
+          (RoundRobinSnapshot, $$RoundRobinSnapshotsTableReferences),
+          RoundRobinSnapshot,
+          PrefetchHooks Function({bool divisionId})
+        > {
+  $$RoundRobinSnapshotsTableTableManager(
+    _$AppDatabase db,
+    $RoundRobinSnapshotsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$RoundRobinSnapshotsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$RoundRobinSnapshotsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$RoundRobinSnapshotsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> divisionId = const Value.absent(),
+                Value<String> tournamentJson = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RoundRobinSnapshotsCompanion(
+                divisionId: divisionId,
+                tournamentJson: tournamentJson,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String divisionId,
+                required String tournamentJson,
+                Value<int> rowid = const Value.absent(),
+              }) => RoundRobinSnapshotsCompanion.insert(
+                divisionId: divisionId,
+                tournamentJson: tournamentJson,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$RoundRobinSnapshotsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({divisionId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (divisionId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.divisionId,
+                        referencedTable: $$RoundRobinSnapshotsTableReferences
+                            ._divisionIdTable(db),
+                        referencedColumn: $$RoundRobinSnapshotsTableReferences
+                            ._divisionIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$RoundRobinSnapshotsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $RoundRobinSnapshotsTable,
+      RoundRobinSnapshot,
+      $$RoundRobinSnapshotsTableFilterComposer,
+      $$RoundRobinSnapshotsTableOrderingComposer,
+      $$RoundRobinSnapshotsTableAnnotationComposer,
+      $$RoundRobinSnapshotsTableCreateCompanionBuilder,
+      $$RoundRobinSnapshotsTableUpdateCompanionBuilder,
+      (RoundRobinSnapshot, $$RoundRobinSnapshotsTableReferences),
+      RoundRobinSnapshot,
+      PrefetchHooks Function({bool divisionId})
+    >;
+typedef $$RoundRobinOutboxTableCreateCompanionBuilder =
+    RoundRobinOutboxCompanion Function({
+      required String id,
+      required String divisionId,
+      required String payloadJson,
+      required String status,
+      required DateTime createdAt,
+      Value<String?> failure,
+      Value<String?> remoteJson,
+      Value<int> rowid,
+    });
+typedef $$RoundRobinOutboxTableUpdateCompanionBuilder =
+    RoundRobinOutboxCompanion Function({
+      Value<String> id,
+      Value<String> divisionId,
+      Value<String> payloadJson,
+      Value<String> status,
+      Value<DateTime> createdAt,
+      Value<String?> failure,
+      Value<String?> remoteJson,
+      Value<int> rowid,
+    });
+
+final class $$RoundRobinOutboxTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $RoundRobinOutboxTable,
+          RoundRobinOutboxData
+        > {
+  $$RoundRobinOutboxTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $EventDivisionsTable _divisionIdTable(_$AppDatabase db) => db
+      .eventDivisions
+      .createAlias('round_robin_outbox__division_id__event_divisions__id');
+
+  $$EventDivisionsTableProcessedTableManager get divisionId {
+    final $_column = $_itemColumn<String>('division_id')!;
+
+    final manager = $$EventDivisionsTableTableManager(
+      $_db,
+      $_db.eventDivisions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_divisionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$RoundRobinOutboxTableFilterComposer
+    extends Composer<_$AppDatabase, $RoundRobinOutboxTable> {
+  $$RoundRobinOutboxTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get failure => $composableBuilder(
+    column: $table.failure,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get remoteJson => $composableBuilder(
+    column: $table.remoteJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$EventDivisionsTableFilterComposer get divisionId {
+    final $$EventDivisionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableFilterComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$RoundRobinOutboxTableOrderingComposer
+    extends Composer<_$AppDatabase, $RoundRobinOutboxTable> {
+  $$RoundRobinOutboxTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get failure => $composableBuilder(
+    column: $table.failure,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get remoteJson => $composableBuilder(
+    column: $table.remoteJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$EventDivisionsTableOrderingComposer get divisionId {
+    final $$EventDivisionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$RoundRobinOutboxTableAnnotationComposer
+    extends Composer<_$AppDatabase, $RoundRobinOutboxTable> {
+  $$RoundRobinOutboxTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get failure =>
+      $composableBuilder(column: $table.failure, builder: (column) => column);
+
+  GeneratedColumn<String> get remoteJson => $composableBuilder(
+    column: $table.remoteJson,
+    builder: (column) => column,
+  );
+
+  $$EventDivisionsTableAnnotationComposer get divisionId {
+    final $$EventDivisionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$RoundRobinOutboxTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $RoundRobinOutboxTable,
+          RoundRobinOutboxData,
+          $$RoundRobinOutboxTableFilterComposer,
+          $$RoundRobinOutboxTableOrderingComposer,
+          $$RoundRobinOutboxTableAnnotationComposer,
+          $$RoundRobinOutboxTableCreateCompanionBuilder,
+          $$RoundRobinOutboxTableUpdateCompanionBuilder,
+          (RoundRobinOutboxData, $$RoundRobinOutboxTableReferences),
+          RoundRobinOutboxData,
+          PrefetchHooks Function({bool divisionId})
+        > {
+  $$RoundRobinOutboxTableTableManager(
+    _$AppDatabase db,
+    $RoundRobinOutboxTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$RoundRobinOutboxTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$RoundRobinOutboxTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$RoundRobinOutboxTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> divisionId = const Value.absent(),
+                Value<String> payloadJson = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<String?> failure = const Value.absent(),
+                Value<String?> remoteJson = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RoundRobinOutboxCompanion(
+                id: id,
+                divisionId: divisionId,
+                payloadJson: payloadJson,
+                status: status,
+                createdAt: createdAt,
+                failure: failure,
+                remoteJson: remoteJson,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String divisionId,
+                required String payloadJson,
+                required String status,
+                required DateTime createdAt,
+                Value<String?> failure = const Value.absent(),
+                Value<String?> remoteJson = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RoundRobinOutboxCompanion.insert(
+                id: id,
+                divisionId: divisionId,
+                payloadJson: payloadJson,
+                status: status,
+                createdAt: createdAt,
+                failure: failure,
+                remoteJson: remoteJson,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$RoundRobinOutboxTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({divisionId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (divisionId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.divisionId,
+                        referencedTable: $$RoundRobinOutboxTableReferences
+                            ._divisionIdTable(db),
+                        referencedColumn: $$RoundRobinOutboxTableReferences
+                            ._divisionIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$RoundRobinOutboxTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $RoundRobinOutboxTable,
+      RoundRobinOutboxData,
+      $$RoundRobinOutboxTableFilterComposer,
+      $$RoundRobinOutboxTableOrderingComposer,
+      $$RoundRobinOutboxTableAnnotationComposer,
+      $$RoundRobinOutboxTableCreateCompanionBuilder,
+      $$RoundRobinOutboxTableUpdateCompanionBuilder,
+      (RoundRobinOutboxData, $$RoundRobinOutboxTableReferences),
+      RoundRobinOutboxData,
+      PrefetchHooks Function({bool divisionId})
+    >;
+typedef $$RoundRobinCheckpointsTableCreateCompanionBuilder =
+    RoundRobinCheckpointsCompanion Function({
+      required String scope,
+      required DateTime updatedAt,
+      required String tournamentId,
+      Value<int> rowid,
+    });
+typedef $$RoundRobinCheckpointsTableUpdateCompanionBuilder =
+    RoundRobinCheckpointsCompanion Function({
+      Value<String> scope,
+      Value<DateTime> updatedAt,
+      Value<String> tournamentId,
+      Value<int> rowid,
+    });
+
+class $$RoundRobinCheckpointsTableFilterComposer
+    extends Composer<_$AppDatabase, $RoundRobinCheckpointsTable> {
+  $$RoundRobinCheckpointsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get scope => $composableBuilder(
+    column: $table.scope,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tournamentId => $composableBuilder(
+    column: $table.tournamentId,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$RoundRobinCheckpointsTableOrderingComposer
+    extends Composer<_$AppDatabase, $RoundRobinCheckpointsTable> {
+  $$RoundRobinCheckpointsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get scope => $composableBuilder(
+    column: $table.scope,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tournamentId => $composableBuilder(
+    column: $table.tournamentId,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$RoundRobinCheckpointsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $RoundRobinCheckpointsTable> {
+  $$RoundRobinCheckpointsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get scope =>
+      $composableBuilder(column: $table.scope, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get tournamentId => $composableBuilder(
+    column: $table.tournamentId,
+    builder: (column) => column,
+  );
+}
+
+class $$RoundRobinCheckpointsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $RoundRobinCheckpointsTable,
+          RoundRobinCheckpoint,
+          $$RoundRobinCheckpointsTableFilterComposer,
+          $$RoundRobinCheckpointsTableOrderingComposer,
+          $$RoundRobinCheckpointsTableAnnotationComposer,
+          $$RoundRobinCheckpointsTableCreateCompanionBuilder,
+          $$RoundRobinCheckpointsTableUpdateCompanionBuilder,
+          (
+            RoundRobinCheckpoint,
+            BaseReferences<
+              _$AppDatabase,
+              $RoundRobinCheckpointsTable,
+              RoundRobinCheckpoint
+            >,
+          ),
+          RoundRobinCheckpoint,
+          PrefetchHooks Function()
+        > {
+  $$RoundRobinCheckpointsTableTableManager(
+    _$AppDatabase db,
+    $RoundRobinCheckpointsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$RoundRobinCheckpointsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$RoundRobinCheckpointsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$RoundRobinCheckpointsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> scope = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<String> tournamentId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RoundRobinCheckpointsCompanion(
+                scope: scope,
+                updatedAt: updatedAt,
+                tournamentId: tournamentId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String scope,
+                required DateTime updatedAt,
+                required String tournamentId,
+                Value<int> rowid = const Value.absent(),
+              }) => RoundRobinCheckpointsCompanion.insert(
+                scope: scope,
+                updatedAt: updatedAt,
+                tournamentId: tournamentId,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$RoundRobinCheckpointsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $RoundRobinCheckpointsTable,
+      RoundRobinCheckpoint,
+      $$RoundRobinCheckpointsTableFilterComposer,
+      $$RoundRobinCheckpointsTableOrderingComposer,
+      $$RoundRobinCheckpointsTableAnnotationComposer,
+      $$RoundRobinCheckpointsTableCreateCompanionBuilder,
+      $$RoundRobinCheckpointsTableUpdateCompanionBuilder,
+      (
+        RoundRobinCheckpoint,
+        BaseReferences<
+          _$AppDatabase,
+          $RoundRobinCheckpointsTable,
+          RoundRobinCheckpoint
+        >,
+      ),
+      RoundRobinCheckpoint,
+      PrefetchHooks Function()
+    >;
 typedef $$MatchResultRevisionsTableCreateCompanionBuilder =
     MatchResultRevisionsCompanion Function({
       required String operationId,
@@ -30250,6 +32279,12 @@ class $AppDatabaseManager {
         _db,
         _db.singleEliminationCheckpoints,
       );
+  $$RoundRobinSnapshotsTableTableManager get roundRobinSnapshots =>
+      $$RoundRobinSnapshotsTableTableManager(_db, _db.roundRobinSnapshots);
+  $$RoundRobinOutboxTableTableManager get roundRobinOutbox =>
+      $$RoundRobinOutboxTableTableManager(_db, _db.roundRobinOutbox);
+  $$RoundRobinCheckpointsTableTableManager get roundRobinCheckpoints =>
+      $$RoundRobinCheckpointsTableTableManager(_db, _db.roundRobinCheckpoints);
   $$MatchResultRevisionsTableTableManager get matchResultRevisions =>
       $$MatchResultRevisionsTableTableManager(_db, _db.matchResultRevisions);
 }

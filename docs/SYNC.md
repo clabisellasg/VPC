@@ -273,3 +273,17 @@ operations. Formation-only SQLite triggers are suspended/restored within this
 transaction for authoritative historical imports; foreign keys and table checks
 remain enforced. Web never constructs this Drift puller or checkpoint store.
 Realtime only requests the same authoritative pull, never applies payloads.
+## M14 bounded round-robin synchronization
+
+M14 adds fixed generate/regenerate, start, result, and correction commands for
+round-robin schedules. Android commits a confirmed schedule or score change
+and its operation UUID together, retains it across restart, and does not call
+pending work synchronized. Identical payload replay is safe; changed operation
+reuse and stale aggregate versions conflict. Pull is ordered and checkpointed,
+imports cloud timestamps/versions without creating outbox work, and stops
+before protected local intent.
+
+Correction writes the immutable prior result before updating the Match, then
+recomputes derived standings and complete placements in the same transaction.
+No downstream winner progression exists. This slice does not synchronize
+Double Elimination or court-queue behavior.

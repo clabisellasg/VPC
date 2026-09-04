@@ -6,6 +6,7 @@ import '../../application/accounts/account_models.dart';
 import '../../application/events/event_setup_models.dart';
 import '../../application/players/player_directory_models.dart';
 import '../../application/participation/participation_models.dart';
+import '../../domain/common/domain_enums.dart';
 import '../../domain/common/entity_id.dart';
 import '../../domain/common/domain_failure.dart';
 import '../../domain/common/repository_result.dart';
@@ -25,7 +26,9 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
   final _search = TextEditingController();
   EventSetup? _setup;
   List<PlayerDirectoryEntry> _players = const [];
-  PlayerDirectoryEntry? _selected;
+  List<ParticipationRecord> _registered = const [];
+  final _selected = <PlayerId, PlayerDirectoryEntry>{};
+  final _recentlyAdded = <PlayerId>{};
   final _divisions = <DivisionId>{};
   String? _message;
   bool _working = false;
@@ -67,7 +70,6 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
     );
     setState(() {
       _finding = true;
-      _selected = null;
     });
     try {
       if (store == null) {
@@ -89,6 +91,7 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
           .when(success: (value) => value, failure: (failure) => throw failure);
       if (!mounted || request != _searchRequest) return;
       setState(() {
+        _registered = roster;
         _players = [
           if (more) ..._players,
           ...page.entries,
@@ -119,6 +122,26 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
       return const Center(child: Text('Organizer access required.'));
     }
     final setup = _setup;
+    final activeRegistered = _registered
+        .where((record) => !record.participant.metadata.isDeleted)
+        .toList();
+    final recent = activeRegistered
+        .where((record) => _recentlyAdded.contains(record.participant.playerId))
+        .toList();
+    final checkedIn = activeRegistered
+        .where(
+          (record) =>
+              !_recentlyAdded.contains(record.participant.playerId) &&
+              record.participant.checkInStatus == CheckInStatus.checkedIn,
+        )
+        .toList();
+    final awaitingCheckIn = activeRegistered
+        .where(
+          (record) =>
+              !_recentlyAdded.contains(record.participant.playerId) &&
+              record.participant.checkInStatus != CheckInStatus.checkedIn,
+        )
+        .toList();
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
@@ -128,7 +151,7 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
         ),
         const SizedBox(height: 8),
         const Text(
-          'Select an existing permanent community player. Players already registered in this event are hidden.',
+          'Select one or more permanent community players. Registered players are listed separately below.',
         ),
         const SizedBox(height: 16),
         TextField(
@@ -146,7 +169,6 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
             _searchRequest++;
             _finding = false;
             _players = const [];
-            _selected = null;
             _nextCursor = null;
           }),
         ),
@@ -157,15 +179,33 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
           const Text(
             'No unregistered players on this page. Search by name or load more.',
           ),
-        for (final player in _players)
-          ListTile(
-            leading: Icon(
-              _selected?.profile.id == player.profile.id
-                  ? Icons.radio_button_checked
-                  : Icons.radio_button_unchecked,
+        if (_selected.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Text('${_selected.length} selected'),
+          ),
+        if (_players.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Text(
+              'Available players',
+              style: Theme.of(context).textTheme.titleMedium,
             ),
+          ),
+        for (final player in _players)
+          CheckboxListTile(
+            value: _selected.containsKey(player.profile.id),
             title: Text(player.profile.displayName),
-            onTap: _finding ? null : () => setState(() => _selected = player),
+            controlAffinity: ListTileControlAffinity.leading,
+            onChanged: _finding
+                ? null
+                : (checked) => setState(() {
+                    if (checked == true) {
+                      _selected[player.profile.id] = player;
+                    } else {
+                      _selected.remove(player.profile.id);
+                    }
+                  }),
           ),
         if (_nextCursor != null)
           TextButton(
@@ -177,6 +217,42 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
           icon: const Icon(Icons.person_add),
           label: const Text('Create a permanent player first'),
         ),
+        if (activeRegistered.isNotEmpty) ...[
+          const Divider(),
+          if (recent.isNotEmpty) ...[
+            Text(
+              'Added this session',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            for (final record in recent)
+              ListTile(
+                leading: const Icon(Icons.person_add_alt_1),
+                title: Text(record.playerDisplayName),
+                subtitle: const Text('Not checked in'),
+              ),
+          ],
+          if (checkedIn.isNotEmpty) ...[
+            Text('Checked in', style: Theme.of(context).textTheme.titleMedium),
+            for (final record in checkedIn)
+              ListTile(
+                leading: const Icon(Icons.how_to_reg),
+                title: Text(record.playerDisplayName),
+                subtitle: const Text('Already registered'),
+              ),
+          ],
+          if (awaitingCheckIn.isNotEmpty) ...[
+            Text(
+              'Registered • awaiting check-in',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            for (final record in awaitingCheckIn)
+              ListTile(
+                leading: const Icon(Icons.person_outline),
+                title: Text(record.playerDisplayName),
+                subtitle: const Text('Already registered'),
+              ),
+          ],
+        ],
         if (setup != null) ...[
           const Divider(),
           Text('Divisions', style: Theme.of(context).textTheme.titleMedium),
@@ -204,7 +280,11 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
           onPressed: _working || _finding ? null : _register,
           child: _working
               ? const CircularProgressIndicator()
-              : const Text('Review and register'),
+              : Text(
+                  _selected.isEmpty
+                      ? 'Select players to register'
+                      : 'Review and register ${_selected.length}',
+                ),
         ),
       ],
     );
@@ -212,22 +292,29 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
 
   Future<void> _register() async {
     final setup = _setup;
-    final selected = _selected;
-    if (setup == null || selected == null || _divisions.isEmpty) {
-      setState(() => _message = 'Select one player and at least one division.');
+    final selected = _selected.values.toList();
+    if (setup == null || selected.isEmpty || _divisions.isEmpty) {
+      setState(() => _message = 'Select at least one player and one division.');
       return;
     }
     final store = ref.read(participationStoreProvider)!;
     final existing = await store.listForEvent(setup.event.id);
-    final duplicate = switch (existing) {
-      RepositorySuccess(:final value) => value.any(
-        (record) => record.participant.playerId == selected.profile.id,
-      ),
-      RepositoryFailure() => false,
+    final duplicateNames = switch (existing) {
+      RepositorySuccess(:final value) =>
+        selected
+            .where(
+              (player) => value.any(
+                (record) => record.participant.playerId == player.profile.id,
+              ),
+            )
+            .map((player) => player.profile.displayName)
+            .toList(),
+      RepositoryFailure() => <String>[],
     };
-    if (duplicate) {
+    if (duplicateNames.isNotEmpty) {
       setState(
-        () => _message = 'This player is already registered for the event.',
+        () => _message =
+            '${duplicateNames.join(', ')} already registered for this event.',
       );
       return;
     }
@@ -237,7 +324,8 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
       builder: (context) => AlertDialog(
         title: const Text('Register participant?'),
         content: Text(
-          '${selected.profile.displayName}\nNot checked in • Unpaid',
+          '${selected.map((player) => player.profile.displayName).join('\n')}\n\n'
+          '${selected.length} participant${selected.length == 1 ? '' : 's'} • Not checked in • Unpaid',
         ),
         actions: [
           TextButton(
@@ -253,30 +341,45 @@ class _AddParticipantPageState extends ConsumerState<AddParticipantPage> {
     );
     if (confirmed != true || !mounted) return;
     setState(() => _working = true);
-    final result = await ref
-        .read(participationServiceProvider)
-        .register(
-          setup: setup,
-          playerId: selected.profile.id,
-          playerDisplayName: selected.profile.displayName,
-          divisionIds: _divisions,
-        );
+    var registered = 0;
+    var pending = false;
+    DomainFailure? firstFailure;
+    for (final player in selected) {
+      final result = await ref
+          .read(participationServiceProvider)
+          .register(
+            setup: setup,
+            playerId: player.profile.id,
+            playerDisplayName: player.profile.displayName,
+            divisionIds: _divisions,
+          );
+      switch (result) {
+        case RepositorySuccess(value: ParticipationSaved(:final disposition)):
+          registered++;
+          pending =
+              pending ||
+              disposition == ParticipationMutationDisposition.pending;
+          _recentlyAdded.add(player.profile.id);
+        case RepositoryFailure(:final failure):
+          firstFailure ??= failure;
+      }
+    }
     if (!mounted) return;
-    setState(() => _working = false);
-    switch (result) {
-      case RepositorySuccess(value: ParticipationSaved(:final disposition)):
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              disposition == ParticipationMutationDisposition.pending
-                  ? 'Registered locally; synchronization is pending.'
-                  : 'Participant registered.',
-            ),
+    setState(() {
+      _working = false;
+      _selected.clear();
+      _message = firstFailure?.message;
+    });
+    if (registered > 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '$registered participant${registered == 1 ? '' : 's'} registered'
+            '${pending ? ' locally; synchronization is pending.' : '.'}',
           ),
-        );
-        context.pop();
-      case RepositoryFailure(:final failure):
-        setState(() => _message = failure.message);
+        ),
+      );
+      await _find();
     }
   }
 }

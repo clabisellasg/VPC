@@ -194,8 +194,13 @@ Supabase **Authentication → URL Configuration** must allow exactly the
 configured deployment callback plus these development callbacks:
 
 - `com.voltapaddleclub.vpc://auth-callback/account/confirm`
+- `http://localhost:8080/account/confirm`
+- `http://127.0.0.1:8080/account/confirm`
 - `http://localhost:7357/account/confirm`
 - `http://127.0.0.1:7357/account/confirm`
+
+Port 8080 is the preferred fixed local Web development port. The 7357 entries
+remain accepted for compatibility with earlier milestone test sessions.
 
 Hosted email confirmation remains enabled. Never disable it to bypass a test,
 and never place a password, token, private key, or personal email in source,
@@ -326,3 +331,12 @@ the draft aggregate; Android may show Pending until the organizer-authorized
 upload succeeds. Unrated and odd players remain plainly visible. Conflicts must
 be preserved for later handling, never silently resolved. The Android and Web
 walkthrough in the M11 record is mandatory before marking M11 complete.
+## M14 round-robin acceptance
+
+Use synthetic divisions configured as Single or Double Round Robin. Review
+seed order, preview before saving, and verify BYE/rest rounds for odd counts.
+Start matches explicitly, record valid V1 scores, watch derived standings, and
+verify all-team placements only after the schedule completes. Corrections need
+a reason and must retain audit history. Android pending operations must survive
+restart and reconcile once; Web mutation is online-only. Guest views must not
+expose payment or account data.

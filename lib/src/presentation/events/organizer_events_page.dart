@@ -149,6 +149,19 @@ class _EventCard extends ConsumerWidget {
                 icon: const Icon(Icons.account_tree_outlined),
                 label: Text('${division.name}: Single Elimination bracket'),
               ),
+            for (final division in setup.divisions.where(
+              (d) =>
+                  !d.metadata.isDeleted &&
+                  (d.format == TournamentFormat.singleRoundRobin ||
+                      d.format == TournamentFormat.doubleRoundRobin),
+            ))
+              OutlinedButton.icon(
+                onPressed: () => context.push(
+                  '/organizer/events/${setup.event.id.value}/divisions/${division.id.value}/round-robin/generate',
+                ),
+                icon: const Icon(Icons.table_chart_outlined),
+                label: Text('${division.name}: Round Robin schedule'),
+              ),
             Wrap(
               spacing: 8,
               runSpacing: 8,

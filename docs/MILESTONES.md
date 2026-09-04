@@ -128,7 +128,7 @@ authorized proceeding.
 - **Purpose:** Implement schedules, scoring, standings, approved tie-breakers,
   and round-robin presentation.
 - **Dependencies:** M12.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED; automated/hosted validation and user-confirmed Android/Web walkthrough categories A–F passed.
 
 ### M15 — Double Elimination
 

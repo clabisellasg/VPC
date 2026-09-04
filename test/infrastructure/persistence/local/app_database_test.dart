@@ -19,7 +19,7 @@ void main() {
   });
 
   test(
-    'fresh schema creates operational and bounded sync tables at version 7',
+    'fresh schema creates operational and bounded sync tables at version 8',
     () async {
       final rows = await database
           .customSelect(
@@ -28,7 +28,7 @@ void main() {
           )
           .get();
 
-      expect(database.schemaVersion, 7);
+      expect(database.schemaVersion, 8);
       expect(rows.map((row) => row.read<String>('name')).toSet(), {
         'court_queue_entries',
         'division_participants',
@@ -58,6 +58,9 @@ void main() {
         'single_elimination_outbox',
         'single_elimination_checkpoints',
         'match_result_revisions',
+        'round_robin_snapshots',
+        'round_robin_outbox',
+        'round_robin_checkpoints',
       });
     },
   );

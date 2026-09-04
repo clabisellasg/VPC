@@ -124,13 +124,6 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(
-          find.descendant(
-            of: find.byType(ListTile),
-            matching: find.text('VPC Registered'),
-          ),
-          findsNothing,
-        );
         if (fail) {
           expect(
             find.text('Unable to check the event roster. Please search again.'),
@@ -138,16 +131,19 @@ void main() {
           );
           expect(find.text('Load more players'), findsNothing);
         } else {
-          await tester.tap(find.text('Load more players'));
-          await tester.pumpAndSettle();
-          expect(find.text('VPC Available'), findsOneWidget);
+          expect(find.text('Already registered'), findsOneWidget);
           expect(
             find.descendant(
               of: find.byType(ListTile),
               matching: find.text('VPC Registered'),
             ),
-            findsNothing,
+            findsOneWidget,
           );
+          expect(find.text('Registered • awaiting check-in'), findsOneWidget);
+          await tester.tap(find.text('Load more players'));
+          await tester.pumpAndSettle();
+          expect(find.text('VPC Available'), findsOneWidget);
+          expect(find.text('VPC Registered'), findsOneWidget);
           await tester.enterText(find.byType(TextField), 'VPC Registered');
           await tester.tap(find.byTooltip('Search'));
           await tester.pumpAndSettle();
@@ -156,7 +152,7 @@ void main() {
               of: find.byType(ListTile),
               matching: find.text('VPC Registered'),
             ),
-            findsNothing,
+            findsOneWidget,
           );
           expect(find.text('VPC Available'), findsNothing);
         }

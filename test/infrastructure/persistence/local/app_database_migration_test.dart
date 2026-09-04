@@ -6,6 +6,30 @@ import 'package:vpc/src/infrastructure/persistence/local/app_database.dart';
 import '../../../generated_migrations/schema.dart';
 
 void main() {
+  test(
+    'v7 to v8 preserves bracket data and adds round-robin durability',
+    () async {
+      final verifier = SchemaVerifier(GeneratedHelper());
+      final schema = await verifier.schemaAt(7);
+      schema.rawDatabase.execute('''
+INSERT INTO events(id,name,scheduled_at,event_type,status,court_label,created_at,updated_at,version)
+VALUES('14000000-0000-4000-8000-000000000001','VPC M14 Migration','2026-09-04T00:00:00.000Z','formal','registration','Sample Court','2026-09-04T00:00:00.000Z','2026-09-04T00:00:00.000Z',3);
+INSERT INTO event_divisions(id,event_id,name,tournament_format,created_at,updated_at,version)
+VALUES('14000000-0000-4000-8000-000000000002','14000000-0000-4000-8000-000000000001','Open','singleRoundRobin','2026-09-04T00:00:00.000Z','2026-09-04T00:00:00.000Z',4);
+''');
+      final db = AppDatabase(schema.newConnection());
+      await verifier.migrateAndValidate(db, 8);
+      final division = await db.select(db.eventDivisions).getSingle();
+      expect(division.tournamentFormat, 'singleRoundRobin');
+      expect(division.version, 4);
+      expect(await db.select(db.roundRobinSnapshots).get(), isEmpty);
+      expect(await db.select(db.roundRobinOutbox).get(), isEmpty);
+      expect(await db.select(db.roundRobinCheckpoints).get(), isEmpty);
+      await db.close();
+      schema.close();
+    },
+  );
+
   test('v6 to v7 preserves M12 records and adds bracket durability', () async {
     final verifier = SchemaVerifier(GeneratedHelper());
     final schema = await verifier.schemaAt(6);

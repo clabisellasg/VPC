@@ -296,6 +296,21 @@ flowchart LR
 
 Detailed synchronization semantics are recorded in [SYNC.md](SYNC.md), and the
 conceptual entities are recorded in [DATABASE.md](DATABASE.md).
+
+## M14 round-robin boundary
+
+Pure Dart circle-method generation implements only Single and Double Round
+Robin. Planned keys, round positions, legs, seed order, and BYE rests are
+deterministic; a BYE is presentation metadata and never a Match. Standings are
+derived from active completed Match records and the V1-079 recursive tie-break
+order. Mutable wins/losses/points totals are not stored.
+
+Android persists the schedule snapshot, match rows, immutable correction
+revisions, final placements, and one outbox command atomically. Web uses the
+same application contract through fixed online Supabase RPCs and never opens
+SQLite. Both use authoritative refreshes; Realtime payloads are hints only.
+Round-robin matches are independent and create no match dependencies. M15 owns
+Double Elimination and M16 owns the court queue.
 ## M8 permanent player directory boundary
 
 M8 adds a provider-neutral player directory query port above the M2 player

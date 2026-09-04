@@ -104,15 +104,33 @@ class _Details extends StatelessWidget {
                       ),
                       leading: const Icon(Icons.groups_outlined),
                       trailing:
-                          division.format == TournamentFormat.singleElimination
+                          division.format ==
+                                  TournamentFormat.singleElimination ||
+                              division.format ==
+                                  TournamentFormat.singleRoundRobin ||
+                              division.format ==
+                                  TournamentFormat.doubleRoundRobin
                           ? const Icon(Icons.account_tree_outlined)
                           : null,
                       onTap:
-                          division.format == TournamentFormat.singleElimination
-                          ? () => context.push(
-                              '/events/${event.id.value}/divisions/${division.id.value}/bracket',
-                            )
-                          : null,
+                          division.format !=
+                                  TournamentFormat.singleElimination &&
+                              division.format !=
+                                  TournamentFormat.singleRoundRobin &&
+                              division.format !=
+                                  TournamentFormat.doubleRoundRobin
+                          ? null
+                          : () => context.push(
+                              division.format ==
+                                      TournamentFormat.singleElimination
+                                  ? '/events/${event.id.value}/divisions/${division.id.value}/bracket'
+                                  : division.format ==
+                                            TournamentFormat.singleRoundRobin ||
+                                        division.format ==
+                                            TournamentFormat.doubleRoundRobin
+                                  ? '/events/${event.id.value}/divisions/${division.id.value}/round-robin'
+                                  : '/events/${event.id.value}',
+                            ),
                     ),
                   ),
                 ),

@@ -97,6 +97,49 @@ void main() {
     expect(preview.unassigned, hasLength(4));
     expect(preview.baseTeamVersions[confirmed.teams.single.id], 2);
   });
+  test('manual pairing accumulates teams in the active preview', () {
+    final initial = snapshot([5, 1, 4, 2, 3, 2]);
+    final first = service.manual(
+      initial,
+      initial.eligiblePlayers[0],
+      initial.eligiblePlayers[1],
+    );
+    final second = service.manual(
+      initial,
+      initial.eligiblePlayers[2],
+      initial.eligiblePlayers[3],
+      currentPreview: first,
+    );
+
+    expect(second.teams, hasLength(2));
+    expect(second.teams[0].players, first.teams[0].players);
+    expect(second.unassigned, hasLength(2));
+    expect(
+      second.unassigned.map((player) => player.playerId),
+      containsAll([
+        initial.eligiblePlayers[4].playerId,
+        initial.eligiblePlayers[5].playerId,
+      ]),
+    );
+  });
+  test('mistaken manual pair can be removed before confirmation', () {
+    final initial = snapshot([5, 1, 4, 2]);
+    final preview = service.manual(
+      initial,
+      initial.eligiblePlayers[1],
+      initial.eligiblePlayers[2],
+    );
+
+    final corrected = service.removePreviewTeam(
+      initial,
+      preview,
+      preview.teams.single.id,
+    );
+
+    expect(corrected.teams, isEmpty);
+    expect(corrected.unassigned, hasLength(4));
+    expect(corrected.baseTeamVersions, preview.baseTeamVersions);
+  });
 }
 
 final class _Ids implements TeamIdFactory {

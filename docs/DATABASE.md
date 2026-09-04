@@ -381,3 +381,16 @@ checked-in, active event and division participant, and one player may have only
 one active team in a division. Android schema version 5 adds bounded
 `team_formation_outbox_operations`, `team_formation_pull_checkpoints`, and
 `team_formation_conflicts`; they do not change the cloud domain tables.
+## M14 round-robin mapping
+
+`round_robin_tournaments` is the cloud aggregate root for a division schedule;
+Android mirrors it as `round_robin_snapshots` with bounded outbox/checkpoint
+tables. Existing `matches`, `match_result_revisions`, and
+`division_placements` remain the operational source. Round and match positions
+are stored in existing match columns; leg and resting-team information remains
+in the validated deterministic plan. No dependency rows are created.
+
+Standings totals are calculated from active completed matches and are not
+stored. Once all expected matches complete, placement rows for every team are
+replaced atomically using tombstones for prior placements. The private receipt
+table stores idempotency results and is inaccessible to client roles.

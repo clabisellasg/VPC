@@ -109,7 +109,8 @@ class _OrganizerTeamFormationPageState
       setState(() {
         _preview = ref
             .read(teamFormationServiceProvider)!
-            .manual(_snapshot!, values[0], values[1]);
+            .manual(_snapshot!, values[0], values[1], currentPreview: _preview);
+        _selected.clear();
         _message = null;
       });
     } catch (error) {
@@ -145,6 +146,20 @@ class _OrganizerTeamFormationPageState
     _message = 'Review the replacement, then confirm to return this team to Unassigned.';
   });
 
+  void _undoPreviewPair(TeamId teamId) => setState(() {
+    _preview = ref
+        .read(teamFormationServiceProvider)!
+        .removePreviewTeam(_snapshot!, _preview!, teamId);
+    _selected.clear();
+    _message = 'Pair removed from the preview. Select players to pair again.';
+  });
+
+  void _resetPreview() => setState(() {
+    _preview = null;
+    _selected.clear();
+    _message = 'Unconfirmed pairing changes were discarded.';
+  });
+
   @override
   Widget build(BuildContext context) {
     if (ref.watch(accountControllerProvider).snapshot?.authorization !=
@@ -159,13 +174,16 @@ class _OrganizerTeamFormationPageState
     if (_snapshot == null) {
       return Center(child: Text(_message ?? 'Team formation unavailable.'));
     }
-    final assigned = _snapshot!.teams
+    final displayedTeams = _preview?.teams ?? _snapshot!.teams;
+    final assigned = displayedTeams
         .expand((t) => t.players)
         .map((p) => p.playerId)
         .toSet();
-    final unassigned = _snapshot!.eligiblePlayers
-        .where((p) => !assigned.contains(p.playerId))
-        .toList();
+    final unassigned =
+        _preview?.unassigned ??
+        _snapshot!.eligiblePlayers
+            .where((p) => !assigned.contains(p.playerId))
+            .toList();
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
@@ -250,8 +268,18 @@ class _OrganizerTeamFormationPageState
                       ),
                   ] else ...[
                     for (var i = 0; i < _preview!.teams.length; i++)
-                      Text(
-                        'Team ${i + 1}: ${_preview!.teams[i].players.map((p) => p.displayName).join(' + ')}${_preview!.teams[i].strength == null ? '' : ' • strength ${_preview!.teams[i].strength}'}',
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          'Team ${i + 1}: ${_preview!.teams[i].players.map((p) => p.displayName).join(' + ')}${_preview!.teams[i].strength == null ? '' : ' • strength ${_preview!.teams[i].strength}'}',
+                        ),
+                        trailing: _preview!.method == TeamFormationMethod.manual
+                            ? TextButton(
+                                onPressed: () =>
+                                    _undoPreviewPair(_preview!.teams[i].id),
+                                child: const Text('Undo pair'),
+                              )
+                            : null,
                       ),
                     if (_preview!.unassigned.isNotEmpty)
                       Text(
@@ -262,9 +290,19 @@ class _OrganizerTeamFormationPageState
                     if (_preview!.spread != null)
                       Text('Balance spread: ${_preview!.spread}'),
                     const SizedBox(height: 8),
-                    FilledButton(
-                      onPressed: _confirm,
-                      child: const Text('Confirm replacement'),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        FilledButton(
+                          onPressed: _preview!.teams.isEmpty ? null : _confirm,
+                          child: const Text('Confirm replacement'),
+                        ),
+                        TextButton(
+                          onPressed: _resetPreview,
+                          child: const Text('Reset preview'),
+                        ),
+                      ],
                     ),
                   ],
                 ],

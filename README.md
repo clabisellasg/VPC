@@ -6,9 +6,8 @@ single-court community. It will eventually manage reusable community players,
 participation, check-in, payment status, temporary teams, approved tournament
 formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 13 — Single Elimination (`COMPLETED`).
-M0–M12 are accepted. M13 automated/hosted validation and user-confirmed Android/Web
-walkthroughs passed. M14–M21 remain NOT STARTED.
+**Current status:** Milestone 14 — Single and Double Round Robin (`COMPLETED`).
+M0–M14 are completed; M15–M21 remain NOT STARTED.
 
 ## Version 1 technology stack
 
@@ -55,6 +54,7 @@ scope, replace the stack, or begin a later milestone.
 - [Milestone 11 implementation record](docs/milestones/M11_TEAM_FORMATION.md)
 - [Milestone 12 implementation record](docs/milestones/M12_TOURNAMENT_ENGINE_FOUNDATION.md)
 - [Milestone 13 implementation record](docs/milestones/M13_SINGLE_ELIMINATION.md)
+- [Milestone 14 implementation record](docs/milestones/M14_ROUND_ROBIN.md)
 
 ## Development setup
 
@@ -79,14 +79,17 @@ flutter run -d <device-id>
 Run on Chrome:
 
 ```powershell
-flutter run -d chrome
+flutter run -d chrome --web-port 8080
 ```
+
+The fixed development port keeps the local URL stable at
+`http://localhost:8080` instead of allocating a different port per session.
 
 The compile-time environment defaults to `development`. Select an explicit
 supported value with `--dart-define`:
 
 ```powershell
-flutter run -d chrome --dart-define=APP_ENV=test
+flutter run -d chrome --web-port 8080 --dart-define=APP_ENV=test
 flutter build web --dart-define=APP_ENV=production
 ```
 
@@ -97,7 +100,7 @@ Supabase is optional for ordinary tests and builds. For a configured online
 run, supply both client values from outside the repository:
 
 ```powershell
-flutter run -d chrome `
+flutter run -d chrome --web-port 8080 `
   "--dart-define=SUPABASE_URL=$env:VPC_SUPABASE_URL" `
   "--dart-define=SUPABASE_PUBLISHABLE_KEY=$env:VPC_SUPABASE_PUBLISHABLE_KEY"
 ```

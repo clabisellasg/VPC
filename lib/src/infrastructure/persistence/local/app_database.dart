@@ -767,6 +767,39 @@ class SingleEliminationCheckpoints extends Table {
   Set<Column<Object>> get primaryKey => {scope};
 }
 
+class RoundRobinSnapshots extends Table {
+  TextColumn get divisionId =>
+      text().references(EventDivisions, #id, onDelete: KeyAction.restrict)();
+  TextColumn get tournamentJson =>
+      text().customConstraint('NOT NULL CHECK(json_valid(tournament_json))')();
+  @override
+  Set<Column<Object>> get primaryKey => {divisionId};
+}
+
+class RoundRobinOutbox extends Table {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+  TextColumn get divisionId =>
+      text().references(EventDivisions, #id, onDelete: KeyAction.restrict)();
+  TextColumn get payloadJson =>
+      text().customConstraint('NOT NULL CHECK(json_valid(payload_json))')();
+  TextColumn get status => text().customConstraint(
+    "NOT NULL CHECK(status IN ('pending','blocked','failed','conflicted','accepted'))",
+  )();
+  DateTimeColumn get createdAt => dateTime()();
+  TextColumn get failure => text().nullable()();
+  TextColumn get remoteJson => text().nullable()();
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class RoundRobinCheckpoints extends Table {
+  TextColumn get scope => text()();
+  DateTimeColumn get updatedAt => dateTime()();
+  TextColumn get tournamentId => text().withLength(min: 36, max: 36)();
+  @override
+  Set<Column<Object>> get primaryKey => {scope};
+}
+
 class MatchResultRevisions extends Table {
   TextColumn get operationId => text().withLength(min: 36, max: 36)();
   TextColumn get matchId =>
@@ -809,6 +842,9 @@ class MatchResultRevisions extends Table {
     SingleEliminationSnapshots,
     SingleEliminationOutbox,
     SingleEliminationCheckpoints,
+    RoundRobinSnapshots,
+    RoundRobinOutbox,
+    RoundRobinCheckpoints,
     MatchResultRevisions,
   ],
 )
@@ -843,7 +879,7 @@ final class AppDatabase extends _$AppDatabase {
       });
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -914,7 +950,7 @@ final class AppDatabase extends _$AppDatabase {
         }
         if (to == 6) return;
       }
-      if (from <= 6 && to == 7) {
+      if (from <= 6 && to >= 7) {
         await migrator.createTable(singleEliminationSnapshots);
         await migrator.createTable(singleEliminationOutbox);
         await migrator.createTable(singleEliminationCheckpoints);
@@ -922,6 +958,12 @@ final class AppDatabase extends _$AppDatabase {
         for (final statement in _m13IntegrityTriggers) {
           await customStatement(statement);
         }
+        if (to == 7) return;
+      }
+      if (from <= 7 && to == 8) {
+        await migrator.createTable(roundRobinSnapshots);
+        await migrator.createTable(roundRobinOutbox);
+        await migrator.createTable(roundRobinCheckpoints);
         return;
       }
       throw StateError(

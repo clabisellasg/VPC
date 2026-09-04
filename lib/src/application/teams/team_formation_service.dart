@@ -19,12 +19,15 @@ final class TeamFormationService {
   TeamFormationPreview manual(
     TeamFormationSnapshot snapshot,
     EligibleTeamPlayer first,
-    EligibleTeamPlayer second,
-  ) {
+    EligibleTeamPlayer second, {
+    TeamFormationPreview? currentPreview,
+  }) {
     _requireRegistration(snapshot);
     _requireEligible(snapshot, first);
     _requireEligible(snapshot, second);
-    final alreadyAssigned = snapshot.teams
+    final previewTeams = currentPreview?.teams;
+    final sourceTeams = previewTeams ?? snapshot.teams;
+    final alreadyAssigned = sourceTeams
         .expand((team) => team.players)
         .map((player) => player.playerId)
         .toSet();
@@ -36,7 +39,7 @@ final class TeamFormationService {
     }
     return TeamFormationPreview(
       teams: [
-        ...snapshot.teams.map(_replacementCopy),
+        ...(previewTeams ?? snapshot.teams.map(_replacementCopy)),
         TeamDraft(
           id: ids.nextTeamId(),
           players: [first, second],
@@ -44,15 +47,15 @@ final class TeamFormationService {
         ),
       ],
       unassigned: _unassigned(snapshot.eligiblePlayers, [
-        ...snapshot.teams.expand((team) => team.players),
+        ...sourceTeams.expand((team) => team.players),
         first,
         second,
       ]),
       unrated: const [],
       method: TeamFormationMethod.manual,
-      baseTeamVersions: {
-        for (final team in snapshot.teams) team.id: team.recordVersion,
-      },
+      baseTeamVersions:
+          currentPreview?.baseTeamVersions ??
+          {for (final team in snapshot.teams) team.id: team.recordVersion},
     );
   }
 
@@ -82,6 +85,31 @@ final class TeamFormationService {
       baseTeamVersions: {
         for (final team in snapshot.teams) team.id: team.recordVersion,
       },
+    );
+  }
+
+  TeamFormationPreview removePreviewTeam(
+    TeamFormationSnapshot snapshot,
+    TeamFormationPreview preview,
+    TeamId teamId,
+  ) {
+    _requireRegistration(snapshot);
+    if (!preview.teams.any((team) => team.id == teamId)) {
+      throw const ValidationFailure(
+        field: 'team',
+        message: 'The selected preview team is not available.',
+      );
+    }
+    final retained = preview.teams.where((team) => team.id != teamId).toList();
+    return TeamFormationPreview(
+      teams: retained,
+      unassigned: _unassigned(
+        snapshot.eligiblePlayers,
+        retained.expand((team) => team.players),
+      ),
+      unrated: const [],
+      method: preview.method,
+      baseTeamVersions: preview.baseTeamVersions,
     );
   }
 

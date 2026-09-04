@@ -1,5 +1,38 @@
 # Testing Strategy
 
+## M14 validation
+
+M14 adds deterministic 2–8-team circle-method, odd-team BYE, Single/Double
+formula, standings, all OPEN-005 tie-break stages, correction/audit, placement,
+Drift v7→v8, offline outbox/restart/reconciliation, hosted idempotency/RLS, and
+responsive presentation coverage. Focused regressions additionally cover
+odd-team hosted match keys, accumulated and undoable manual team previews,
+multi-participant registration, drag-based seed ordering, and explicit
+Champion/Runner-up labels before event completion.
+
+The user confirmed mandatory Android and Web walkthrough categories A–F,
+including schedules, BYEs, both legs, results, tie-break standings, final
+placements, correction, regeneration/lifecycle locks, Android offline restart
+and reconnect, Web online-only behavior, permissions, guest reads,
+responsiveness, and accessibility. Docker's Linux daemon remained unavailable,
+so local pgTAP was not executed; hosted rollback assertions supplied database
+coverage. No remote CI run is claimed.
+
+The final Flutter acceptance suite passed all 308 tests; formatting and static
+analysis were clean, and production Web and Android debug APK builds passed.
+Linked migration history agrees through `20260904181500`, the dry run is
+empty, and linked lint reports no errors (only previously documented
+PL/pgSQL type/shadow warnings). Publishable-key smoke checks returned 200 for
+public events and Round Robin schedules, denied private payments/profiles/roles,
+and rejected an anonymous event write.
+
+The v8 schema snapshot had already been exported during implementation.
+The final build-runner freshness pass and Drift migration-helper regeneration
+completed with unchanged outputs, and all v7→v8/fresh-schema tests passed. A
+repeat `drift_dev schema dump` invocation stalled in the Windows build-hook
+launcher and was interrupted after repeated no-output waits; no generated or
+source file was lost or substituted.
+
 ## M13 validation
 
 Hosted repair and rollback assertions passed for 2–8-team generation, correction
@@ -527,3 +560,17 @@ public player/event reads return 200, and private profile/role reads return 401.
 Local pgTAP remains skipped because the Docker daemon is unavailable. Final
 command outcomes are recorded in the M11 milestone record; no remote CI run is
 claimed.
+## Milestone 14 round-robin coverage
+
+M14 tests the circle method for 2–8 odd/even teams, Single/Double formulas,
+pair cardinality, reversed second-leg display sides, BYE rests, canonical seed
+ordering, every accepted tie-break stage, incomplete/tombstoned/corrected
+results, final placement derivation, transactional generation/rollback,
+immutable correction audit, schema v7-to-v8 migration, and responsive preview.
+Ordinary Flutter tests use fakes or in-memory Drift and make no network calls.
+
+Hosted rollback assertions cover organizer authorization, anonymous/member
+denial, deterministic generation, identical and changed-payload replay,
+server-side score validation, final placements, correction, and audit
+preservation. Docker pgTAP remains conditional; manual Android/Web acceptance
+is recorded only after it is actually performed.
