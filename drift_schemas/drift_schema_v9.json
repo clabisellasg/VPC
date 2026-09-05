@@ -13,14 +13,14 @@
       "type": "table",
       "data": {
         "name": "players",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -28,9 +28,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -48,9 +48,9 @@
           {
             "name": "deleted_at",
             "getter_name": "deletedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -60,10 +60,17 @@
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "display_name",
@@ -89,9 +96,8 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(id)",
-          "CHECK(updated_at >= created_at)",
-          "CHECK(deleted_at IS NULL OR deleted_at >= updated_at)"
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
         ],
         "explicit_pk": [
           "id"
@@ -104,14 +110,14 @@
       "type": "table",
       "data": {
         "name": "events",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -119,9 +125,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -139,9 +145,9 @@
           {
             "name": "deleted_at",
             "getter_name": "deletedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -151,10 +157,17 @@
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "name",
@@ -169,9 +182,9 @@
           {
             "name": "scheduled_at",
             "getter_name": "scheduledAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -201,7 +214,7 @@
             "getter_name": "entryFeeMinorUnits",
             "moor_type": "int",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -211,7 +224,7 @@
             "getter_name": "entryFeeCurrency",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -230,10 +243,9 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(id)",
-          "CHECK((entry_fee_minor_units IS NULL AND entry_fee_currency IS NULL)OR(entry_fee_minor_units >= 0 AND entry_fee_currency GLOB '[A-Z][A-Z][A-Z]'))",
-          "CHECK(updated_at >= created_at)",
-          "CHECK(deleted_at IS NULL OR deleted_at >= updated_at)"
+          "CHECK ((entry_fee_minor_units IS NULL AND entry_fee_currency IS NULL) OR (entry_fee_minor_units >= 0 AND entry_fee_currency GLOB '[A-Z][A-Z][A-Z]'))",
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
         ],
         "explicit_pk": [
           "id"
@@ -248,14 +260,14 @@
       "type": "table",
       "data": {
         "name": "event_divisions",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -263,9 +275,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -283,9 +295,9 @@
           {
             "name": "deleted_at",
             "getter_name": "deletedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -295,17 +307,28 @@
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "event_id",
             "getter_name": "eventId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES events(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES events (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES events (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -346,9 +369,8 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(id)",
-          "CHECK(updated_at >= created_at)",
-          "CHECK(deleted_at IS NULL OR deleted_at >= updated_at)"
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
         ],
         "explicit_pk": [
           "id"
@@ -364,14 +386,14 @@
       "type": "table",
       "data": {
         "name": "event_participants",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -379,9 +401,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -399,9 +421,9 @@
           {
             "name": "deleted_at",
             "getter_name": "deletedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -411,17 +433,28 @@
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "event_id",
             "getter_name": "eventId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES events(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES events (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES events (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -443,7 +476,11 @@
             "getter_name": "playerId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES players(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES players (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES players (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -474,9 +511,8 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(id)",
-          "CHECK(updated_at >= created_at)",
-          "CHECK(deleted_at IS NULL OR deleted_at >= updated_at)"
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
         ],
         "explicit_pk": [
           "id"
@@ -492,14 +528,14 @@
       "type": "table",
       "data": {
         "name": "division_participants",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -507,9 +543,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -527,9 +563,9 @@
           {
             "name": "deleted_at",
             "getter_name": "deletedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -539,17 +575,28 @@
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "division_id",
             "getter_name": "divisionId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -571,7 +618,11 @@
             "getter_name": "eventParticipantId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_participants(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_participants (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_participants (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -592,9 +643,8 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(id)",
-          "CHECK(updated_at >= created_at)",
-          "CHECK(deleted_at IS NULL OR deleted_at >= updated_at)"
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
         ],
         "explicit_pk": [
           "id"
@@ -610,14 +660,14 @@
       "type": "table",
       "data": {
         "name": "participant_payments",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -625,9 +675,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -645,9 +695,9 @@
           {
             "name": "deleted_at",
             "getter_name": "deletedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -657,17 +707,28 @@
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "event_participant_id",
             "getter_name": "eventParticipantId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_participants(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_participants (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_participants (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -689,7 +750,11 @@
             "getter_name": "divisionId",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL REFERENCES event_divisions(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -720,9 +785,8 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(id)",
-          "CHECK(updated_at >= created_at)",
-          "CHECK(deleted_at IS NULL OR deleted_at >= updated_at)"
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
         ],
         "explicit_pk": [
           "id"
@@ -737,14 +801,14 @@
       "type": "table",
       "data": {
         "name": "teams",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -752,9 +816,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -772,9 +836,9 @@
           {
             "name": "deleted_at",
             "getter_name": "deletedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -784,17 +848,28 @@
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "division_id",
             "getter_name": "divisionId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -826,7 +901,7 @@
             "getter_name": "displayLabel",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -835,10 +910,9 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(id)",
-          "CHECK(display_label IS NULL OR trim(display_label) <> '')",
-          "CHECK(updated_at >= created_at)",
-          "CHECK(deleted_at IS NULL OR deleted_at >= updated_at)"
+          "CHECK (display_label IS NULL OR trim(display_label) <> '')",
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
         ],
         "explicit_pk": [
           "id"
@@ -854,14 +928,14 @@
       "type": "table",
       "data": {
         "name": "team_members",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -869,9 +943,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -889,9 +963,9 @@
           {
             "name": "deleted_at",
             "getter_name": "deletedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -901,7 +975,11 @@
             "getter_name": "teamId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES teams(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES teams (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES teams (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -923,7 +1001,11 @@
             "getter_name": "playerId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES players(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES players (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES players (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -944,9 +1026,8 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(team_id, player_id)",
-          "CHECK(updated_at >= created_at)",
-          "CHECK(deleted_at IS NULL OR deleted_at >= updated_at)"
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
         ],
         "explicit_pk": [
           "team_id",
@@ -963,14 +1044,14 @@
       "type": "table",
       "data": {
         "name": "matches",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -978,9 +1059,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -998,9 +1079,9 @@
           {
             "name": "deleted_at",
             "getter_name": "deletedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1010,17 +1091,28 @@
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "division_id",
             "getter_name": "divisionId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -1042,7 +1134,11 @@
             "getter_name": "sideOneTeamId",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL REFERENCES teams(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES teams (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES teams (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -1064,7 +1160,11 @@
             "getter_name": "sideTwoTeamId",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL REFERENCES teams(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES teams (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES teams (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -1096,7 +1196,7 @@
             "getter_name": "sideOneScore",
             "moor_type": "int",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1106,7 +1206,7 @@
             "getter_name": "sideTwoScore",
             "moor_type": "int",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1116,7 +1216,11 @@
             "getter_name": "winnerTeamId",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL REFERENCES teams(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES teams (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES teams (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -1138,7 +1242,7 @@
             "getter_name": "roundNumber",
             "moor_type": "int",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1148,7 +1252,7 @@
             "getter_name": "sequenceNumber",
             "moor_type": "int",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1157,15 +1261,14 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(id)",
-          "CHECK(side_one_team_id IS NULL OR side_two_team_id IS NULL OR side_one_team_id <> side_two_team_id)",
-          "CHECK(side_one_score IS NULL OR side_one_score >= 0)",
-          "CHECK(side_two_score IS NULL OR side_two_score >= 0)",
-          "CHECK(round_number IS NULL OR round_number > 0)",
-          "CHECK(sequence_number IS NULL OR sequence_number > 0)",
-          "CHECK((status = 'completed' AND side_one_team_id IS NOT NULL AND side_two_team_id IS NOT NULL AND side_one_score IS NOT NULL AND side_two_score IS NOT NULL AND winner_team_id IS NOT NULL AND winner_team_id IN (side_one_team_id, side_two_team_id))OR(status <> 'completed' AND winner_team_id IS NULL))",
-          "CHECK(updated_at >= created_at)",
-          "CHECK(deleted_at IS NULL OR deleted_at >= updated_at)"
+          "CHECK (side_one_team_id IS NULL OR side_two_team_id IS NULL OR side_one_team_id <> side_two_team_id)",
+          "CHECK (side_one_score IS NULL OR side_one_score >= 0)",
+          "CHECK (side_two_score IS NULL OR side_two_score >= 0)",
+          "CHECK (round_number IS NULL OR round_number > 0)",
+          "CHECK (sequence_number IS NULL OR sequence_number > 0)",
+          "CHECK ((status = 'completed' AND side_one_team_id IS NOT NULL AND side_two_team_id IS NOT NULL AND side_one_score IS NOT NULL AND side_two_score IS NOT NULL AND winner_team_id IS NOT NULL AND winner_team_id IN (side_one_team_id, side_two_team_id)) OR (status <> 'completed' AND winner_team_id IS NULL))",
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
         ],
         "explicit_pk": [
           "id"
@@ -1180,14 +1283,14 @@
       "type": "table",
       "data": {
         "name": "match_dependencies",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1195,9 +1298,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1215,9 +1318,9 @@
           {
             "name": "deleted_at",
             "getter_name": "deletedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1227,7 +1330,11 @@
             "getter_name": "sourceMatchId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES matches(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES matches (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES matches (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -1259,7 +1366,11 @@
             "getter_name": "destinationMatchId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES matches(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES matches (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES matches (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -1290,10 +1401,9 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(source_match_id, source_outcome, destination_match_id, destination_slot)",
-          "CHECK(source_match_id <> destination_match_id)",
-          "CHECK(updated_at >= created_at)",
-          "CHECK(deleted_at IS NULL OR deleted_at >= updated_at)"
+          "CHECK (source_match_id <> destination_match_id)",
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
         ],
         "explicit_pk": [
           "source_match_id",
@@ -1313,14 +1423,14 @@
       "type": "table",
       "data": {
         "name": "court_queue_entries",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1328,9 +1438,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1348,9 +1458,9 @@
           {
             "name": "deleted_at",
             "getter_name": "deletedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1360,17 +1470,28 @@
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "event_id",
             "getter_name": "eventId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES events(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES events (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES events (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -1392,7 +1513,11 @@
             "getter_name": "divisionId",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL REFERENCES event_divisions(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -1414,7 +1539,11 @@
             "getter_name": "matchId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES matches(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES matches (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES matches (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -1445,9 +1574,8 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(id)",
-          "CHECK(updated_at >= created_at)",
-          "CHECK(deleted_at IS NULL OR deleted_at >= updated_at)"
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
         ],
         "explicit_pk": [
           "id"
@@ -1463,14 +1591,14 @@
       "type": "table",
       "data": {
         "name": "division_placements",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1478,9 +1606,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1498,9 +1626,9 @@
           {
             "name": "deleted_at",
             "getter_name": "deletedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1510,17 +1638,28 @@
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "division_id",
             "getter_name": "divisionId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -1542,7 +1681,11 @@
             "getter_name": "teamId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES teams(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES teams (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES teams (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -1573,9 +1716,8 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(id)",
-          "CHECK(updated_at >= created_at)",
-          "CHECK(deleted_at IS NULL OR deleted_at >= updated_at)"
+          "CHECK (updated_at >= created_at)",
+          "CHECK (deleted_at IS NULL OR deleted_at >= updated_at)"
         ],
         "explicit_pk": [
           "id"
@@ -1590,17 +1732,24 @@
       "type": "table",
       "data": {
         "name": "sync_outbox_operations",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "id",
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "entity_type",
@@ -1617,7 +1766,11 @@
             "getter_name": "entityId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES players(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES players (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES players (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -1649,7 +1802,7 @@
             "getter_name": "baseVersion",
             "moor_type": "int",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1667,9 +1820,9 @@
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1679,7 +1832,7 @@
             "getter_name": "attemptCount",
             "moor_type": "int",
             "nullable": false,
-            "customConstraints": "NOT NULL DEFAULT 0",
+            "customConstraints": null,
             "default_dart": "const CustomExpression('0')",
             "default_client_dart": null,
             "dsl_features": []
@@ -1687,9 +1840,9 @@
           {
             "name": "next_eligible_at",
             "getter_name": "nextEligibleAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1707,9 +1860,9 @@
           {
             "name": "claimed_at",
             "getter_name": "claimedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1719,7 +1872,7 @@
             "getter_name": "failureCode",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1729,7 +1882,7 @@
             "getter_name": "failureMessage",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1738,11 +1891,10 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(id)",
-          "CHECK(base_version IS NULL OR base_version >= 0)",
-          "CHECK(attempt_count >= 0)",
-          "CHECK((status = 'inFlight' AND claimed_at IS NOT NULL)OR(status <> 'inFlight' AND claimed_at IS NULL))",
-          "CHECK(failure_message IS NULL OR length(failure_message) <= 240)"
+          "CHECK (base_version IS NULL OR base_version >= 0)",
+          "CHECK (attempt_count >= 0)",
+          "CHECK ((status = 'inFlight' AND claimed_at IS NOT NULL) OR (status <> 'inFlight' AND claimed_at IS NULL))",
+          "CHECK (failure_message IS NULL OR length(failure_message) <= 240)"
         ],
         "explicit_pk": [
           "id"
@@ -1757,7 +1909,7 @@
       "type": "table",
       "data": {
         "name": "sync_pull_checkpoints",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "entity_type",
@@ -1772,9 +1924,9 @@
           {
             "name": "cursor_updated_at",
             "getter_name": "cursorUpdatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1784,7 +1936,11 @@
             "getter_name": "cursorEntityId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES players(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES players (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES players (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -1804,9 +1960,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1814,9 +1970,7 @@
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": [
-          "PRIMARY KEY(entity_type)"
-        ],
+        "constraints": [],
         "explicit_pk": [
           "entity_type"
         ]
@@ -1831,24 +1985,35 @@
       "type": "table",
       "data": {
         "name": "sync_conflicts",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "id",
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "operation_id",
             "getter_name": "operationId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL UNIQUE REFERENCES sync_outbox_operations(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "UNIQUE REFERENCES sync_outbox_operations (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "UNIQUE REFERENCES sync_outbox_operations (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -1881,7 +2046,11 @@
             "getter_name": "entityId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES players(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES players (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES players (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -1903,7 +2072,7 @@
             "getter_name": "expectedVersion",
             "moor_type": "int",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1923,7 +2092,7 @@
             "getter_name": "remotePayloadJson",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1933,7 +2102,7 @@
             "getter_name": "remoteVersion",
             "moor_type": "int",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1941,9 +2110,9 @@
           {
             "name": "detected_at",
             "getter_name": "detectedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -1962,10 +2131,9 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(id)",
-          "CHECK(expected_version IS NULL OR expected_version >= 0)",
-          "CHECK(remote_version IS NULL OR remote_version >= 0)",
-          "CHECK(remote_payload_json IS NULL OR(json_valid(remote_payload_json) AND json_type(remote_payload_json) = 'object'))"
+          "CHECK (expected_version IS NULL OR expected_version >= 0)",
+          "CHECK (remote_version IS NULL OR remote_version >= 0)",
+          "CHECK (remote_payload_json IS NULL OR (json_valid(remote_payload_json) AND json_type(remote_payload_json) = 'object'))"
         ],
         "explicit_pk": [
           "id"
@@ -1980,24 +2148,35 @@
       "type": "table",
       "data": {
         "name": "event_setup_outbox_operations",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "id",
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "event_id",
             "getter_name": "eventId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES events(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES events (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES events (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -2019,7 +2198,7 @@
             "getter_name": "baseVersion",
             "moor_type": "int",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2037,9 +2216,9 @@
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2059,7 +2238,7 @@
             "getter_name": "failureMessage",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2068,9 +2247,8 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(id)",
-          "CHECK(base_version IS NULL OR base_version >= 0)",
-          "CHECK(failure_message IS NULL OR length(failure_message) <= 240)"
+          "CHECK (base_version IS NULL OR base_version >= 0)",
+          "CHECK (failure_message IS NULL OR length(failure_message) <= 240)"
         ],
         "explicit_pk": [
           "id"
@@ -2085,14 +2263,14 @@
       "type": "table",
       "data": {
         "name": "event_setup_pull_checkpoints",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "singleton",
             "getter_name": "singleton",
             "moor_type": "int",
             "nullable": false,
-            "customConstraints": "NOT NULL DEFAULT 1",
+            "customConstraints": null,
             "default_dart": "const CustomExpression('1')",
             "default_client_dart": null,
             "dsl_features": []
@@ -2100,9 +2278,9 @@
           {
             "name": "cursor_updated_at",
             "getter_name": "cursorUpdatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2112,7 +2290,11 @@
             "getter_name": "cursorEventId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES events(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES events (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES events (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -2132,9 +2314,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2143,8 +2325,7 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(singleton)",
-          "CHECK(singleton = 1)"
+          "CHECK (singleton = 1)"
         ],
         "explicit_pk": [
           "singleton"
@@ -2160,24 +2341,35 @@
       "type": "table",
       "data": {
         "name": "event_setup_conflicts",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "id",
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "operation_id",
             "getter_name": "operationId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL UNIQUE REFERENCES event_setup_outbox_operations(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "UNIQUE REFERENCES event_setup_outbox_operations (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "UNIQUE REFERENCES event_setup_outbox_operations (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -2200,7 +2392,11 @@
             "getter_name": "eventId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES events(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES events (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES events (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -2232,7 +2428,7 @@
             "getter_name": "remotePayloadJson",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2240,9 +2436,9 @@
           {
             "name": "detected_at",
             "getter_name": "detectedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2260,9 +2456,7 @@
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": [
-          "PRIMARY KEY(id)"
-        ],
+        "constraints": [],
         "explicit_pk": [
           "id"
         ]
@@ -2276,24 +2470,35 @@
       "type": "table",
       "data": {
         "name": "participation_outbox_operations",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "id",
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "event_participant_id",
             "getter_name": "eventParticipantId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_participants(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_participants (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_participants (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -2315,7 +2520,7 @@
             "getter_name": "baseVersion",
             "moor_type": "int",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2333,9 +2538,9 @@
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2355,7 +2560,7 @@
             "getter_name": "failureMessage",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2364,9 +2569,8 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(id)",
-          "CHECK(base_version IS NULL OR base_version >= 0)",
-          "CHECK(failure_message IS NULL OR length(failure_message) <= 240)"
+          "CHECK (base_version IS NULL OR base_version >= 0)",
+          "CHECK (failure_message IS NULL OR length(failure_message) <= 240)"
         ],
         "explicit_pk": [
           "id"
@@ -2381,14 +2585,14 @@
       "type": "table",
       "data": {
         "name": "participation_pull_checkpoints",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "singleton",
             "getter_name": "singleton",
             "moor_type": "int",
             "nullable": false,
-            "customConstraints": "NOT NULL DEFAULT 1",
+            "customConstraints": null,
             "default_dart": "const CustomExpression('1')",
             "default_client_dart": null,
             "dsl_features": []
@@ -2396,9 +2600,9 @@
           {
             "name": "cursor_updated_at",
             "getter_name": "cursorUpdatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2408,7 +2612,11 @@
             "getter_name": "cursorParticipantId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_participants(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_participants (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_participants (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -2428,9 +2636,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2439,8 +2647,7 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(singleton)",
-          "CHECK(singleton = 1)"
+          "CHECK (singleton = 1)"
         ],
         "explicit_pk": [
           "singleton"
@@ -2456,24 +2663,35 @@
       "type": "table",
       "data": {
         "name": "participation_conflicts",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "id",
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "operation_id",
             "getter_name": "operationId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL UNIQUE REFERENCES participation_outbox_operations(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "UNIQUE REFERENCES participation_outbox_operations (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "UNIQUE REFERENCES participation_outbox_operations (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -2496,7 +2714,11 @@
             "getter_name": "eventParticipantId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_participants(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_participants (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_participants (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -2528,7 +2750,7 @@
             "getter_name": "remotePayloadJson",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2536,9 +2758,9 @@
           {
             "name": "detected_at",
             "getter_name": "detectedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2556,9 +2778,7 @@
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": [
-          "PRIMARY KEY(id)"
-        ],
+        "constraints": [],
         "explicit_pk": [
           "id"
         ]
@@ -2573,24 +2793,35 @@
       "type": "table",
       "data": {
         "name": "team_formation_outbox_operations",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "id",
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "event_id",
             "getter_name": "eventId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES events(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES events (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES events (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -2612,7 +2843,11 @@
             "getter_name": "divisionId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -2642,9 +2877,9 @@
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2664,7 +2899,7 @@
             "getter_name": "failureMessage",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2672,9 +2907,7 @@
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": [
-          "PRIMARY KEY(id)"
-        ],
+        "constraints": [],
         "explicit_pk": [
           "id"
         ]
@@ -2688,14 +2921,14 @@
       "type": "table",
       "data": {
         "name": "team_formation_pull_checkpoints",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "singleton",
             "getter_name": "singleton",
             "moor_type": "int",
             "nullable": false,
-            "customConstraints": "NOT NULL DEFAULT 1",
+            "customConstraints": null,
             "default_dart": "const CustomExpression('1')",
             "default_client_dart": null,
             "dsl_features": []
@@ -2703,9 +2936,9 @@
           {
             "name": "cursor_updated_at",
             "getter_name": "cursorUpdatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2715,7 +2948,11 @@
             "getter_name": "cursorDivisionId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -2735,9 +2972,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2746,8 +2983,7 @@
         "is_virtual": false,
         "without_rowid": false,
         "constraints": [
-          "PRIMARY KEY(singleton)",
-          "CHECK(singleton = 1)"
+          "CHECK (singleton = 1)"
         ],
         "explicit_pk": [
           "singleton"
@@ -2763,24 +2999,35 @@
       "type": "table",
       "data": {
         "name": "team_formation_conflicts",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "id",
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "operation_id",
             "getter_name": "operationId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL UNIQUE REFERENCES team_formation_outbox_operations(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "UNIQUE REFERENCES team_formation_outbox_operations (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "UNIQUE REFERENCES team_formation_outbox_operations (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -2803,7 +3050,11 @@
             "getter_name": "divisionId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -2825,7 +3076,7 @@
             "getter_name": "localPayloadJson",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2835,7 +3086,7 @@
             "getter_name": "remotePayloadJson",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2843,9 +3094,9 @@
           {
             "name": "detected_at",
             "getter_name": "detectedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2863,9 +3114,7 @@
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": [
-          "PRIMARY KEY(id)"
-        ],
+        "constraints": [],
         "explicit_pk": [
           "id"
         ]
@@ -2879,14 +3128,18 @@
       "type": "table",
       "data": {
         "name": "single_elimination_snapshots",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "division_id",
             "getter_name": "divisionId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -2908,7 +3161,7 @@
             "getter_name": "bracketJson",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL CHECK (json_valid(bracket_json))",
+            "customConstraints": "NOT NULL CHECK(json_valid(bracket_json))",
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2916,9 +3169,7 @@
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": [
-          "PRIMARY KEY(division_id)"
-        ],
+        "constraints": [],
         "explicit_pk": [
           "division_id"
         ]
@@ -2932,24 +3183,35 @@
       "type": "table",
       "data": {
         "name": "single_elimination_outbox",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "id",
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "division_id",
             "getter_name": "divisionId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -2971,7 +3233,7 @@
             "getter_name": "payloadJson",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL CHECK (json_valid(payload_json))",
+            "customConstraints": "NOT NULL CHECK(json_valid(payload_json))",
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2981,7 +3243,7 @@
             "getter_name": "status",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL CHECK (status IN ('pending', 'blocked', 'failed', 'conflicted', 'accepted'))",
+            "customConstraints": "NOT NULL CHECK(status IN ('pending','blocked','failed','conflicted','accepted'))",
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -2989,9 +3251,9 @@
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3001,7 +3263,7 @@
             "getter_name": "failure",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3011,7 +3273,7 @@
             "getter_name": "remoteJson",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3019,9 +3281,7 @@
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": [
-          "PRIMARY KEY(id)"
-        ],
+        "constraints": [],
         "explicit_pk": [
           "id"
         ]
@@ -3033,14 +3293,14 @@
       "type": "table",
       "data": {
         "name": "single_elimination_checkpoints",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "scope",
             "getter_name": "scope",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3048,9 +3308,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3060,17 +3320,22 @@
             "getter_name": "bracketId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           }
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": [
-          "PRIMARY KEY(scope)"
-        ],
+        "constraints": [],
         "explicit_pk": [
           "scope"
         ]
@@ -3084,14 +3349,18 @@
       "type": "table",
       "data": {
         "name": "round_robin_snapshots",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "division_id",
             "getter_name": "divisionId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -3113,7 +3382,7 @@
             "getter_name": "tournamentJson",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL CHECK (json_valid(tournament_json))",
+            "customConstraints": "NOT NULL CHECK(json_valid(tournament_json))",
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3121,9 +3390,7 @@
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": [
-          "PRIMARY KEY(division_id)"
-        ],
+        "constraints": [],
         "explicit_pk": [
           "division_id"
         ]
@@ -3137,24 +3404,35 @@
       "type": "table",
       "data": {
         "name": "round_robin_outbox",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "id",
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "division_id",
             "getter_name": "divisionId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -3176,7 +3454,7 @@
             "getter_name": "payloadJson",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL CHECK (json_valid(payload_json))",
+            "customConstraints": "NOT NULL CHECK(json_valid(payload_json))",
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3186,7 +3464,7 @@
             "getter_name": "status",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL CHECK (status IN ('pending', 'blocked', 'failed', 'conflicted', 'accepted'))",
+            "customConstraints": "NOT NULL CHECK(status IN ('pending','blocked','failed','conflicted','accepted'))",
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3194,9 +3472,9 @@
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3206,7 +3484,7 @@
             "getter_name": "failure",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3216,7 +3494,7 @@
             "getter_name": "remoteJson",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3224,9 +3502,7 @@
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": [
-          "PRIMARY KEY(id)"
-        ],
+        "constraints": [],
         "explicit_pk": [
           "id"
         ]
@@ -3238,14 +3514,14 @@
       "type": "table",
       "data": {
         "name": "round_robin_checkpoints",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "scope",
             "getter_name": "scope",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3253,9 +3529,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3265,17 +3541,22 @@
             "getter_name": "tournamentId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           }
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": [
-          "PRIMARY KEY(scope)"
-        ],
+        "constraints": [],
         "explicit_pk": [
           "scope"
         ]
@@ -3289,14 +3570,18 @@
       "type": "table",
       "data": {
         "name": "double_elimination_snapshots",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "division_id",
             "getter_name": "divisionId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -3318,7 +3603,7 @@
             "getter_name": "bracketJson",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL CHECK (json_valid(bracket_json))",
+            "customConstraints": "NOT NULL CHECK(json_valid(bracket_json))",
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3326,9 +3611,7 @@
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": [
-          "PRIMARY KEY(division_id)"
-        ],
+        "constraints": [],
         "explicit_pk": [
           "division_id"
         ]
@@ -3342,24 +3625,35 @@
       "type": "table",
       "data": {
         "name": "double_elimination_outbox",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "id",
             "getter_name": "id",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "division_id",
             "getter_name": "divisionId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES event_divisions (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES event_divisions (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -3381,7 +3675,7 @@
             "getter_name": "payloadJson",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL CHECK (json_valid(payload_json))",
+            "customConstraints": "NOT NULL CHECK(json_valid(payload_json))",
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3391,7 +3685,7 @@
             "getter_name": "status",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL CHECK (status IN ('pending', 'blocked', 'failed', 'conflicted', 'accepted'))",
+            "customConstraints": "NOT NULL CHECK(status IN ('pending','blocked','failed','conflicted','accepted'))",
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3399,9 +3693,9 @@
           {
             "name": "created_at",
             "getter_name": "createdAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3411,7 +3705,7 @@
             "getter_name": "failure",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3421,7 +3715,7 @@
             "getter_name": "remoteJson",
             "moor_type": "string",
             "nullable": true,
-            "customConstraints": "NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3429,9 +3723,7 @@
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": [
-          "PRIMARY KEY(id)"
-        ],
+        "constraints": [],
         "explicit_pk": [
           "id"
         ]
@@ -3443,14 +3735,14 @@
       "type": "table",
       "data": {
         "name": "double_elimination_checkpoints",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "scope",
             "getter_name": "scope",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3458,9 +3750,9 @@
           {
             "name": "updated_at",
             "getter_name": "updatedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3470,17 +3762,22 @@
             "getter_name": "bracketId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           }
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": [
-          "PRIMARY KEY(scope)"
-        ],
+        "constraints": [],
         "explicit_pk": [
           "scope"
         ]
@@ -3494,24 +3791,35 @@
       "type": "table",
       "data": {
         "name": "match_result_revisions",
-        "was_declared_in_moor": true,
+        "was_declared_in_moor": false,
         "columns": [
           {
             "name": "operation_id",
             "getter_name": "operationId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": []
+            "dsl_features": [
+              {
+                "allowed-lengths": {
+                  "min": 36,
+                  "max": 36
+                }
+              }
+            ]
           },
           {
             "name": "match_id",
             "getter_name": "matchId",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL REFERENCES matches(id)ON DELETE RESTRICT",
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES matches (id) ON DELETE RESTRICT",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES matches (id) ON DELETE RESTRICT"
+            },
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": [
@@ -3533,7 +3841,7 @@
             "getter_name": "previousResult",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL CHECK (json_valid(previous_result))",
+            "customConstraints": "NOT NULL CHECK(json_valid(previous_result))",
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3543,7 +3851,7 @@
             "getter_name": "reason",
             "moor_type": "string",
             "nullable": false,
-            "customConstraints": "NOT NULL CHECK (trim(reason) <> '')",
+            "customConstraints": "NOT NULL CHECK(trim(reason)<>'')",
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3551,9 +3859,9 @@
           {
             "name": "recorded_at",
             "getter_name": "recordedAt",
-            "moor_type": "string",
+            "moor_type": "dateTime",
             "nullable": false,
-            "customConstraints": "NOT NULL",
+            "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
             "dsl_features": []
@@ -3561,9 +3869,7 @@
         ],
         "is_virtual": false,
         "without_rowid": false,
-        "constraints": [
-          "PRIMARY KEY(operation_id)"
-        ],
+        "constraints": [],
         "explicit_pk": [
           "operation_id"
         ]
@@ -3578,9 +3884,14 @@
       "data": {
         "on": 0,
         "name": "players_display_name_idx",
-        "sql": "CREATE INDEX players_display_name_idx ON players (display_name);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "display_name",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3592,9 +3903,18 @@
       "data": {
         "on": 1,
         "name": "events_status_scheduled_at_idx",
-        "sql": "CREATE INDEX events_status_scheduled_at_idx ON events (status, scheduled_at);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "status",
+            "order_by": null
+          },
+          {
+            "column": "scheduled_at",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3606,9 +3926,14 @@
       "data": {
         "on": 2,
         "name": "event_divisions_event_id_idx",
-        "sql": "CREATE INDEX event_divisions_event_id_idx ON event_divisions (event_id);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "event_id",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3620,7 +3945,7 @@
       "data": {
         "on": 2,
         "name": "event_divisions_active_name_idx",
-        "sql": "CREATE UNIQUE INDEX event_divisions_active_name_idx ON event_divisions (event_id, lower(name)) WHERE deleted_at IS NULL;",
+        "sql": "CREATE UNIQUE INDEX event_divisions_active_name_idx ON event_divisions (event_id, lower(name)) WHERE deleted_at IS NULL",
         "unique": true,
         "columns": []
       }
@@ -3634,9 +3959,14 @@
       "data": {
         "on": 3,
         "name": "event_participants_player_id_idx",
-        "sql": "CREATE INDEX event_participants_player_id_idx ON event_participants (player_id);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "player_id",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3648,7 +3978,7 @@
       "data": {
         "on": 3,
         "name": "event_participants_active_player_idx",
-        "sql": "CREATE UNIQUE INDEX event_participants_active_player_idx ON event_participants (event_id, player_id) WHERE deleted_at IS NULL;",
+        "sql": "CREATE UNIQUE INDEX event_participants_active_player_idx ON event_participants (event_id, player_id) WHERE deleted_at IS NULL",
         "unique": true,
         "columns": []
       }
@@ -3662,9 +3992,14 @@
       "data": {
         "on": 4,
         "name": "division_participants_event_participant_idx",
-        "sql": "CREATE INDEX division_participants_event_participant_idx ON division_participants (event_participant_id);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "event_participant_id",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3676,7 +4011,7 @@
       "data": {
         "on": 4,
         "name": "division_participants_active_entry_idx",
-        "sql": "CREATE UNIQUE INDEX division_participants_active_entry_idx ON division_participants (division_id, event_participant_id) WHERE deleted_at IS NULL;",
+        "sql": "CREATE UNIQUE INDEX division_participants_active_entry_idx ON division_participants (division_id, event_participant_id) WHERE deleted_at IS NULL",
         "unique": true,
         "columns": []
       }
@@ -3690,7 +4025,7 @@
       "data": {
         "on": 5,
         "name": "participant_payments_active_event_scope_idx",
-        "sql": "CREATE UNIQUE INDEX participant_payments_active_event_scope_idx ON participant_payments (event_participant_id) WHERE division_id IS NULL AND deleted_at IS NULL;",
+        "sql": "CREATE UNIQUE INDEX participant_payments_active_event_scope_idx ON participant_payments (event_participant_id) WHERE division_id IS NULL AND deleted_at IS NULL",
         "unique": true,
         "columns": []
       }
@@ -3704,7 +4039,7 @@
       "data": {
         "on": 5,
         "name": "participant_payments_active_division_scope_idx",
-        "sql": "CREATE UNIQUE INDEX participant_payments_active_division_scope_idx ON participant_payments (event_participant_id, division_id) WHERE division_id IS NOT NULL AND deleted_at IS NULL;",
+        "sql": "CREATE UNIQUE INDEX participant_payments_active_division_scope_idx ON participant_payments (event_participant_id, division_id) WHERE division_id IS NOT NULL AND deleted_at IS NULL",
         "unique": true,
         "columns": []
       }
@@ -3718,9 +4053,14 @@
       "data": {
         "on": 6,
         "name": "teams_division_id_idx",
-        "sql": "CREATE INDEX teams_division_id_idx ON teams (division_id);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "division_id",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3732,9 +4072,14 @@
       "data": {
         "on": 7,
         "name": "team_members_player_id_idx",
-        "sql": "CREATE INDEX team_members_player_id_idx ON team_members (player_id);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "player_id",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3746,9 +4091,22 @@
       "data": {
         "on": 8,
         "name": "matches_division_status_idx",
-        "sql": "CREATE INDEX matches_division_status_idx ON matches (division_id, status, sequence_number);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "division_id",
+            "order_by": null
+          },
+          {
+            "column": "status",
+            "order_by": null
+          },
+          {
+            "column": "sequence_number",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3760,9 +4118,14 @@
       "data": {
         "on": 9,
         "name": "match_dependencies_destination_idx",
-        "sql": "CREATE INDEX match_dependencies_destination_idx ON match_dependencies (destination_match_id);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "destination_match_id",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3774,7 +4137,7 @@
       "data": {
         "on": 9,
         "name": "match_dependencies_active_destination_slot_idx",
-        "sql": "CREATE UNIQUE INDEX match_dependencies_active_destination_slot_idx ON match_dependencies (destination_match_id, destination_slot) WHERE deleted_at IS NULL;",
+        "sql": "CREATE UNIQUE INDEX match_dependencies_active_destination_slot_idx ON match_dependencies (destination_match_id, destination_slot) WHERE deleted_at IS NULL",
         "unique": true,
         "columns": []
       }
@@ -3788,7 +4151,7 @@
       "data": {
         "on": 10,
         "name": "court_queue_entries_active_position_idx",
-        "sql": "CREATE UNIQUE INDEX court_queue_entries_active_position_idx ON court_queue_entries (event_id, queue_position) WHERE deleted_at IS NULL;",
+        "sql": "CREATE UNIQUE INDEX court_queue_entries_active_position_idx ON court_queue_entries (event_id, queue_position) WHERE deleted_at IS NULL",
         "unique": true,
         "columns": []
       }
@@ -3802,7 +4165,7 @@
       "data": {
         "on": 10,
         "name": "court_queue_entries_active_match_idx",
-        "sql": "CREATE UNIQUE INDEX court_queue_entries_active_match_idx ON court_queue_entries (match_id) WHERE deleted_at IS NULL;",
+        "sql": "CREATE UNIQUE INDEX court_queue_entries_active_match_idx ON court_queue_entries (match_id) WHERE deleted_at IS NULL",
         "unique": true,
         "columns": []
       }
@@ -3816,7 +4179,7 @@
       "data": {
         "on": 11,
         "name": "division_placements_active_position_idx",
-        "sql": "CREATE UNIQUE INDEX division_placements_active_position_idx ON division_placements (division_id, position) WHERE deleted_at IS NULL;",
+        "sql": "CREATE UNIQUE INDEX division_placements_active_position_idx ON division_placements (division_id, position) WHERE deleted_at IS NULL",
         "unique": true,
         "columns": []
       }
@@ -3830,7 +4193,7 @@
       "data": {
         "on": 11,
         "name": "division_placements_active_team_idx",
-        "sql": "CREATE UNIQUE INDEX division_placements_active_team_idx ON division_placements (division_id, team_id) WHERE deleted_at IS NULL;",
+        "sql": "CREATE UNIQUE INDEX division_placements_active_team_idx ON division_placements (division_id, team_id) WHERE deleted_at IS NULL",
         "unique": true,
         "columns": []
       }
@@ -3844,9 +4207,26 @@
       "data": {
         "on": 12,
         "name": "sync_outbox_eligibility_idx",
-        "sql": "CREATE INDEX sync_outbox_eligibility_idx ON sync_outbox_operations (status, next_eligible_at, created_at, id);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "status",
+            "order_by": null
+          },
+          {
+            "column": "next_eligible_at",
+            "order_by": null
+          },
+          {
+            "column": "created_at",
+            "order_by": null
+          },
+          {
+            "column": "id",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3858,9 +4238,18 @@
       "data": {
         "on": 12,
         "name": "sync_outbox_entity_idx",
-        "sql": "CREATE INDEX sync_outbox_entity_idx ON sync_outbox_operations (entity_type, entity_id);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "entity_type",
+            "order_by": null
+          },
+          {
+            "column": "entity_id",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3872,9 +4261,18 @@
       "data": {
         "on": 14,
         "name": "sync_conflicts_unresolved_idx",
-        "sql": "CREATE INDEX sync_conflicts_unresolved_idx ON sync_conflicts (status, detected_at);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "status",
+            "order_by": null
+          },
+          {
+            "column": "detected_at",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3886,9 +4284,18 @@
       "data": {
         "on": 14,
         "name": "sync_conflicts_entity_idx",
-        "sql": "CREATE INDEX sync_conflicts_entity_idx ON sync_conflicts (entity_type, entity_id);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "entity_type",
+            "order_by": null
+          },
+          {
+            "column": "entity_id",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3900,9 +4307,22 @@
       "data": {
         "on": 15,
         "name": "event_setup_outbox_eligibility_idx",
-        "sql": "CREATE INDEX event_setup_outbox_eligibility_idx ON event_setup_outbox_operations (status, created_at, id);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "status",
+            "order_by": null
+          },
+          {
+            "column": "created_at",
+            "order_by": null
+          },
+          {
+            "column": "id",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3914,9 +4334,14 @@
       "data": {
         "on": 17,
         "name": "event_setup_conflicts_event_idx",
-        "sql": "CREATE INDEX event_setup_conflicts_event_idx ON event_setup_conflicts (event_id);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "event_id",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3928,9 +4353,22 @@
       "data": {
         "on": 18,
         "name": "participation_outbox_eligibility_idx",
-        "sql": "CREATE INDEX participation_outbox_eligibility_idx ON participation_outbox_operations (status, created_at, id);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "status",
+            "order_by": null
+          },
+          {
+            "column": "created_at",
+            "order_by": null
+          },
+          {
+            "column": "id",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3942,9 +4380,14 @@
       "data": {
         "on": 20,
         "name": "participation_conflicts_participant_idx",
-        "sql": "CREATE INDEX participation_conflicts_participant_idx ON participation_conflicts (event_participant_id);",
+        "sql": null,
         "unique": false,
-        "columns": []
+        "columns": [
+          {
+            "column": "event_participant_id",
+            "order_by": null
+          }
+        ]
       }
     },
     {
@@ -3956,410 +4399,22 @@
       "data": {
         "on": 21,
         "name": "team_formation_outbox_eligibility_idx",
-        "sql": "CREATE INDEX team_formation_outbox_eligibility_idx ON team_formation_outbox_operations (status, created_at, id);",
+        "sql": null,
         "unique": false,
-        "columns": []
-      }
-    },
-    {
-      "id": 62,
-      "references": [
-        1
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 1,
-        "references_in_body": [
-          1
-        ],
-        "name": "events_status_transition_guard",
-        "sql": "CREATE TRIGGER events_status_transition_guard\nBEFORE UPDATE OF status ON events\nWHEN NEW.status <> OLD.status AND NOT (\n  (OLD.status = 'upcoming' AND NEW.status = 'registration') OR\n  (OLD.status = 'registration' AND NEW.status = 'inProgress') OR\n  (OLD.status = 'inProgress' AND NEW.status = 'completed') OR\n  (OLD.status = 'completed' AND NEW.status = 'archived')\n)\nBEGIN\n  SELECT RAISE(ABORT, 'invalid event status transition');\nEND;"
-      }
-    },
-    {
-      "id": 63,
-      "references": [
-        8
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 8,
-        "references_in_body": [
-          8
-        ],
-        "name": "matches_status_transition_guard",
-        "sql": "CREATE TRIGGER matches_status_transition_guard\nBEFORE UPDATE OF status ON matches\nWHEN NEW.status <> OLD.status AND NOT (\n  (OLD.status = 'scheduled' AND NEW.status = 'queued') OR\n  (OLD.status = 'queued' AND NEW.status = 'inProgress') OR\n  (OLD.status = 'inProgress' AND NEW.status = 'completed')\n)\nBEGIN\n  SELECT RAISE(ABORT, 'invalid match status transition');\nEND;"
-      }
-    },
-    {
-      "id": 64,
-      "references": [
-        4,
-        2,
-        3
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 4,
-        "references_in_body": [
-          4,
-          2,
-          3
-        ],
-        "name": "division_participants_scope_guard",
-        "sql": "CREATE TRIGGER division_participants_scope_guard\nBEFORE INSERT ON division_participants\nWHEN (SELECT event_id FROM event_divisions WHERE id = NEW.division_id) <>\n     (SELECT event_id FROM event_participants WHERE id = NEW.event_participant_id)\nBEGIN\n  SELECT RAISE(ABORT, 'division participant event mismatch');\nEND;"
-      }
-    },
-    {
-      "id": 65,
-      "references": [
-        4,
-        2,
-        3
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 4,
-        "references_in_body": [
-          4,
-          2,
-          3
-        ],
-        "name": "division_participants_scope_update_guard",
-        "sql": "CREATE TRIGGER division_participants_scope_update_guard\nBEFORE UPDATE OF division_id, event_participant_id ON division_participants\nWHEN (SELECT event_id FROM event_divisions WHERE id = NEW.division_id) <>\n     (SELECT event_id FROM event_participants WHERE id = NEW.event_participant_id)\nBEGIN\n  SELECT RAISE(ABORT, 'division participant event mismatch');\nEND;"
-      }
-    },
-    {
-      "id": 66,
-      "references": [
-        5,
-        2,
-        3
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 5,
-        "references_in_body": [
-          5,
-          2,
-          3
-        ],
-        "name": "participant_payments_scope_guard",
-        "sql": "CREATE TRIGGER participant_payments_scope_guard\nBEFORE INSERT ON participant_payments\nWHEN NEW.division_id IS NOT NULL AND\n     (SELECT event_id FROM event_divisions WHERE id = NEW.division_id) <>\n     (SELECT event_id FROM event_participants WHERE id = NEW.event_participant_id)\nBEGIN\n  SELECT RAISE(ABORT, 'payment division event mismatch');\nEND;"
-      }
-    },
-    {
-      "id": 67,
-      "references": [
-        5,
-        2,
-        3
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 5,
-        "references_in_body": [
-          5,
-          2,
-          3
-        ],
-        "name": "participant_payments_scope_update_guard",
-        "sql": "CREATE TRIGGER participant_payments_scope_update_guard\nBEFORE UPDATE OF division_id, event_participant_id ON participant_payments\nWHEN NEW.division_id IS NOT NULL AND\n     (SELECT event_id FROM event_divisions WHERE id = NEW.division_id) <>\n     (SELECT event_id FROM event_participants WHERE id = NEW.event_participant_id)\nBEGIN\n  SELECT RAISE(ABORT, 'payment division event mismatch');\nEND;"
-      }
-    },
-    {
-      "id": 68,
-      "references": [
-        8,
-        6
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 8,
-        "references_in_body": [
-          8,
-          6
-        ],
-        "name": "matches_team_scope_guard",
-        "sql": "CREATE TRIGGER matches_team_scope_guard\nBEFORE INSERT ON matches\nWHEN (NEW.side_one_team_id IS NOT NULL AND\n      (SELECT division_id FROM teams WHERE id = NEW.side_one_team_id) <> NEW.division_id)\n  OR (NEW.side_two_team_id IS NOT NULL AND\n      (SELECT division_id FROM teams WHERE id = NEW.side_two_team_id) <> NEW.division_id)\n  OR (NEW.winner_team_id IS NOT NULL AND\n      (SELECT division_id FROM teams WHERE id = NEW.winner_team_id) <> NEW.division_id)\nBEGIN\n  SELECT RAISE(ABORT, 'match team division mismatch');\nEND;"
-      }
-    },
-    {
-      "id": 69,
-      "references": [
-        8,
-        6
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 8,
-        "references_in_body": [
-          8,
-          6
-        ],
-        "name": "matches_team_scope_update_guard",
-        "sql": "CREATE TRIGGER matches_team_scope_update_guard\nBEFORE UPDATE OF division_id, side_one_team_id, side_two_team_id, winner_team_id\nON matches\nWHEN (NEW.side_one_team_id IS NOT NULL AND\n      (SELECT division_id FROM teams WHERE id = NEW.side_one_team_id) <> NEW.division_id)\n  OR (NEW.side_two_team_id IS NOT NULL AND\n      (SELECT division_id FROM teams WHERE id = NEW.side_two_team_id) <> NEW.division_id)\n  OR (NEW.winner_team_id IS NOT NULL AND\n      (SELECT division_id FROM teams WHERE id = NEW.winner_team_id) <> NEW.division_id)\nBEGIN\n  SELECT RAISE(ABORT, 'match team division mismatch');\nEND;"
-      }
-    },
-    {
-      "id": 70,
-      "references": [
-        9,
-        8
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 9,
-        "references_in_body": [
-          9,
-          8
-        ],
-        "name": "match_dependencies_scope_guard",
-        "sql": "CREATE TRIGGER match_dependencies_scope_guard\nBEFORE INSERT ON match_dependencies\nWHEN (SELECT division_id FROM matches WHERE id = NEW.source_match_id) <>\n     (SELECT division_id FROM matches WHERE id = NEW.destination_match_id)\nBEGIN\n  SELECT RAISE(ABORT, 'match dependency division mismatch');\nEND;"
-      }
-    },
-    {
-      "id": 71,
-      "references": [
-        9,
-        8
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 9,
-        "references_in_body": [
-          9,
-          8
-        ],
-        "name": "match_dependencies_scope_update_guard",
-        "sql": "CREATE TRIGGER match_dependencies_scope_update_guard\nBEFORE UPDATE OF source_match_id, destination_match_id ON match_dependencies\nWHEN (SELECT division_id FROM matches WHERE id = NEW.source_match_id) <>\n     (SELECT division_id FROM matches WHERE id = NEW.destination_match_id)\nBEGIN\n  SELECT RAISE(ABORT, 'match dependency division mismatch');\nEND;"
-      }
-    },
-    {
-      "id": 72,
-      "references": [
-        10,
-        2,
-        8
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 10,
-        "references_in_body": [
-          10,
-          2,
-          8
-        ],
-        "name": "court_queue_entries_scope_guard",
-        "sql": "CREATE TRIGGER court_queue_entries_scope_guard\nBEFORE INSERT ON court_queue_entries\nWHEN (SELECT event_id FROM event_divisions\n      WHERE id = (SELECT division_id FROM matches WHERE id = NEW.match_id)) <> NEW.event_id\n  OR (NEW.division_id IS NOT NULL AND\n      NEW.division_id <> (SELECT division_id FROM matches WHERE id = NEW.match_id))\nBEGIN\n  SELECT RAISE(ABORT, 'court queue scope mismatch');\nEND;"
-      }
-    },
-    {
-      "id": 73,
-      "references": [
-        10,
-        2,
-        8
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 10,
-        "references_in_body": [
-          10,
-          2,
-          8
-        ],
-        "name": "court_queue_entries_scope_update_guard",
-        "sql": "CREATE TRIGGER court_queue_entries_scope_update_guard\nBEFORE UPDATE OF event_id, division_id, match_id ON court_queue_entries\nWHEN (SELECT event_id FROM event_divisions\n      WHERE id = (SELECT division_id FROM matches WHERE id = NEW.match_id)) <> NEW.event_id\n  OR (NEW.division_id IS NOT NULL AND\n      NEW.division_id <> (SELECT division_id FROM matches WHERE id = NEW.match_id))\nBEGIN\n  SELECT RAISE(ABORT, 'court queue scope mismatch');\nEND;"
-      }
-    },
-    {
-      "id": 74,
-      "references": [
-        11,
-        6
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 11,
-        "references_in_body": [
-          11,
-          6
-        ],
-        "name": "division_placements_scope_guard",
-        "sql": "CREATE TRIGGER division_placements_scope_guard\nBEFORE INSERT ON division_placements\nWHEN (SELECT division_id FROM teams WHERE id = NEW.team_id) <> NEW.division_id\nBEGIN\n  SELECT RAISE(ABORT, 'placement team division mismatch');\nEND;"
-      }
-    },
-    {
-      "id": 75,
-      "references": [
-        11,
-        6
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 11,
-        "references_in_body": [
-          11,
-          6
-        ],
-        "name": "division_placements_scope_update_guard",
-        "sql": "CREATE TRIGGER division_placements_scope_update_guard\nBEFORE UPDATE OF division_id, team_id ON division_placements\nWHEN (SELECT division_id FROM teams WHERE id = NEW.team_id) <> NEW.division_id\nBEGIN\n  SELECT RAISE(ABORT, 'placement team division mismatch');\nEND;"
-      }
-    },
-    {
-      "id": 76,
-      "references": [
-        1,
-        2
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 1,
-        "references_in_body": [
-          1,
-          2
-        ],
-        "name": "events_format_required_guard",
-        "sql": "CREATE TRIGGER events_format_required_guard\nBEFORE UPDATE OF status ON events\nWHEN NEW.status = 'inProgress' AND OLD.status <> 'inProgress' AND EXISTS (\n  SELECT 1 FROM event_divisions\n  WHERE event_id = NEW.id AND deleted_at IS NULL AND tournament_format IS NULL\n)\nBEGIN\n  SELECT RAISE(ABORT, 'tournament formats must be configured before event begins');\nEND;"
-      }
-    },
-    {
-      "id": 77,
-      "references": [
-        7,
-        6,
-        2,
-        1,
-        3,
-        4
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 7,
-        "references_in_body": [
-          7,
-          6,
-          2,
-          1,
-          3,
-          4
-        ],
-        "name": "team_members_eligibility_guard",
-        "sql": "CREATE TRIGGER team_members_eligibility_guard\nBEFORE INSERT ON team_members\nWHEN NOT EXISTS (\n  SELECT 1\n  FROM teams t\n  JOIN event_divisions d ON d.id = t.division_id AND d.deleted_at IS NULL\n  JOIN events e ON e.id = d.event_id AND e.deleted_at IS NULL\n  JOIN event_participants ep ON ep.event_id = e.id AND ep.player_id = NEW.player_id\n    AND ep.deleted_at IS NULL AND ep.check_in_status = 'checkedIn'\n  JOIN division_participants dp ON dp.event_participant_id = ep.id\n    AND dp.division_id = d.id AND dp.deleted_at IS NULL\n  WHERE t.id = NEW.team_id AND t.deleted_at IS NULL AND e.status = 'registration'\n)\nBEGIN\n  SELECT RAISE(ABORT, 'team member is not eligible');\nEND;"
-      }
-    },
-    {
-      "id": 78,
-      "references": [
-        7,
-        6
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 7,
-        "references_in_body": [
-          7,
-          6
-        ],
-        "name": "team_members_unique_division_guard",
-        "sql": "CREATE TRIGGER team_members_unique_division_guard\nBEFORE INSERT ON team_members\nWHEN EXISTS (\n  SELECT 1 FROM team_members tm\n  JOIN teams existing_team ON existing_team.id = tm.team_id AND existing_team.deleted_at IS NULL\n  JOIN teams new_team ON new_team.id = NEW.team_id\n  WHERE tm.player_id = NEW.player_id AND tm.deleted_at IS NULL\n    AND existing_team.division_id = new_team.division_id\n)\nBEGIN\n  SELECT RAISE(ABORT, 'player already belongs to an active team in this division');\nEND;"
-      }
-    },
-    {
-      "id": 79,
-      "references": [
-        2,
-        1,
-        8
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 2,
-        "references_in_body": [
-          2,
-          1,
-          8
-        ],
-        "name": "event_divisions_setup_lock_guard",
-        "sql": "CREATE TRIGGER event_divisions_setup_lock_guard\nBEFORE UPDATE OF name, tournament_format, deleted_at ON event_divisions\nWHEN ((NEW.name IS NOT OLD.name OR NEW.deleted_at IS NOT OLD.deleted_at)\n  AND (SELECT status FROM events WHERE id=OLD.event_id) <> 'upcoming'\n  AND (SELECT deleted_at FROM events WHERE id=OLD.event_id) IS NULL)\n OR (NEW.tournament_format IS NOT OLD.tournament_format AND\n   ((SELECT status FROM events WHERE id=OLD.event_id) <> 'registration'\n    OR OLD.deleted_at IS NOT NULL\n    OR EXISTS(SELECT 1 FROM matches WHERE division_id=OLD.id)))\nBEGIN\n  SELECT RAISE(ABORT, 'division setup or tournament format is locked');\nEND;"
-      }
-    },
-    {
-      "id": 80,
-      "references": [
-        8
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 8,
-        "references_in_body": [
-          8
-        ],
-        "name": "matches_final_score_insert_guard",
-        "sql": "CREATE TRIGGER matches_final_score_insert_guard\nBEFORE INSERT ON matches\nWHEN NEW.status='completed' AND NOT (\n  ((max(NEW.side_one_score,NEW.side_two_score)=11 AND min(NEW.side_one_score,NEW.side_two_score) BETWEEN 0 AND 9)\n    OR (min(NEW.side_one_score,NEW.side_two_score)>=10 AND abs(NEW.side_one_score-NEW.side_two_score)=2))\n  AND NEW.winner_team_id=CASE WHEN NEW.side_one_score>NEW.side_two_score THEN NEW.side_one_team_id ELSE NEW.side_two_team_id END)\nBEGIN\n  SELECT RAISE(ABORT, 'invalid final score or derived winner');\nEND;"
-      }
-    },
-    {
-      "id": 81,
-      "references": [
-        8
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 8,
-        "references_in_body": [
-          8
-        ],
-        "name": "matches_final_score_update_guard",
-        "sql": "CREATE TRIGGER matches_final_score_update_guard\nBEFORE UPDATE ON matches\nWHEN NEW.status='completed' AND NOT (\n  ((max(NEW.side_one_score,NEW.side_two_score)=11 AND min(NEW.side_one_score,NEW.side_two_score) BETWEEN 0 AND 9)\n    OR (min(NEW.side_one_score,NEW.side_two_score)>=10 AND abs(NEW.side_one_score-NEW.side_two_score)=2))\n  AND NEW.winner_team_id=CASE WHEN NEW.side_one_score>NEW.side_two_score THEN NEW.side_one_team_id ELSE NEW.side_two_team_id END)\nBEGIN\n  SELECT RAISE(ABORT, 'invalid final score or derived winner');\nEND;"
-      }
-    },
-    {
-      "id": 82,
-      "references": [
-        8,
-        33
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 8,
-        "references_in_body": [
-          8,
-          33
-        ],
-        "name": "matches_completed_result_lock",
-        "sql": "CREATE TRIGGER matches_completed_result_lock BEFORE UPDATE ON matches\nWHEN OLD.status='completed' AND (NEW.side_one_score IS NOT OLD.side_one_score\n OR NEW.side_two_score IS NOT OLD.side_two_score OR NEW.winner_team_id IS NOT OLD.winner_team_id\n OR NEW.side_one_team_id IS NOT OLD.side_one_team_id OR NEW.side_two_team_id IS NOT OLD.side_two_team_id)\n AND (NEW.side_one_team_id IS NOT OLD.side_one_team_id OR NEW.side_two_team_id IS NOT OLD.side_two_team_id\n OR NOT EXISTS(SELECT 1 FROM match_result_revisions r WHERE r.match_id=OLD.id\n   AND json_extract(r.previous_result,'$.version')=OLD.version\n   AND json_extract(r.previous_result,'$.side_one_score')=OLD.side_one_score\n   AND json_extract(r.previous_result,'$.side_two_score')=OLD.side_two_score))\nBEGIN SELECT RAISE(ABORT,'audited result correction required'); END;"
-      }
-    },
-    {
-      "id": 83,
-      "references": [
-        33
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 33,
-        "references_in_body": [
-          33
-        ],
-        "name": "match_result_revisions_update_lock",
-        "sql": "CREATE TRIGGER match_result_revisions_update_lock BEFORE UPDATE ON match_result_revisions\nBEGIN SELECT RAISE(ABORT,'immutable result revision'); END;"
-      }
-    },
-    {
-      "id": 84,
-      "references": [
-        33
-      ],
-      "type": "trigger",
-      "data": {
-        "on": 33,
-        "references_in_body": [
-          33
-        ],
-        "name": "match_result_revisions_delete_lock",
-        "sql": "CREATE TRIGGER match_result_revisions_delete_lock BEFORE DELETE ON match_result_revisions\nBEGIN SELECT RAISE(ABORT,'immutable result revision'); END;"
+        "columns": [
+          {
+            "column": "status",
+            "order_by": null
+          },
+          {
+            "column": "created_at",
+            "order_by": null
+          },
+          {
+            "column": "id",
+            "order_by": null
+          }
+        ]
       }
     }
   ],
@@ -4369,7 +4424,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"players\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"display_name\" TEXT NOT NULL CHECK (trim(display_name) <> ''), \"skill_level\" INTEGER CHECK (skill_level IS NULL OR skill_level BETWEEN 1 AND 5), PRIMARY KEY(id), CHECK(updated_at >= created_at), CHECK(deleted_at IS NULL OR deleted_at >= updated_at));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"players\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"display_name\" TEXT NOT NULL CHECK (trim(display_name) <> ''), \"skill_level\" INTEGER CHECK (skill_level IS NULL OR skill_level BETWEEN 1 AND 5), PRIMARY KEY (\"id\"), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
         }
       ]
     },
@@ -4378,7 +4433,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"events\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"name\" TEXT NOT NULL CHECK (trim(name) <> ''), \"scheduled_at\" TEXT NOT NULL, \"event_type\" TEXT NOT NULL CHECK (event_type IN ('casual', 'formal')), \"status\" TEXT NOT NULL CHECK (status IN ('upcoming', 'registration', 'inProgress', 'completed', 'archived')), \"entry_fee_minor_units\" INTEGER NULL, \"entry_fee_currency\" TEXT NULL, \"court_label\" TEXT NOT NULL CHECK (trim(court_label) <> ''), PRIMARY KEY(id), CHECK((entry_fee_minor_units IS NULL AND entry_fee_currency IS NULL)OR(entry_fee_minor_units >= 0 AND entry_fee_currency GLOB '[A-Z][A-Z][A-Z]')), CHECK(updated_at >= created_at), CHECK(deleted_at IS NULL OR deleted_at >= updated_at));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"events\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"name\" TEXT NOT NULL CHECK (trim(name) <> ''), \"scheduled_at\" TEXT NOT NULL, \"event_type\" TEXT NOT NULL CHECK (event_type IN ('casual', 'formal')), \"status\" TEXT NOT NULL CHECK (status IN ('upcoming', 'registration', 'inProgress', 'completed', 'archived')), \"entry_fee_minor_units\" INTEGER NULL, \"entry_fee_currency\" TEXT NULL, \"court_label\" TEXT NOT NULL CHECK (trim(court_label) <> ''), PRIMARY KEY (\"id\"), CHECK ((entry_fee_minor_units IS NULL AND entry_fee_currency IS NULL) OR (entry_fee_minor_units >= 0 AND entry_fee_currency GLOB '[A-Z][A-Z][A-Z]')), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
         }
       ]
     },
@@ -4387,7 +4442,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"event_divisions\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"event_id\" TEXT NOT NULL REFERENCES events(id)ON DELETE RESTRICT, \"name\" TEXT NOT NULL CHECK (trim(name) <> ''), \"tournament_format\" TEXT CHECK (tournament_format IS NULL OR tournament_format IN ('singleElimination', 'doubleElimination', 'singleRoundRobin', 'doubleRoundRobin')), PRIMARY KEY(id), CHECK(updated_at >= created_at), CHECK(deleted_at IS NULL OR deleted_at >= updated_at));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"event_divisions\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"event_id\" TEXT NOT NULL REFERENCES events (id) ON DELETE RESTRICT, \"name\" TEXT NOT NULL CHECK (trim(name) <> ''), \"tournament_format\" TEXT CHECK (tournament_format IS NULL OR tournament_format IN ('singleElimination', 'doubleElimination', 'singleRoundRobin', 'doubleRoundRobin')), PRIMARY KEY (\"id\"), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
         }
       ]
     },
@@ -4396,7 +4451,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"event_participants\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"event_id\" TEXT NOT NULL REFERENCES events(id)ON DELETE RESTRICT, \"player_id\" TEXT NOT NULL REFERENCES players(id)ON DELETE RESTRICT, \"check_in_status\" TEXT NOT NULL CHECK (check_in_status IN ('notPresent', 'checkedIn')), PRIMARY KEY(id), CHECK(updated_at >= created_at), CHECK(deleted_at IS NULL OR deleted_at >= updated_at));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"event_participants\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"event_id\" TEXT NOT NULL REFERENCES events (id) ON DELETE RESTRICT, \"player_id\" TEXT NOT NULL REFERENCES players (id) ON DELETE RESTRICT, \"check_in_status\" TEXT NOT NULL CHECK (check_in_status IN ('notPresent', 'checkedIn')), PRIMARY KEY (\"id\"), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
         }
       ]
     },
@@ -4405,7 +4460,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"division_participants\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT, \"event_participant_id\" TEXT NOT NULL REFERENCES event_participants(id)ON DELETE RESTRICT, PRIMARY KEY(id), CHECK(updated_at >= created_at), CHECK(deleted_at IS NULL OR deleted_at >= updated_at));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"division_participants\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"event_participant_id\" TEXT NOT NULL REFERENCES event_participants (id) ON DELETE RESTRICT, PRIMARY KEY (\"id\"), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
         }
       ]
     },
@@ -4414,7 +4469,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"participant_payments\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"event_participant_id\" TEXT NOT NULL REFERENCES event_participants(id)ON DELETE RESTRICT, \"division_id\" TEXT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT, \"status\" TEXT NOT NULL CHECK (status IN ('unpaid', 'paid')), PRIMARY KEY(id), CHECK(updated_at >= created_at), CHECK(deleted_at IS NULL OR deleted_at >= updated_at));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"participant_payments\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"event_participant_id\" TEXT NOT NULL REFERENCES event_participants (id) ON DELETE RESTRICT, \"division_id\" TEXT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"status\" TEXT NOT NULL CHECK (status IN ('unpaid', 'paid')), PRIMARY KEY (\"id\"), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
         }
       ]
     },
@@ -4423,7 +4478,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"teams\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT, \"formation_method\" TEXT NOT NULL CHECK (formation_method IN ('manual', 'random', 'balanced')), \"display_label\" TEXT NULL, PRIMARY KEY(id), CHECK(display_label IS NULL OR trim(display_label) <> ''), CHECK(updated_at >= created_at), CHECK(deleted_at IS NULL OR deleted_at >= updated_at));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"teams\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"formation_method\" TEXT NOT NULL CHECK (formation_method IN ('manual', 'random', 'balanced')), \"display_label\" TEXT NULL, PRIMARY KEY (\"id\"), CHECK (display_label IS NULL OR trim(display_label) <> ''), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
         }
       ]
     },
@@ -4432,7 +4487,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"team_members\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"team_id\" TEXT NOT NULL REFERENCES teams(id)ON DELETE RESTRICT, \"player_id\" TEXT NOT NULL REFERENCES players(id)ON DELETE RESTRICT, PRIMARY KEY(team_id, player_id), CHECK(updated_at >= created_at), CHECK(deleted_at IS NULL OR deleted_at >= updated_at));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"team_members\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"team_id\" TEXT NOT NULL REFERENCES teams (id) ON DELETE RESTRICT, \"player_id\" TEXT NOT NULL REFERENCES players (id) ON DELETE RESTRICT, PRIMARY KEY (\"team_id\", \"player_id\"), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
         }
       ]
     },
@@ -4441,7 +4496,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"matches\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT, \"side_one_team_id\" TEXT NULL REFERENCES teams(id)ON DELETE RESTRICT, \"side_two_team_id\" TEXT NULL REFERENCES teams(id)ON DELETE RESTRICT, \"status\" TEXT NOT NULL CHECK (status IN ('scheduled', 'queued', 'inProgress', 'completed')), \"side_one_score\" INTEGER NULL, \"side_two_score\" INTEGER NULL, \"winner_team_id\" TEXT NULL REFERENCES teams(id)ON DELETE RESTRICT, \"round_number\" INTEGER NULL, \"sequence_number\" INTEGER NULL, PRIMARY KEY(id), CHECK(side_one_team_id IS NULL OR side_two_team_id IS NULL OR side_one_team_id <> side_two_team_id), CHECK(side_one_score IS NULL OR side_one_score >= 0), CHECK(side_two_score IS NULL OR side_two_score >= 0), CHECK(round_number IS NULL OR round_number > 0), CHECK(sequence_number IS NULL OR sequence_number > 0), CHECK((status = 'completed' AND side_one_team_id IS NOT NULL AND side_two_team_id IS NOT NULL AND side_one_score IS NOT NULL AND side_two_score IS NOT NULL AND winner_team_id IS NOT NULL AND winner_team_id IN (side_one_team_id, side_two_team_id))OR(status <> 'completed' AND winner_team_id IS NULL)), CHECK(updated_at >= created_at), CHECK(deleted_at IS NULL OR deleted_at >= updated_at));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"matches\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"side_one_team_id\" TEXT NULL REFERENCES teams (id) ON DELETE RESTRICT, \"side_two_team_id\" TEXT NULL REFERENCES teams (id) ON DELETE RESTRICT, \"status\" TEXT NOT NULL CHECK (status IN ('scheduled', 'queued', 'inProgress', 'completed')), \"side_one_score\" INTEGER NULL, \"side_two_score\" INTEGER NULL, \"winner_team_id\" TEXT NULL REFERENCES teams (id) ON DELETE RESTRICT, \"round_number\" INTEGER NULL, \"sequence_number\" INTEGER NULL, PRIMARY KEY (\"id\"), CHECK (side_one_team_id IS NULL OR side_two_team_id IS NULL OR side_one_team_id <> side_two_team_id), CHECK (side_one_score IS NULL OR side_one_score >= 0), CHECK (side_two_score IS NULL OR side_two_score >= 0), CHECK (round_number IS NULL OR round_number > 0), CHECK (sequence_number IS NULL OR sequence_number > 0), CHECK ((status = 'completed' AND side_one_team_id IS NOT NULL AND side_two_team_id IS NOT NULL AND side_one_score IS NOT NULL AND side_two_score IS NOT NULL AND winner_team_id IS NOT NULL AND winner_team_id IN (side_one_team_id, side_two_team_id)) OR (status <> 'completed' AND winner_team_id IS NULL)), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
         }
       ]
     },
@@ -4450,7 +4505,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"match_dependencies\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"source_match_id\" TEXT NOT NULL REFERENCES matches(id)ON DELETE RESTRICT, \"source_outcome\" TEXT NOT NULL CHECK (source_outcome IN ('winner', 'loser')), \"destination_match_id\" TEXT NOT NULL REFERENCES matches(id)ON DELETE RESTRICT, \"destination_slot\" TEXT NOT NULL CHECK (destination_slot IN ('sideOne', 'sideTwo')), PRIMARY KEY(source_match_id, source_outcome, destination_match_id, destination_slot), CHECK(source_match_id <> destination_match_id), CHECK(updated_at >= created_at), CHECK(deleted_at IS NULL OR deleted_at >= updated_at));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"match_dependencies\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"source_match_id\" TEXT NOT NULL REFERENCES matches (id) ON DELETE RESTRICT, \"source_outcome\" TEXT NOT NULL CHECK (source_outcome IN ('winner', 'loser')), \"destination_match_id\" TEXT NOT NULL REFERENCES matches (id) ON DELETE RESTRICT, \"destination_slot\" TEXT NOT NULL CHECK (destination_slot IN ('sideOne', 'sideTwo')), PRIMARY KEY (\"source_match_id\", \"source_outcome\", \"destination_match_id\", \"destination_slot\"), CHECK (source_match_id <> destination_match_id), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
         }
       ]
     },
@@ -4459,7 +4514,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"court_queue_entries\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"event_id\" TEXT NOT NULL REFERENCES events(id)ON DELETE RESTRICT, \"division_id\" TEXT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT, \"match_id\" TEXT NOT NULL REFERENCES matches(id)ON DELETE RESTRICT, \"queue_position\" INTEGER NOT NULL CHECK (queue_position >= 0), PRIMARY KEY(id), CHECK(updated_at >= created_at), CHECK(deleted_at IS NULL OR deleted_at >= updated_at));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"court_queue_entries\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"event_id\" TEXT NOT NULL REFERENCES events (id) ON DELETE RESTRICT, \"division_id\" TEXT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"match_id\" TEXT NOT NULL REFERENCES matches (id) ON DELETE RESTRICT, \"queue_position\" INTEGER NOT NULL CHECK (queue_position >= 0), PRIMARY KEY (\"id\"), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
         }
       ]
     },
@@ -4468,7 +4523,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"division_placements\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT, \"team_id\" TEXT NOT NULL REFERENCES teams(id)ON DELETE RESTRICT, \"position\" INTEGER NOT NULL CHECK (position > 0), PRIMARY KEY(id), CHECK(updated_at >= created_at), CHECK(deleted_at IS NULL OR deleted_at >= updated_at));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"division_placements\" (\"created_at\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"version\" INTEGER NOT NULL CHECK (version >= 0), \"deleted_at\" TEXT NULL, \"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"team_id\" TEXT NOT NULL REFERENCES teams (id) ON DELETE RESTRICT, \"position\" INTEGER NOT NULL CHECK (position > 0), PRIMARY KEY (\"id\"), CHECK (updated_at >= created_at), CHECK (deleted_at IS NULL OR deleted_at >= updated_at));"
         }
       ]
     },
@@ -4477,7 +4532,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"sync_outbox_operations\" (\"id\" TEXT NOT NULL, \"entity_type\" TEXT NOT NULL CHECK (entity_type = 'player'), \"entity_id\" TEXT NOT NULL REFERENCES players(id)ON DELETE RESTRICT, \"operation_kind\" TEXT NOT NULL CHECK (operation_kind IN ('upsert', 'tombstone')), \"base_version\" INTEGER NULL, \"payload_json\" TEXT NOT NULL CHECK (json_valid(payload_json) AND json_type(payload_json) = 'object'), \"created_at\" TEXT NOT NULL, \"attempt_count\" INTEGER NOT NULL DEFAULT 0, \"next_eligible_at\" TEXT NOT NULL, \"status\" TEXT NOT NULL CHECK (status IN ('pending', 'inFlight', 'conflicted', 'failed')), \"claimed_at\" TEXT NULL, \"failure_code\" TEXT NULL, \"failure_message\" TEXT NULL, PRIMARY KEY(id), CHECK(base_version IS NULL OR base_version >= 0), CHECK(attempt_count >= 0), CHECK((status = 'inFlight' AND claimed_at IS NOT NULL)OR(status <> 'inFlight' AND claimed_at IS NULL)), CHECK(failure_message IS NULL OR length(failure_message) <= 240));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"sync_outbox_operations\" (\"id\" TEXT NOT NULL, \"entity_type\" TEXT NOT NULL CHECK (entity_type = 'player'), \"entity_id\" TEXT NOT NULL REFERENCES players (id) ON DELETE RESTRICT, \"operation_kind\" TEXT NOT NULL CHECK (operation_kind IN ('upsert', 'tombstone')), \"base_version\" INTEGER NULL, \"payload_json\" TEXT NOT NULL CHECK (json_valid(payload_json) AND json_type(payload_json) = 'object'), \"created_at\" TEXT NOT NULL, \"attempt_count\" INTEGER NOT NULL DEFAULT 0, \"next_eligible_at\" TEXT NOT NULL, \"status\" TEXT NOT NULL CHECK (status IN ('pending', 'inFlight', 'conflicted', 'failed')), \"claimed_at\" TEXT NULL, \"failure_code\" TEXT NULL, \"failure_message\" TEXT NULL, PRIMARY KEY (\"id\"), CHECK (base_version IS NULL OR base_version >= 0), CHECK (attempt_count >= 0), CHECK ((status = 'inFlight' AND claimed_at IS NOT NULL) OR (status <> 'inFlight' AND claimed_at IS NULL)), CHECK (failure_message IS NULL OR length(failure_message) <= 240));"
         }
       ]
     },
@@ -4486,7 +4541,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"sync_pull_checkpoints\" (\"entity_type\" TEXT NOT NULL CHECK (entity_type = 'player'), \"cursor_updated_at\" TEXT NOT NULL, \"cursor_entity_id\" TEXT NOT NULL REFERENCES players(id)ON DELETE RESTRICT, \"updated_at\" TEXT NOT NULL, PRIMARY KEY(entity_type));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"sync_pull_checkpoints\" (\"entity_type\" TEXT NOT NULL CHECK (entity_type = 'player'), \"cursor_updated_at\" TEXT NOT NULL, \"cursor_entity_id\" TEXT NOT NULL REFERENCES players (id) ON DELETE RESTRICT, \"updated_at\" TEXT NOT NULL, PRIMARY KEY (\"entity_type\"));"
         }
       ]
     },
@@ -4495,7 +4550,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"sync_conflicts\" (\"id\" TEXT NOT NULL, \"operation_id\" TEXT NOT NULL UNIQUE REFERENCES sync_outbox_operations(id)ON DELETE RESTRICT, \"entity_type\" TEXT NOT NULL CHECK (entity_type = 'player'), \"entity_id\" TEXT NOT NULL REFERENCES players(id)ON DELETE RESTRICT, \"expected_version\" INTEGER NULL, \"local_payload_json\" TEXT NOT NULL CHECK (json_valid(local_payload_json) AND json_type(local_payload_json) = 'object'), \"remote_payload_json\" TEXT NULL, \"remote_version\" INTEGER NULL, \"detected_at\" TEXT NOT NULL, \"status\" TEXT NOT NULL CHECK (status IN ('unresolved', 'resolved')), PRIMARY KEY(id), CHECK(expected_version IS NULL OR expected_version >= 0), CHECK(remote_version IS NULL OR remote_version >= 0), CHECK(remote_payload_json IS NULL OR(json_valid(remote_payload_json) AND json_type(remote_payload_json) = 'object')));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"sync_conflicts\" (\"id\" TEXT NOT NULL, \"operation_id\" TEXT NOT NULL UNIQUE REFERENCES sync_outbox_operations (id) ON DELETE RESTRICT, \"entity_type\" TEXT NOT NULL CHECK (entity_type = 'player'), \"entity_id\" TEXT NOT NULL REFERENCES players (id) ON DELETE RESTRICT, \"expected_version\" INTEGER NULL, \"local_payload_json\" TEXT NOT NULL CHECK (json_valid(local_payload_json) AND json_type(local_payload_json) = 'object'), \"remote_payload_json\" TEXT NULL, \"remote_version\" INTEGER NULL, \"detected_at\" TEXT NOT NULL, \"status\" TEXT NOT NULL CHECK (status IN ('unresolved', 'resolved')), PRIMARY KEY (\"id\"), CHECK (expected_version IS NULL OR expected_version >= 0), CHECK (remote_version IS NULL OR remote_version >= 0), CHECK (remote_payload_json IS NULL OR (json_valid(remote_payload_json) AND json_type(remote_payload_json) = 'object')));"
         }
       ]
     },
@@ -4504,7 +4559,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"event_setup_outbox_operations\" (\"id\" TEXT NOT NULL, \"event_id\" TEXT NOT NULL REFERENCES events(id)ON DELETE RESTRICT, \"base_version\" INTEGER NULL, \"payload_json\" TEXT NOT NULL CHECK (json_valid(payload_json) AND json_type(payload_json) = 'object'), \"created_at\" TEXT NOT NULL, \"status\" TEXT NOT NULL CHECK (status IN ('pending', 'blocked', 'conflicted', 'failed')), \"failure_message\" TEXT NULL, PRIMARY KEY(id), CHECK(base_version IS NULL OR base_version >= 0), CHECK(failure_message IS NULL OR length(failure_message) <= 240));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"event_setup_outbox_operations\" (\"id\" TEXT NOT NULL, \"event_id\" TEXT NOT NULL REFERENCES events (id) ON DELETE RESTRICT, \"base_version\" INTEGER NULL, \"payload_json\" TEXT NOT NULL CHECK (json_valid(payload_json) AND json_type(payload_json) = 'object'), \"created_at\" TEXT NOT NULL, \"status\" TEXT NOT NULL CHECK (status IN ('pending', 'blocked', 'conflicted', 'failed')), \"failure_message\" TEXT NULL, PRIMARY KEY (\"id\"), CHECK (base_version IS NULL OR base_version >= 0), CHECK (failure_message IS NULL OR length(failure_message) <= 240));"
         }
       ]
     },
@@ -4513,7 +4568,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"event_setup_pull_checkpoints\" (\"singleton\" INTEGER NOT NULL DEFAULT 1, \"cursor_updated_at\" TEXT NOT NULL, \"cursor_event_id\" TEXT NOT NULL REFERENCES events(id)ON DELETE RESTRICT, \"updated_at\" TEXT NOT NULL, PRIMARY KEY(singleton), CHECK(singleton = 1));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"event_setup_pull_checkpoints\" (\"singleton\" INTEGER NOT NULL DEFAULT 1, \"cursor_updated_at\" TEXT NOT NULL, \"cursor_event_id\" TEXT NOT NULL REFERENCES events (id) ON DELETE RESTRICT, \"updated_at\" TEXT NOT NULL, PRIMARY KEY (\"singleton\"), CHECK (singleton = 1));"
         }
       ]
     },
@@ -4522,7 +4577,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"event_setup_conflicts\" (\"id\" TEXT NOT NULL, \"operation_id\" TEXT NOT NULL UNIQUE REFERENCES event_setup_outbox_operations(id)ON DELETE RESTRICT, \"event_id\" TEXT NOT NULL REFERENCES events(id)ON DELETE RESTRICT, \"local_payload_json\" TEXT NOT NULL CHECK (json_valid(local_payload_json) AND json_type(local_payload_json) = 'object'), \"remote_payload_json\" TEXT NULL, \"detected_at\" TEXT NOT NULL, \"status\" TEXT NOT NULL CHECK (status IN ('unresolved', 'resolved')), PRIMARY KEY(id));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"event_setup_conflicts\" (\"id\" TEXT NOT NULL, \"operation_id\" TEXT NOT NULL UNIQUE REFERENCES event_setup_outbox_operations (id) ON DELETE RESTRICT, \"event_id\" TEXT NOT NULL REFERENCES events (id) ON DELETE RESTRICT, \"local_payload_json\" TEXT NOT NULL CHECK (json_valid(local_payload_json) AND json_type(local_payload_json) = 'object'), \"remote_payload_json\" TEXT NULL, \"detected_at\" TEXT NOT NULL, \"status\" TEXT NOT NULL CHECK (status IN ('unresolved', 'resolved')), PRIMARY KEY (\"id\"));"
         }
       ]
     },
@@ -4531,7 +4586,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"participation_outbox_operations\" (\"id\" TEXT NOT NULL, \"event_participant_id\" TEXT NOT NULL REFERENCES event_participants(id)ON DELETE RESTRICT, \"base_version\" INTEGER NULL, \"payload_json\" TEXT NOT NULL CHECK (json_valid(payload_json) AND json_type(payload_json) = 'object'), \"created_at\" TEXT NOT NULL, \"status\" TEXT NOT NULL CHECK (status IN ('pending', 'blocked', 'conflicted', 'failed')), \"failure_message\" TEXT NULL, PRIMARY KEY(id), CHECK(base_version IS NULL OR base_version >= 0), CHECK(failure_message IS NULL OR length(failure_message) <= 240));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"participation_outbox_operations\" (\"id\" TEXT NOT NULL, \"event_participant_id\" TEXT NOT NULL REFERENCES event_participants (id) ON DELETE RESTRICT, \"base_version\" INTEGER NULL, \"payload_json\" TEXT NOT NULL CHECK (json_valid(payload_json) AND json_type(payload_json) = 'object'), \"created_at\" TEXT NOT NULL, \"status\" TEXT NOT NULL CHECK (status IN ('pending', 'blocked', 'conflicted', 'failed')), \"failure_message\" TEXT NULL, PRIMARY KEY (\"id\"), CHECK (base_version IS NULL OR base_version >= 0), CHECK (failure_message IS NULL OR length(failure_message) <= 240));"
         }
       ]
     },
@@ -4540,7 +4595,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"participation_pull_checkpoints\" (\"singleton\" INTEGER NOT NULL DEFAULT 1, \"cursor_updated_at\" TEXT NOT NULL, \"cursor_participant_id\" TEXT NOT NULL REFERENCES event_participants(id)ON DELETE RESTRICT, \"updated_at\" TEXT NOT NULL, PRIMARY KEY(singleton), CHECK(singleton = 1));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"participation_pull_checkpoints\" (\"singleton\" INTEGER NOT NULL DEFAULT 1, \"cursor_updated_at\" TEXT NOT NULL, \"cursor_participant_id\" TEXT NOT NULL REFERENCES event_participants (id) ON DELETE RESTRICT, \"updated_at\" TEXT NOT NULL, PRIMARY KEY (\"singleton\"), CHECK (singleton = 1));"
         }
       ]
     },
@@ -4549,7 +4604,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"participation_conflicts\" (\"id\" TEXT NOT NULL, \"operation_id\" TEXT NOT NULL UNIQUE REFERENCES participation_outbox_operations(id)ON DELETE RESTRICT, \"event_participant_id\" TEXT NOT NULL REFERENCES event_participants(id)ON DELETE RESTRICT, \"local_payload_json\" TEXT NOT NULL CHECK (json_valid(local_payload_json) AND json_type(local_payload_json) = 'object'), \"remote_payload_json\" TEXT NULL, \"detected_at\" TEXT NOT NULL, \"status\" TEXT NOT NULL CHECK (status IN ('unresolved', 'resolved')), PRIMARY KEY(id));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"participation_conflicts\" (\"id\" TEXT NOT NULL, \"operation_id\" TEXT NOT NULL UNIQUE REFERENCES participation_outbox_operations (id) ON DELETE RESTRICT, \"event_participant_id\" TEXT NOT NULL REFERENCES event_participants (id) ON DELETE RESTRICT, \"local_payload_json\" TEXT NOT NULL CHECK (json_valid(local_payload_json) AND json_type(local_payload_json) = 'object'), \"remote_payload_json\" TEXT NULL, \"detected_at\" TEXT NOT NULL, \"status\" TEXT NOT NULL CHECK (status IN ('unresolved', 'resolved')), PRIMARY KEY (\"id\"));"
         }
       ]
     },
@@ -4558,7 +4613,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"team_formation_outbox_operations\" (\"id\" TEXT NOT NULL, \"event_id\" TEXT NOT NULL REFERENCES events(id)ON DELETE RESTRICT, \"division_id\" TEXT NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT, \"payload_json\" TEXT NOT NULL CHECK (json_valid(payload_json) AND json_type(payload_json) = 'object'), \"created_at\" TEXT NOT NULL, \"status\" TEXT NOT NULL CHECK (status IN ('pending', 'blocked', 'conflicted', 'failed')), \"failure_message\" TEXT NULL, PRIMARY KEY(id));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"team_formation_outbox_operations\" (\"id\" TEXT NOT NULL, \"event_id\" TEXT NOT NULL REFERENCES events (id) ON DELETE RESTRICT, \"division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"payload_json\" TEXT NOT NULL CHECK (json_valid(payload_json) AND json_type(payload_json) = 'object'), \"created_at\" TEXT NOT NULL, \"status\" TEXT NOT NULL CHECK (status IN ('pending', 'blocked', 'conflicted', 'failed')), \"failure_message\" TEXT NULL, PRIMARY KEY (\"id\"));"
         }
       ]
     },
@@ -4567,7 +4622,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"team_formation_pull_checkpoints\" (\"singleton\" INTEGER NOT NULL DEFAULT 1, \"cursor_updated_at\" TEXT NOT NULL, \"cursor_division_id\" TEXT NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT, \"updated_at\" TEXT NOT NULL, PRIMARY KEY(singleton), CHECK(singleton = 1));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"team_formation_pull_checkpoints\" (\"singleton\" INTEGER NOT NULL DEFAULT 1, \"cursor_updated_at\" TEXT NOT NULL, \"cursor_division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"updated_at\" TEXT NOT NULL, PRIMARY KEY (\"singleton\"), CHECK (singleton = 1));"
         }
       ]
     },
@@ -4576,7 +4631,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"team_formation_conflicts\" (\"id\" TEXT NOT NULL, \"operation_id\" TEXT NOT NULL UNIQUE REFERENCES team_formation_outbox_operations(id)ON DELETE RESTRICT, \"division_id\" TEXT NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT, \"local_payload_json\" TEXT NOT NULL, \"remote_payload_json\" TEXT NULL, \"detected_at\" TEXT NOT NULL, \"status\" TEXT NOT NULL CHECK (status IN ('unresolved', 'resolved')), PRIMARY KEY(id));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"team_formation_conflicts\" (\"id\" TEXT NOT NULL, \"operation_id\" TEXT NOT NULL UNIQUE REFERENCES team_formation_outbox_operations (id) ON DELETE RESTRICT, \"division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"local_payload_json\" TEXT NOT NULL, \"remote_payload_json\" TEXT NULL, \"detected_at\" TEXT NOT NULL, \"status\" TEXT NOT NULL CHECK (status IN ('unresolved', 'resolved')), PRIMARY KEY (\"id\"));"
         }
       ]
     },
@@ -4585,7 +4640,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"single_elimination_snapshots\" (\"division_id\" TEXT NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT, \"bracket_json\" TEXT NOT NULL CHECK (json_valid(bracket_json)), PRIMARY KEY(division_id));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"single_elimination_snapshots\" (\"division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"bracket_json\" TEXT NOT NULL CHECK(json_valid(bracket_json)), PRIMARY KEY (\"division_id\"));"
         }
       ]
     },
@@ -4594,7 +4649,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"single_elimination_outbox\" (\"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT, \"payload_json\" TEXT NOT NULL CHECK (json_valid(payload_json)), \"status\" TEXT NOT NULL CHECK (status IN ('pending', 'blocked', 'failed', 'conflicted', 'accepted')), \"created_at\" TEXT NOT NULL, \"failure\" TEXT NULL, \"remote_json\" TEXT NULL, PRIMARY KEY(id));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"single_elimination_outbox\" (\"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"payload_json\" TEXT NOT NULL CHECK(json_valid(payload_json)), \"status\" TEXT NOT NULL CHECK(status IN ('pending','blocked','failed','conflicted','accepted')), \"created_at\" TEXT NOT NULL, \"failure\" TEXT NULL, \"remote_json\" TEXT NULL, PRIMARY KEY (\"id\"));"
         }
       ]
     },
@@ -4603,7 +4658,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"single_elimination_checkpoints\" (\"scope\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"bracket_id\" TEXT NOT NULL, PRIMARY KEY(scope));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"single_elimination_checkpoints\" (\"scope\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"bracket_id\" TEXT NOT NULL, PRIMARY KEY (\"scope\"));"
         }
       ]
     },
@@ -4612,7 +4667,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"round_robin_snapshots\" (\"division_id\" TEXT NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT, \"tournament_json\" TEXT NOT NULL CHECK (json_valid(tournament_json)), PRIMARY KEY(division_id));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"round_robin_snapshots\" (\"division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"tournament_json\" TEXT NOT NULL CHECK(json_valid(tournament_json)), PRIMARY KEY (\"division_id\"));"
         }
       ]
     },
@@ -4621,7 +4676,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"round_robin_outbox\" (\"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT, \"payload_json\" TEXT NOT NULL CHECK (json_valid(payload_json)), \"status\" TEXT NOT NULL CHECK (status IN ('pending', 'blocked', 'failed', 'conflicted', 'accepted')), \"created_at\" TEXT NOT NULL, \"failure\" TEXT NULL, \"remote_json\" TEXT NULL, PRIMARY KEY(id));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"round_robin_outbox\" (\"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"payload_json\" TEXT NOT NULL CHECK(json_valid(payload_json)), \"status\" TEXT NOT NULL CHECK(status IN ('pending','blocked','failed','conflicted','accepted')), \"created_at\" TEXT NOT NULL, \"failure\" TEXT NULL, \"remote_json\" TEXT NULL, PRIMARY KEY (\"id\"));"
         }
       ]
     },
@@ -4630,7 +4685,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"round_robin_checkpoints\" (\"scope\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"tournament_id\" TEXT NOT NULL, PRIMARY KEY(scope));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"round_robin_checkpoints\" (\"scope\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"tournament_id\" TEXT NOT NULL, PRIMARY KEY (\"scope\"));"
         }
       ]
     },
@@ -4639,7 +4694,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"double_elimination_snapshots\" (\"division_id\" TEXT NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT, \"bracket_json\" TEXT NOT NULL CHECK (json_valid(bracket_json)), PRIMARY KEY(division_id));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"double_elimination_snapshots\" (\"division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"bracket_json\" TEXT NOT NULL CHECK(json_valid(bracket_json)), PRIMARY KEY (\"division_id\"));"
         }
       ]
     },
@@ -4648,7 +4703,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"double_elimination_outbox\" (\"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions(id)ON DELETE RESTRICT, \"payload_json\" TEXT NOT NULL CHECK (json_valid(payload_json)), \"status\" TEXT NOT NULL CHECK (status IN ('pending', 'blocked', 'failed', 'conflicted', 'accepted')), \"created_at\" TEXT NOT NULL, \"failure\" TEXT NULL, \"remote_json\" TEXT NULL, PRIMARY KEY(id));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"double_elimination_outbox\" (\"id\" TEXT NOT NULL, \"division_id\" TEXT NOT NULL REFERENCES event_divisions (id) ON DELETE RESTRICT, \"payload_json\" TEXT NOT NULL CHECK(json_valid(payload_json)), \"status\" TEXT NOT NULL CHECK(status IN ('pending','blocked','failed','conflicted','accepted')), \"created_at\" TEXT NOT NULL, \"failure\" TEXT NULL, \"remote_json\" TEXT NULL, PRIMARY KEY (\"id\"));"
         }
       ]
     },
@@ -4657,7 +4712,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"double_elimination_checkpoints\" (\"scope\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"bracket_id\" TEXT NOT NULL, PRIMARY KEY(scope));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"double_elimination_checkpoints\" (\"scope\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, \"bracket_id\" TEXT NOT NULL, PRIMARY KEY (\"scope\"));"
         }
       ]
     },
@@ -4666,7 +4721,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"match_result_revisions\" (\"operation_id\" TEXT NOT NULL, \"match_id\" TEXT NOT NULL REFERENCES matches(id)ON DELETE RESTRICT, \"previous_result\" TEXT NOT NULL CHECK (json_valid(previous_result)), \"reason\" TEXT NOT NULL CHECK (trim(reason) <> ''), \"recorded_at\" TEXT NOT NULL, PRIMARY KEY(operation_id));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"match_result_revisions\" (\"operation_id\" TEXT NOT NULL, \"match_id\" TEXT NOT NULL REFERENCES matches (id) ON DELETE RESTRICT, \"previous_result\" TEXT NOT NULL CHECK(json_valid(previous_result)), \"reason\" TEXT NOT NULL CHECK(trim(reason)<>''), \"recorded_at\" TEXT NOT NULL, PRIMARY KEY (\"operation_id\"));"
         }
       ]
     },
@@ -4919,213 +4974,6 @@
         {
           "dialect": "sqlite",
           "sql": "CREATE INDEX team_formation_outbox_eligibility_idx ON team_formation_outbox_operations (status, created_at, id)"
-        }
-      ]
-    },
-    {
-      "name": "events_status_transition_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER events_status_transition_guard BEFORE UPDATE OF status ON events WHEN NEW.status <> OLD.status AND NOT((OLD.status = 'upcoming' AND NEW.status = 'registration')OR(OLD.status = 'registration' AND NEW.status = 'inProgress')OR(OLD.status = 'inProgress' AND NEW.status = 'completed')OR(OLD.status = 'completed' AND NEW.status = 'archived'))BEGIN SELECT RAISE (ABORT, 'invalid event status transition');END"
-        }
-      ]
-    },
-    {
-      "name": "matches_status_transition_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER matches_status_transition_guard BEFORE UPDATE OF status ON matches WHEN NEW.status <> OLD.status AND NOT((OLD.status = 'scheduled' AND NEW.status = 'queued')OR(OLD.status = 'queued' AND NEW.status = 'inProgress')OR(OLD.status = 'inProgress' AND NEW.status = 'completed'))BEGIN SELECT RAISE (ABORT, 'invalid match status transition');END"
-        }
-      ]
-    },
-    {
-      "name": "division_participants_scope_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER division_participants_scope_guard BEFORE INSERT ON division_participants WHEN (SELECT event_id FROM event_divisions WHERE id = NEW.division_id) <> (SELECT event_id FROM event_participants WHERE id = NEW.event_participant_id) BEGIN SELECT RAISE (ABORT, 'division participant event mismatch');END"
-        }
-      ]
-    },
-    {
-      "name": "division_participants_scope_update_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER division_participants_scope_update_guard BEFORE UPDATE OF division_id, event_participant_id ON division_participants WHEN (SELECT event_id FROM event_divisions WHERE id = NEW.division_id) <> (SELECT event_id FROM event_participants WHERE id = NEW.event_participant_id) BEGIN SELECT RAISE (ABORT, 'division participant event mismatch');END"
-        }
-      ]
-    },
-    {
-      "name": "participant_payments_scope_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER participant_payments_scope_guard BEFORE INSERT ON participant_payments WHEN NEW.division_id IS NOT NULL AND (SELECT event_id FROM event_divisions WHERE id = NEW.division_id) <> (SELECT event_id FROM event_participants WHERE id = NEW.event_participant_id) BEGIN SELECT RAISE (ABORT, 'payment division event mismatch');END"
-        }
-      ]
-    },
-    {
-      "name": "participant_payments_scope_update_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER participant_payments_scope_update_guard BEFORE UPDATE OF division_id, event_participant_id ON participant_payments WHEN NEW.division_id IS NOT NULL AND (SELECT event_id FROM event_divisions WHERE id = NEW.division_id) <> (SELECT event_id FROM event_participants WHERE id = NEW.event_participant_id) BEGIN SELECT RAISE (ABORT, 'payment division event mismatch');END"
-        }
-      ]
-    },
-    {
-      "name": "matches_team_scope_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER matches_team_scope_guard BEFORE INSERT ON matches WHEN(NEW.side_one_team_id IS NOT NULL AND (SELECT division_id FROM teams WHERE id = NEW.side_one_team_id) <> NEW.division_id)OR(NEW.side_two_team_id IS NOT NULL AND (SELECT division_id FROM teams WHERE id = NEW.side_two_team_id) <> NEW.division_id)OR(NEW.winner_team_id IS NOT NULL AND (SELECT division_id FROM teams WHERE id = NEW.winner_team_id) <> NEW.division_id)BEGIN SELECT RAISE (ABORT, 'match team division mismatch');END"
-        }
-      ]
-    },
-    {
-      "name": "matches_team_scope_update_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER matches_team_scope_update_guard BEFORE UPDATE OF division_id, side_one_team_id, side_two_team_id, winner_team_id ON matches WHEN(NEW.side_one_team_id IS NOT NULL AND (SELECT division_id FROM teams WHERE id = NEW.side_one_team_id) <> NEW.division_id)OR(NEW.side_two_team_id IS NOT NULL AND (SELECT division_id FROM teams WHERE id = NEW.side_two_team_id) <> NEW.division_id)OR(NEW.winner_team_id IS NOT NULL AND (SELECT division_id FROM teams WHERE id = NEW.winner_team_id) <> NEW.division_id)BEGIN SELECT RAISE (ABORT, 'match team division mismatch');END"
-        }
-      ]
-    },
-    {
-      "name": "match_dependencies_scope_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER match_dependencies_scope_guard BEFORE INSERT ON match_dependencies WHEN (SELECT division_id FROM matches WHERE id = NEW.source_match_id) <> (SELECT division_id FROM matches WHERE id = NEW.destination_match_id) BEGIN SELECT RAISE (ABORT, 'match dependency division mismatch');END"
-        }
-      ]
-    },
-    {
-      "name": "match_dependencies_scope_update_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER match_dependencies_scope_update_guard BEFORE UPDATE OF source_match_id, destination_match_id ON match_dependencies WHEN (SELECT division_id FROM matches WHERE id = NEW.source_match_id) <> (SELECT division_id FROM matches WHERE id = NEW.destination_match_id) BEGIN SELECT RAISE (ABORT, 'match dependency division mismatch');END"
-        }
-      ]
-    },
-    {
-      "name": "court_queue_entries_scope_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER court_queue_entries_scope_guard BEFORE INSERT ON court_queue_entries WHEN (SELECT event_id FROM event_divisions WHERE id = (SELECT division_id FROM matches WHERE id = NEW.match_id)) <> NEW.event_id OR(NEW.division_id IS NOT NULL AND NEW.division_id <> (SELECT division_id FROM matches WHERE id = NEW.match_id))BEGIN SELECT RAISE (ABORT, 'court queue scope mismatch');END"
-        }
-      ]
-    },
-    {
-      "name": "court_queue_entries_scope_update_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER court_queue_entries_scope_update_guard BEFORE UPDATE OF event_id, division_id, match_id ON court_queue_entries WHEN (SELECT event_id FROM event_divisions WHERE id = (SELECT division_id FROM matches WHERE id = NEW.match_id)) <> NEW.event_id OR(NEW.division_id IS NOT NULL AND NEW.division_id <> (SELECT division_id FROM matches WHERE id = NEW.match_id))BEGIN SELECT RAISE (ABORT, 'court queue scope mismatch');END"
-        }
-      ]
-    },
-    {
-      "name": "division_placements_scope_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER division_placements_scope_guard BEFORE INSERT ON division_placements WHEN (SELECT division_id FROM teams WHERE id = NEW.team_id) <> NEW.division_id BEGIN SELECT RAISE (ABORT, 'placement team division mismatch');END"
-        }
-      ]
-    },
-    {
-      "name": "division_placements_scope_update_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER division_placements_scope_update_guard BEFORE UPDATE OF division_id, team_id ON division_placements WHEN (SELECT division_id FROM teams WHERE id = NEW.team_id) <> NEW.division_id BEGIN SELECT RAISE (ABORT, 'placement team division mismatch');END"
-        }
-      ]
-    },
-    {
-      "name": "events_format_required_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER events_format_required_guard BEFORE UPDATE OF status ON events WHEN NEW.status = 'inProgress' AND OLD.status <> 'inProgress' AND EXISTS (SELECT 1 FROM event_divisions WHERE event_id = NEW.id AND deleted_at IS NULL AND tournament_format IS NULL) BEGIN SELECT RAISE (ABORT, 'tournament formats must be configured before event begins');END"
-        }
-      ]
-    },
-    {
-      "name": "team_members_eligibility_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER team_members_eligibility_guard BEFORE INSERT ON team_members WHEN NOT EXISTS (SELECT 1 FROM teams AS t JOIN event_divisions AS d ON d.id = t.division_id AND d.deleted_at IS NULL JOIN events AS e ON e.id = d.event_id AND e.deleted_at IS NULL JOIN event_participants AS ep ON ep.event_id = e.id AND ep.player_id = NEW.player_id AND ep.deleted_at IS NULL AND ep.check_in_status = 'checkedIn' JOIN division_participants AS dp ON dp.event_participant_id = ep.id AND dp.division_id = d.id AND dp.deleted_at IS NULL WHERE t.id = NEW.team_id AND t.deleted_at IS NULL AND e.status = 'registration') BEGIN SELECT RAISE (ABORT, 'team member is not eligible');END"
-        }
-      ]
-    },
-    {
-      "name": "team_members_unique_division_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER team_members_unique_division_guard BEFORE INSERT ON team_members WHEN EXISTS (SELECT 1 FROM team_members AS tm JOIN teams AS existing_team ON existing_team.id = tm.team_id AND existing_team.deleted_at IS NULL JOIN teams AS new_team ON new_team.id = NEW.team_id WHERE tm.player_id = NEW.player_id AND tm.deleted_at IS NULL AND existing_team.division_id = new_team.division_id) BEGIN SELECT RAISE (ABORT, 'player already belongs to an active team in this division');END"
-        }
-      ]
-    },
-    {
-      "name": "event_divisions_setup_lock_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER event_divisions_setup_lock_guard BEFORE UPDATE OF name, tournament_format, deleted_at ON event_divisions WHEN((NEW.name IS NOT OLD.name OR NEW.deleted_at IS NOT OLD.deleted_at)AND (SELECT status FROM events WHERE id = OLD.event_id) <> 'upcoming' AND (SELECT deleted_at FROM events WHERE id = OLD.event_id) IS NULL)OR(NEW.tournament_format IS NOT OLD.tournament_format AND((SELECT status FROM events WHERE id = OLD.event_id) <> 'registration' OR OLD.deleted_at IS NOT NULL OR EXISTS (SELECT 1 FROM matches WHERE division_id = OLD.id)))BEGIN SELECT RAISE (ABORT, 'division setup or tournament format is locked');END"
-        }
-      ]
-    },
-    {
-      "name": "matches_final_score_insert_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER matches_final_score_insert_guard BEFORE INSERT ON matches WHEN NEW.status = 'completed' AND NOT(((max(NEW.side_one_score, NEW.side_two_score) = 11 AND min(NEW.side_one_score, NEW.side_two_score) BETWEEN 0 AND 9)OR(min(NEW.side_one_score, NEW.side_two_score) >= 10 AND abs(NEW.side_one_score - NEW.side_two_score) = 2))AND NEW.winner_team_id = CASE WHEN NEW.side_one_score > NEW.side_two_score THEN NEW.side_one_team_id ELSE NEW.side_two_team_id END)BEGIN SELECT RAISE (ABORT, 'invalid final score or derived winner');END"
-        }
-      ]
-    },
-    {
-      "name": "matches_final_score_update_guard",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER matches_final_score_update_guard BEFORE UPDATE ON matches WHEN NEW.status = 'completed' AND NOT(((max(NEW.side_one_score, NEW.side_two_score) = 11 AND min(NEW.side_one_score, NEW.side_two_score) BETWEEN 0 AND 9)OR(min(NEW.side_one_score, NEW.side_two_score) >= 10 AND abs(NEW.side_one_score - NEW.side_two_score) = 2))AND NEW.winner_team_id = CASE WHEN NEW.side_one_score > NEW.side_two_score THEN NEW.side_one_team_id ELSE NEW.side_two_team_id END)BEGIN SELECT RAISE (ABORT, 'invalid final score or derived winner');END"
-        }
-      ]
-    },
-    {
-      "name": "matches_completed_result_lock",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER matches_completed_result_lock BEFORE UPDATE ON matches WHEN OLD.status = 'completed' AND(NEW.side_one_score IS NOT OLD.side_one_score OR NEW.side_two_score IS NOT OLD.side_two_score OR NEW.winner_team_id IS NOT OLD.winner_team_id OR NEW.side_one_team_id IS NOT OLD.side_one_team_id OR NEW.side_two_team_id IS NOT OLD.side_two_team_id)AND(NEW.side_one_team_id IS NOT OLD.side_one_team_id OR NEW.side_two_team_id IS NOT OLD.side_two_team_id OR NOT EXISTS (SELECT 1 FROM match_result_revisions AS r WHERE r.match_id = OLD.id AND json_extract(r.previous_result, '$.version') = OLD.version AND json_extract(r.previous_result, '$.side_one_score') = OLD.side_one_score AND json_extract(r.previous_result, '$.side_two_score') = OLD.side_two_score))BEGIN SELECT RAISE (ABORT, 'audited result correction required');END"
-        }
-      ]
-    },
-    {
-      "name": "match_result_revisions_update_lock",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER match_result_revisions_update_lock BEFORE UPDATE ON match_result_revisions BEGIN SELECT RAISE (ABORT, 'immutable result revision');END"
-        }
-      ]
-    },
-    {
-      "name": "match_result_revisions_delete_lock",
-      "sql": [
-        {
-          "dialect": "sqlite",
-          "sql": "CREATE TRIGGER match_result_revisions_delete_lock BEFORE DELETE ON match_result_revisions BEGIN SELECT RAISE (ABORT, 'immutable result revision');END"
         }
       ]
     }
