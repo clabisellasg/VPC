@@ -280,7 +280,7 @@ final class ParticipationService {
   );
 
   RecordMetadata _next(RecordMetadata value, {DateTime? deletedAt}) {
-    final now = clock.nowUtc();
+    final now = deletedAt ?? clock.nowUtc();
     return RecordMetadata(
       createdAt: value.createdAt,
       updatedAt: now,

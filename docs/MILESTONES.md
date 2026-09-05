@@ -135,7 +135,8 @@ authorized proceeding.
 - **Purpose:** Implement and thoroughly test winners bracket, losers bracket,
   final behavior, progression, and visual bracket.
 - **Dependencies:** M12 and M13.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED; automated/hosted validation and user-confirmed
+  physical Android/Web walkthroughs passed.
 
 ### M16 — One-Court Scheduling and Queue
 

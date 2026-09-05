@@ -115,15 +115,78 @@ void main() {
     expect(result, isA<RepositoryFailure<ParticipationSaved>>());
     expect(await database.select(database.eventParticipants).get(), isEmpty);
   });
+
+  test('equivalent authoritative state clears a false conflict', () async {
+    final local = _record(now);
+    await store.save(local, operationId: SyncOperationId(_operationId));
+    final remote = _record(now, updatedAt: now.add(const Duration(minutes: 1)));
+    await store.preserveConflict(
+      ParticipationOperation(
+        operationId: SyncOperationId(_operationId),
+        record: local,
+        baseVersion: null,
+      ),
+      remote,
+      SyncConflictId(_conflictId),
+      now.add(const Duration(minutes: 2)),
+    );
+
+    expect(await store.acknowledgeEquivalentConflicts(), 1);
+    expect(
+      await database.select(database.participationConflicts).get(),
+      isEmpty,
+    );
+    expect(
+      await database.select(database.participationOutboxOperations).get(),
+      isEmpty,
+    );
+    final loaded = await store.get(EventParticipantId(_participantId));
+    expect(
+      (loaded as RepositorySuccess<ParticipationRecord>)
+          .value
+          .participant
+          .metadata
+          .updatedAt,
+      remote.participant.metadata.updatedAt,
+    );
+  });
+
+  test('different authoritative state preserves a genuine conflict', () async {
+    final local = _record(now);
+    await store.save(local, operationId: SyncOperationId(_operationId));
+    final remote = _record(
+      now,
+      updatedAt: now.add(const Duration(minutes: 1)),
+      checkInStatus: CheckInStatus.checkedIn,
+    );
+    await store.preserveConflict(
+      ParticipationOperation(
+        operationId: SyncOperationId(_operationId),
+        record: local,
+        baseVersion: null,
+      ),
+      remote,
+      SyncConflictId(_conflictId),
+      now.add(const Duration(minutes: 2)),
+    );
+
+    expect(await store.acknowledgeEquivalentConflicts(), 0);
+    expect(
+      await database.select(database.participationConflicts).get(),
+      hasLength(1),
+    );
+  });
 }
 
 ParticipationRecord _record(
   DateTime now, {
   String participantId = _participantId,
+  CheckInStatus checkInStatus = CheckInStatus.notPresent,
+  DateTime? updatedAt,
 }) {
   final metadata = RecordMetadata(
     createdAt: now,
-    updatedAt: now,
+    updatedAt: updatedAt ?? now,
     recordVersion: 0,
   );
   final id = EventParticipantId(participantId);
@@ -132,7 +195,7 @@ ParticipationRecord _record(
       id: id,
       eventId: EventId(_eventId),
       playerId: PlayerId(_playerId),
-      checkInStatus: CheckInStatus.notPresent,
+      checkInStatus: checkInStatus,
       metadata: metadata,
     ),
     playerDisplayName: 'VPC Sample Player',
@@ -168,3 +231,4 @@ const _otherParticipantId = '00000000-0000-4000-8000-000000000208';
 const _otherAssignmentId = '00000000-0000-4000-8000-000000000209';
 const _otherPaymentId = '00000000-0000-4000-8000-000000000210';
 const _otherOperationId = '00000000-0000-4000-8000-000000000211';
+const _conflictId = '00000000-0000-4000-8000-000000000212';

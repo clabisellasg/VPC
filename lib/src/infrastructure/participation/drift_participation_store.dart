@@ -5,6 +5,7 @@ import '../../application/participation/participation_models.dart';
 import '../../domain/common/domain_enums.dart';
 import '../../domain/common/domain_failure.dart';
 import '../../domain/common/entity_id.dart';
+import '../../domain/common/record_metadata.dart';
 import '../../domain/common/repository_result.dart';
 import '../../domain/events/division_participant.dart';
 import '../../domain/events/event_participant.dart';
@@ -227,25 +228,26 @@ final class DriftParticipationStore implements ParticipationStore {
   Future<RepositoryResult<ParticipationSyncStatus>> syncStatus(
     EventParticipantId id,
   ) async {
-    final conflict =
+    final conflicts =
         await (database.select(database.participationConflicts)..where(
               (row) =>
                   row.eventParticipantId.equals(id.value) &
                   row.status.equals('unresolved'),
             ))
-            .getSingleOrNull();
-    if (conflict != null) {
+            .get();
+    if (conflicts.isNotEmpty) {
       return const RepositorySuccess(
         ParticipationSyncStatus(
           disposition: ParticipationMutationDisposition.conflicted,
         ),
       );
     }
-    final outbox =
+    final outboxRows =
         await (database.select(database.participationOutboxOperations)
               ..where((row) => row.eventParticipantId.equals(id.value))
               ..orderBy([(row) => OrderingTerm.desc(row.createdAt)]))
-            .getSingleOrNull();
+            .get();
+    final outbox = outboxRows.isEmpty ? null : outboxRows.first;
     return RepositorySuccess(
       ParticipationSyncStatus(
         disposition: switch (outbox?.status) {
@@ -338,6 +340,35 @@ final class DriftParticipationStore implements ParticipationStore {
         );
   });
 
+  /// Clears only conflicts whose cloud aggregate already represents the exact
+  /// same business state as the queued mutation. Server-assigned updated-at
+  /// values are deliberately ignored; IDs, versions, tombstones, statuses and
+  /// relationships must all agree. Genuine divergent conflicts remain intact.
+  Future<int> acknowledgeEquivalentConflicts() async =>
+      database.transaction(() async {
+        final rows = await (database.select(
+          database.participationConflicts,
+        )..where((row) => row.status.equals('unresolved'))).get();
+        var acknowledged = 0;
+        for (final row in rows) {
+          if (row.remotePayloadJson == null) continue;
+          final local = decodeParticipation(row.localPayloadJson);
+          final remote = decodeParticipation(row.remotePayloadJson!);
+          if (!participationRecordsHaveEquivalentState(local, remote)) {
+            continue;
+          }
+          await _replaceAuthoritative(remote);
+          await (database.delete(
+            database.participationConflicts,
+          )..where((table) => table.id.equals(row.id))).go();
+          await (database.delete(
+            database.participationOutboxOperations,
+          )..where((table) => table.id.equals(row.operationId))).go();
+          acknowledged++;
+        }
+        return acknowledged;
+      });
+
   Future<(DateTime?, EventParticipantId?)> checkpoint() async {
     final row = await database
         .select(database.participationPullCheckpoints)
@@ -353,7 +384,7 @@ final class DriftParticipationStore implements ParticipationStore {
   Future<void> reconcile(List<ParticipationRecord> records, DateTime now) =>
       database.transaction(() async {
         for (final record in records) {
-          final pending =
+          final pendingRows =
               await (database.select(database.participationOutboxOperations)
                     ..where(
                       (row) =>
@@ -362,8 +393,8 @@ final class DriftParticipationStore implements ParticipationStore {
                           ) &
                           row.status.isIn(['pending', 'blocked', 'conflicted']),
                     ))
-                  .getSingleOrNull();
-          if (pending == null) await _replaceAuthoritative(record);
+                  .get();
+          if (pendingRows.isEmpty) await _replaceAuthoritative(record);
         }
         if (records.isNotEmpty) {
           final last = records.last.participant;
@@ -393,6 +424,48 @@ final class DriftParticipationStore implements ParticipationStore {
         .into(database.participantPayments)
         .insertOnConflictUpdate(_paymentCompanion(record.payment));
   }
+}
+
+bool participationRecordsHaveEquivalentState(
+  ParticipationRecord local,
+  ParticipationRecord remote,
+) {
+  bool sameMetadata(RecordMetadata left, RecordMetadata right) =>
+      left.createdAt == right.createdAt &&
+      left.recordVersion == right.recordVersion &&
+      left.deletedAt == right.deletedAt;
+  final leftParticipant = local.participant;
+  final rightParticipant = remote.participant;
+  if (leftParticipant.id != rightParticipant.id ||
+      leftParticipant.eventId != rightParticipant.eventId ||
+      leftParticipant.playerId != rightParticipant.playerId ||
+      leftParticipant.checkInStatus != rightParticipant.checkInStatus ||
+      !sameMetadata(leftParticipant.metadata, rightParticipant.metadata)) {
+    return false;
+  }
+  final leftPayment = local.payment;
+  final rightPayment = remote.payment;
+  if (leftPayment.id != rightPayment.id ||
+      leftPayment.eventParticipantId != rightPayment.eventParticipantId ||
+      leftPayment.divisionId != rightPayment.divisionId ||
+      leftPayment.status != rightPayment.status ||
+      !sameMetadata(leftPayment.metadata, rightPayment.metadata)) {
+    return false;
+  }
+  if (local.divisions.length != remote.divisions.length) return false;
+  final remoteDivisions = {
+    for (final division in remote.divisions) division.id: division,
+  };
+  for (final left in local.divisions) {
+    final right = remoteDivisions[left.id];
+    if (right == null ||
+        left.divisionId != right.divisionId ||
+        left.eventParticipantId != right.eventParticipantId ||
+        !sameMetadata(left.metadata, right.metadata)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 EventParticipantsCompanion _participantCompanion(EventParticipant value) =>

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../presentation/tournament/single_elimination_page.dart';
 import '../presentation/tournament/round_robin_page.dart';
+import '../presentation/tournament/double_elimination_page.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:vpc/src/presentation/public_events/public_app_shell.dart';
@@ -61,6 +62,21 @@ GoRouter createAppRouter() {
           GoRoute(
             path: '/organizer/events/:eventId/divisions/:divisionId/round-robin/generate',
             builder: (context, state) => RoundRobinPage(
+              eventId: state.pathParameters['eventId']!,
+              divisionId: state.pathParameters['divisionId']!,
+              organizerRoute: true,
+            ),
+          ),
+          GoRoute(
+            path: '/events/:eventId/divisions/:divisionId/double-elimination',
+            builder: (context, state) => DoubleEliminationPage(
+              eventId: state.pathParameters['eventId']!,
+              divisionId: state.pathParameters['divisionId']!,
+            ),
+          ),
+          GoRoute(
+            path: '/organizer/events/:eventId/divisions/:divisionId/double-elimination/generate',
+            builder: (context, state) => DoubleEliminationPage(
               eventId: state.pathParameters['eventId']!,
               divisionId: state.pathParameters['divisionId']!,
               organizerRoute: true,

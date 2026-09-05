@@ -22,17 +22,26 @@ final class ParticipationSynchronizer {
     if (_running) return;
     _running = true;
     try {
+      await store.acknowledgeEquivalentConflicts();
       for (final operation in await store.pendingOperations()) {
         switch (await remote.apply(operation)) {
           case ParticipationRemoteAccepted(:final record):
             await store.accept(operation, record);
           case ParticipationRemoteConflict(:final remote):
-            await store.preserveConflict(
-              operation,
-              remote,
-              SyncConflictId(ids.operationId().value),
-              clock.nowUtc(),
-            );
+            if (remote != null &&
+                participationRecordsHaveEquivalentState(
+                  operation.record,
+                  remote,
+                )) {
+              await store.accept(operation, remote);
+            } else {
+              await store.preserveConflict(
+                operation,
+                remote,
+                SyncConflictId(ids.operationId().value),
+                clock.nowUtc(),
+              );
+            }
           case ParticipationRemoteFailure(failure: UnauthorizedFailure()):
             await store.markBlocked(
               operation,

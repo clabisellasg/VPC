@@ -86,10 +86,30 @@ final class _RemoteParticipationStore implements ParticipationStore {
   const _RemoteParticipationStore(this.remote);
   final ParticipationRemoteGateway remote;
   Future<RepositoryResult<List<ParticipationRecord>>> _all() async {
-    final result = await remote.pull();
-    return result.when(
-      success: (page) => RepositorySuccess(page.records),
-      failure: RepositoryFailure.new,
+    final records = <ParticipationRecord>[];
+    DateTime? updatedAt;
+    EventParticipantId? participantId;
+    for (var pageNumber = 0; pageNumber < 20; pageNumber++) {
+      final result = await remote.pull(
+        afterUpdatedAt: updatedAt,
+        afterId: participantId,
+      );
+      if (result case RepositoryFailure(:final failure)) {
+        return RepositoryFailure(failure);
+      }
+      final page = (result as RepositorySuccess<ParticipationPullPage>).value;
+      records.addAll(page.records);
+      if (!page.hasMore || page.records.isEmpty) {
+        return RepositorySuccess(records);
+      }
+      final last = page.records.last.participant;
+      updatedAt = last.metadata.updatedAt;
+      participantId = last.id;
+    }
+    return const RepositoryFailure(
+      PersistenceUnavailableFailure(
+        message: 'Cloud roster exceeded the safe read boundary.',
+      ),
     );
   }
 

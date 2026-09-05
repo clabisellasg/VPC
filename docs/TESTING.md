@@ -1,5 +1,36 @@
 # Testing Strategy
 
+## M15 validation
+
+M15 tests deterministic 2-, 3-, 4-, 5-, and 8-team generation, standard seed
+placement, staged loser routing, non-power-of-two BYEs, acyclic dependencies,
+no-reset and reset finals, champion/runner-up placement, correction audit and
+downstream locks, transactional Drift persistence/rollback, schema v8-to-v9
+migration, and responsive guest/organizer presentation. Ordinary Flutter tests
+use in-memory repositories/databases and make no network calls.
+
+Hosted rollback assertions cover anonymous/member denial, organizer
+generation, replay identity, progression through both brackets, reset-final
+activation, placements, allowed/blocked correction, and immutable audit rows.
+The full Flutter suite passes all 329 tests; formatting, analysis, Web
+production compilation, and Android debug APK compilation pass. Linked history
+agrees through `20260905151500`, its dry run is empty, and lint reports no
+errors (only pre-existing M13/M14 PL/pgSQL warnings). Publishable-key smoke
+checks allow anonymous bracket reads while denying anonymous profile, role,
+payment, and mutation access. The user confirmed the mandatory physical
+Android and Web walkthroughs, including both grand-final outcomes, reset-final
+convergence, BYEs, progression, corrections, guest access, offline restart,
+responsive layouts, and cross-device convergence. Local pgTAP is skipped
+because the installed Docker client cannot reach its Linux engine.
+
+Final regressions cover deterministic reset-match identity for legacy queued
+Android payloads, semantic participation-conflict acknowledgement, bounded Web
+roster pagination, and clear invalid-team eligibility failures. Repeated
+build-runner generation was current. The explicit Drift schema dump command
+again stalled in the Windows build-hook launcher and was interrupted; the
+committed v9 snapshot and generated migration helper remained unchanged and
+the v8-to-v9 migration tests passed.
+
 ## M14 validation
 
 M14 adds deterministic 2–8-team circle-method, odd-team BYE, Single/Double

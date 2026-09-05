@@ -14674,6 +14674,1019 @@ class RoundRobinCheckpointsCompanion
   }
 }
 
+class $DoubleEliminationSnapshotsTable extends DoubleEliminationSnapshots
+    with
+        TableInfo<$DoubleEliminationSnapshotsTable, DoubleEliminationSnapshot> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DoubleEliminationSnapshotsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _divisionIdMeta = const VerificationMeta(
+    'divisionId',
+  );
+  @override
+  late final GeneratedColumn<String> divisionId = GeneratedColumn<String>(
+    'division_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES event_divisions (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _bracketJsonMeta = const VerificationMeta(
+    'bracketJson',
+  );
+  @override
+  late final GeneratedColumn<String> bracketJson = GeneratedColumn<String>(
+    'bracket_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK(json_valid(bracket_json))',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [divisionId, bracketJson];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'double_elimination_snapshots';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DoubleEliminationSnapshot> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('division_id')) {
+      context.handle(
+        _divisionIdMeta,
+        divisionId.isAcceptableOrUnknown(data['division_id']!, _divisionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_divisionIdMeta);
+    }
+    if (data.containsKey('bracket_json')) {
+      context.handle(
+        _bracketJsonMeta,
+        bracketJson.isAcceptableOrUnknown(
+          data['bracket_json']!,
+          _bracketJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_bracketJsonMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {divisionId};
+  @override
+  DoubleEliminationSnapshot map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DoubleEliminationSnapshot(
+      divisionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}division_id'],
+      )!,
+      bracketJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bracket_json'],
+      )!,
+    );
+  }
+
+  @override
+  $DoubleEliminationSnapshotsTable createAlias(String alias) {
+    return $DoubleEliminationSnapshotsTable(attachedDatabase, alias);
+  }
+}
+
+class DoubleEliminationSnapshot extends DataClass
+    implements Insertable<DoubleEliminationSnapshot> {
+  final String divisionId;
+  final String bracketJson;
+  const DoubleEliminationSnapshot({
+    required this.divisionId,
+    required this.bracketJson,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['division_id'] = Variable<String>(divisionId);
+    map['bracket_json'] = Variable<String>(bracketJson);
+    return map;
+  }
+
+  DoubleEliminationSnapshotsCompanion toCompanion(bool nullToAbsent) {
+    return DoubleEliminationSnapshotsCompanion(
+      divisionId: Value(divisionId),
+      bracketJson: Value(bracketJson),
+    );
+  }
+
+  factory DoubleEliminationSnapshot.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DoubleEliminationSnapshot(
+      divisionId: serializer.fromJson<String>(json['divisionId']),
+      bracketJson: serializer.fromJson<String>(json['bracketJson']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'divisionId': serializer.toJson<String>(divisionId),
+      'bracketJson': serializer.toJson<String>(bracketJson),
+    };
+  }
+
+  DoubleEliminationSnapshot copyWith({
+    String? divisionId,
+    String? bracketJson,
+  }) => DoubleEliminationSnapshot(
+    divisionId: divisionId ?? this.divisionId,
+    bracketJson: bracketJson ?? this.bracketJson,
+  );
+  DoubleEliminationSnapshot copyWithCompanion(
+    DoubleEliminationSnapshotsCompanion data,
+  ) {
+    return DoubleEliminationSnapshot(
+      divisionId: data.divisionId.present
+          ? data.divisionId.value
+          : this.divisionId,
+      bracketJson: data.bracketJson.present
+          ? data.bracketJson.value
+          : this.bracketJson,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DoubleEliminationSnapshot(')
+          ..write('divisionId: $divisionId, ')
+          ..write('bracketJson: $bracketJson')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(divisionId, bracketJson);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DoubleEliminationSnapshot &&
+          other.divisionId == this.divisionId &&
+          other.bracketJson == this.bracketJson);
+}
+
+class DoubleEliminationSnapshotsCompanion
+    extends UpdateCompanion<DoubleEliminationSnapshot> {
+  final Value<String> divisionId;
+  final Value<String> bracketJson;
+  final Value<int> rowid;
+  const DoubleEliminationSnapshotsCompanion({
+    this.divisionId = const Value.absent(),
+    this.bracketJson = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DoubleEliminationSnapshotsCompanion.insert({
+    required String divisionId,
+    required String bracketJson,
+    this.rowid = const Value.absent(),
+  }) : divisionId = Value(divisionId),
+       bracketJson = Value(bracketJson);
+  static Insertable<DoubleEliminationSnapshot> custom({
+    Expression<String>? divisionId,
+    Expression<String>? bracketJson,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (divisionId != null) 'division_id': divisionId,
+      if (bracketJson != null) 'bracket_json': bracketJson,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DoubleEliminationSnapshotsCompanion copyWith({
+    Value<String>? divisionId,
+    Value<String>? bracketJson,
+    Value<int>? rowid,
+  }) {
+    return DoubleEliminationSnapshotsCompanion(
+      divisionId: divisionId ?? this.divisionId,
+      bracketJson: bracketJson ?? this.bracketJson,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (divisionId.present) {
+      map['division_id'] = Variable<String>(divisionId.value);
+    }
+    if (bracketJson.present) {
+      map['bracket_json'] = Variable<String>(bracketJson.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DoubleEliminationSnapshotsCompanion(')
+          ..write('divisionId: $divisionId, ')
+          ..write('bracketJson: $bracketJson, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $DoubleEliminationOutboxTable extends DoubleEliminationOutbox
+    with TableInfo<$DoubleEliminationOutboxTable, DoubleEliminationOutboxData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DoubleEliminationOutboxTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _divisionIdMeta = const VerificationMeta(
+    'divisionId',
+  );
+  @override
+  late final GeneratedColumn<String> divisionId = GeneratedColumn<String>(
+    'division_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES event_divisions (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
+    'payloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
+    'payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK(json_valid(payload_json))',
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK(status IN (\'pending\',\'blocked\',\'failed\',\'conflicted\',\'accepted\'))',
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _failureMeta = const VerificationMeta(
+    'failure',
+  );
+  @override
+  late final GeneratedColumn<String> failure = GeneratedColumn<String>(
+    'failure',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteJsonMeta = const VerificationMeta(
+    'remoteJson',
+  );
+  @override
+  late final GeneratedColumn<String> remoteJson = GeneratedColumn<String>(
+    'remote_json',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    divisionId,
+    payloadJson,
+    status,
+    createdAt,
+    failure,
+    remoteJson,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'double_elimination_outbox';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DoubleEliminationOutboxData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('division_id')) {
+      context.handle(
+        _divisionIdMeta,
+        divisionId.isAcceptableOrUnknown(data['division_id']!, _divisionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_divisionIdMeta);
+    }
+    if (data.containsKey('payload_json')) {
+      context.handle(
+        _payloadJsonMeta,
+        payloadJson.isAcceptableOrUnknown(
+          data['payload_json']!,
+          _payloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadJsonMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('failure')) {
+      context.handle(
+        _failureMeta,
+        failure.isAcceptableOrUnknown(data['failure']!, _failureMeta),
+      );
+    }
+    if (data.containsKey('remote_json')) {
+      context.handle(
+        _remoteJsonMeta,
+        remoteJson.isAcceptableOrUnknown(data['remote_json']!, _remoteJsonMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DoubleEliminationOutboxData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DoubleEliminationOutboxData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      divisionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}division_id'],
+      )!,
+      payloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_json'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      failure: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}failure'],
+      ),
+      remoteJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_json'],
+      ),
+    );
+  }
+
+  @override
+  $DoubleEliminationOutboxTable createAlias(String alias) {
+    return $DoubleEliminationOutboxTable(attachedDatabase, alias);
+  }
+}
+
+class DoubleEliminationOutboxData extends DataClass
+    implements Insertable<DoubleEliminationOutboxData> {
+  final String id;
+  final String divisionId;
+  final String payloadJson;
+  final String status;
+  final DateTime createdAt;
+  final String? failure;
+  final String? remoteJson;
+  const DoubleEliminationOutboxData({
+    required this.id,
+    required this.divisionId,
+    required this.payloadJson,
+    required this.status,
+    required this.createdAt,
+    this.failure,
+    this.remoteJson,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['division_id'] = Variable<String>(divisionId);
+    map['payload_json'] = Variable<String>(payloadJson);
+    map['status'] = Variable<String>(status);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || failure != null) {
+      map['failure'] = Variable<String>(failure);
+    }
+    if (!nullToAbsent || remoteJson != null) {
+      map['remote_json'] = Variable<String>(remoteJson);
+    }
+    return map;
+  }
+
+  DoubleEliminationOutboxCompanion toCompanion(bool nullToAbsent) {
+    return DoubleEliminationOutboxCompanion(
+      id: Value(id),
+      divisionId: Value(divisionId),
+      payloadJson: Value(payloadJson),
+      status: Value(status),
+      createdAt: Value(createdAt),
+      failure: failure == null && nullToAbsent
+          ? const Value.absent()
+          : Value(failure),
+      remoteJson: remoteJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteJson),
+    );
+  }
+
+  factory DoubleEliminationOutboxData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DoubleEliminationOutboxData(
+      id: serializer.fromJson<String>(json['id']),
+      divisionId: serializer.fromJson<String>(json['divisionId']),
+      payloadJson: serializer.fromJson<String>(json['payloadJson']),
+      status: serializer.fromJson<String>(json['status']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      failure: serializer.fromJson<String?>(json['failure']),
+      remoteJson: serializer.fromJson<String?>(json['remoteJson']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'divisionId': serializer.toJson<String>(divisionId),
+      'payloadJson': serializer.toJson<String>(payloadJson),
+      'status': serializer.toJson<String>(status),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'failure': serializer.toJson<String?>(failure),
+      'remoteJson': serializer.toJson<String?>(remoteJson),
+    };
+  }
+
+  DoubleEliminationOutboxData copyWith({
+    String? id,
+    String? divisionId,
+    String? payloadJson,
+    String? status,
+    DateTime? createdAt,
+    Value<String?> failure = const Value.absent(),
+    Value<String?> remoteJson = const Value.absent(),
+  }) => DoubleEliminationOutboxData(
+    id: id ?? this.id,
+    divisionId: divisionId ?? this.divisionId,
+    payloadJson: payloadJson ?? this.payloadJson,
+    status: status ?? this.status,
+    createdAt: createdAt ?? this.createdAt,
+    failure: failure.present ? failure.value : this.failure,
+    remoteJson: remoteJson.present ? remoteJson.value : this.remoteJson,
+  );
+  DoubleEliminationOutboxData copyWithCompanion(
+    DoubleEliminationOutboxCompanion data,
+  ) {
+    return DoubleEliminationOutboxData(
+      id: data.id.present ? data.id.value : this.id,
+      divisionId: data.divisionId.present
+          ? data.divisionId.value
+          : this.divisionId,
+      payloadJson: data.payloadJson.present
+          ? data.payloadJson.value
+          : this.payloadJson,
+      status: data.status.present ? data.status.value : this.status,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      failure: data.failure.present ? data.failure.value : this.failure,
+      remoteJson: data.remoteJson.present
+          ? data.remoteJson.value
+          : this.remoteJson,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DoubleEliminationOutboxData(')
+          ..write('id: $id, ')
+          ..write('divisionId: $divisionId, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('failure: $failure, ')
+          ..write('remoteJson: $remoteJson')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    divisionId,
+    payloadJson,
+    status,
+    createdAt,
+    failure,
+    remoteJson,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DoubleEliminationOutboxData &&
+          other.id == this.id &&
+          other.divisionId == this.divisionId &&
+          other.payloadJson == this.payloadJson &&
+          other.status == this.status &&
+          other.createdAt == this.createdAt &&
+          other.failure == this.failure &&
+          other.remoteJson == this.remoteJson);
+}
+
+class DoubleEliminationOutboxCompanion
+    extends UpdateCompanion<DoubleEliminationOutboxData> {
+  final Value<String> id;
+  final Value<String> divisionId;
+  final Value<String> payloadJson;
+  final Value<String> status;
+  final Value<DateTime> createdAt;
+  final Value<String?> failure;
+  final Value<String?> remoteJson;
+  final Value<int> rowid;
+  const DoubleEliminationOutboxCompanion({
+    this.id = const Value.absent(),
+    this.divisionId = const Value.absent(),
+    this.payloadJson = const Value.absent(),
+    this.status = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.failure = const Value.absent(),
+    this.remoteJson = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DoubleEliminationOutboxCompanion.insert({
+    required String id,
+    required String divisionId,
+    required String payloadJson,
+    required String status,
+    required DateTime createdAt,
+    this.failure = const Value.absent(),
+    this.remoteJson = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       divisionId = Value(divisionId),
+       payloadJson = Value(payloadJson),
+       status = Value(status),
+       createdAt = Value(createdAt);
+  static Insertable<DoubleEliminationOutboxData> custom({
+    Expression<String>? id,
+    Expression<String>? divisionId,
+    Expression<String>? payloadJson,
+    Expression<String>? status,
+    Expression<DateTime>? createdAt,
+    Expression<String>? failure,
+    Expression<String>? remoteJson,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (divisionId != null) 'division_id': divisionId,
+      if (payloadJson != null) 'payload_json': payloadJson,
+      if (status != null) 'status': status,
+      if (createdAt != null) 'created_at': createdAt,
+      if (failure != null) 'failure': failure,
+      if (remoteJson != null) 'remote_json': remoteJson,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DoubleEliminationOutboxCompanion copyWith({
+    Value<String>? id,
+    Value<String>? divisionId,
+    Value<String>? payloadJson,
+    Value<String>? status,
+    Value<DateTime>? createdAt,
+    Value<String?>? failure,
+    Value<String?>? remoteJson,
+    Value<int>? rowid,
+  }) {
+    return DoubleEliminationOutboxCompanion(
+      id: id ?? this.id,
+      divisionId: divisionId ?? this.divisionId,
+      payloadJson: payloadJson ?? this.payloadJson,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      failure: failure ?? this.failure,
+      remoteJson: remoteJson ?? this.remoteJson,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (divisionId.present) {
+      map['division_id'] = Variable<String>(divisionId.value);
+    }
+    if (payloadJson.present) {
+      map['payload_json'] = Variable<String>(payloadJson.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (failure.present) {
+      map['failure'] = Variable<String>(failure.value);
+    }
+    if (remoteJson.present) {
+      map['remote_json'] = Variable<String>(remoteJson.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DoubleEliminationOutboxCompanion(')
+          ..write('id: $id, ')
+          ..write('divisionId: $divisionId, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('failure: $failure, ')
+          ..write('remoteJson: $remoteJson, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $DoubleEliminationCheckpointsTable extends DoubleEliminationCheckpoints
+    with
+        TableInfo<
+          $DoubleEliminationCheckpointsTable,
+          DoubleEliminationCheckpoint
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DoubleEliminationCheckpointsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _scopeMeta = const VerificationMeta('scope');
+  @override
+  late final GeneratedColumn<String> scope = GeneratedColumn<String>(
+    'scope',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bracketIdMeta = const VerificationMeta(
+    'bracketId',
+  );
+  @override
+  late final GeneratedColumn<String> bracketId = GeneratedColumn<String>(
+    'bracket_id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [scope, updatedAt, bracketId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'double_elimination_checkpoints';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DoubleEliminationCheckpoint> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('scope')) {
+      context.handle(
+        _scopeMeta,
+        scope.isAcceptableOrUnknown(data['scope']!, _scopeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_scopeMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('bracket_id')) {
+      context.handle(
+        _bracketIdMeta,
+        bracketId.isAcceptableOrUnknown(data['bracket_id']!, _bracketIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bracketIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {scope};
+  @override
+  DoubleEliminationCheckpoint map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DoubleEliminationCheckpoint(
+      scope: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}scope'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      bracketId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bracket_id'],
+      )!,
+    );
+  }
+
+  @override
+  $DoubleEliminationCheckpointsTable createAlias(String alias) {
+    return $DoubleEliminationCheckpointsTable(attachedDatabase, alias);
+  }
+}
+
+class DoubleEliminationCheckpoint extends DataClass
+    implements Insertable<DoubleEliminationCheckpoint> {
+  final String scope;
+  final DateTime updatedAt;
+  final String bracketId;
+  const DoubleEliminationCheckpoint({
+    required this.scope,
+    required this.updatedAt,
+    required this.bracketId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['scope'] = Variable<String>(scope);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['bracket_id'] = Variable<String>(bracketId);
+    return map;
+  }
+
+  DoubleEliminationCheckpointsCompanion toCompanion(bool nullToAbsent) {
+    return DoubleEliminationCheckpointsCompanion(
+      scope: Value(scope),
+      updatedAt: Value(updatedAt),
+      bracketId: Value(bracketId),
+    );
+  }
+
+  factory DoubleEliminationCheckpoint.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DoubleEliminationCheckpoint(
+      scope: serializer.fromJson<String>(json['scope']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      bracketId: serializer.fromJson<String>(json['bracketId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'scope': serializer.toJson<String>(scope),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'bracketId': serializer.toJson<String>(bracketId),
+    };
+  }
+
+  DoubleEliminationCheckpoint copyWith({
+    String? scope,
+    DateTime? updatedAt,
+    String? bracketId,
+  }) => DoubleEliminationCheckpoint(
+    scope: scope ?? this.scope,
+    updatedAt: updatedAt ?? this.updatedAt,
+    bracketId: bracketId ?? this.bracketId,
+  );
+  DoubleEliminationCheckpoint copyWithCompanion(
+    DoubleEliminationCheckpointsCompanion data,
+  ) {
+    return DoubleEliminationCheckpoint(
+      scope: data.scope.present ? data.scope.value : this.scope,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      bracketId: data.bracketId.present ? data.bracketId.value : this.bracketId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DoubleEliminationCheckpoint(')
+          ..write('scope: $scope, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('bracketId: $bracketId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(scope, updatedAt, bracketId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DoubleEliminationCheckpoint &&
+          other.scope == this.scope &&
+          other.updatedAt == this.updatedAt &&
+          other.bracketId == this.bracketId);
+}
+
+class DoubleEliminationCheckpointsCompanion
+    extends UpdateCompanion<DoubleEliminationCheckpoint> {
+  final Value<String> scope;
+  final Value<DateTime> updatedAt;
+  final Value<String> bracketId;
+  final Value<int> rowid;
+  const DoubleEliminationCheckpointsCompanion({
+    this.scope = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.bracketId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DoubleEliminationCheckpointsCompanion.insert({
+    required String scope,
+    required DateTime updatedAt,
+    required String bracketId,
+    this.rowid = const Value.absent(),
+  }) : scope = Value(scope),
+       updatedAt = Value(updatedAt),
+       bracketId = Value(bracketId);
+  static Insertable<DoubleEliminationCheckpoint> custom({
+    Expression<String>? scope,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? bracketId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (scope != null) 'scope': scope,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (bracketId != null) 'bracket_id': bracketId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DoubleEliminationCheckpointsCompanion copyWith({
+    Value<String>? scope,
+    Value<DateTime>? updatedAt,
+    Value<String>? bracketId,
+    Value<int>? rowid,
+  }) {
+    return DoubleEliminationCheckpointsCompanion(
+      scope: scope ?? this.scope,
+      updatedAt: updatedAt ?? this.updatedAt,
+      bracketId: bracketId ?? this.bracketId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (scope.present) {
+      map['scope'] = Variable<String>(scope.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (bracketId.present) {
+      map['bracket_id'] = Variable<String>(bracketId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DoubleEliminationCheckpointsCompanion(')
+          ..write('scope: $scope, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('bracketId: $bracketId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $MatchResultRevisionsTable extends MatchResultRevisions
     with TableInfo<$MatchResultRevisionsTable, MatchResultRevision> {
   @override
@@ -15120,6 +16133,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final $RoundRobinCheckpointsTable roundRobinCheckpoints =
       $RoundRobinCheckpointsTable(this);
+  late final $DoubleEliminationSnapshotsTable doubleEliminationSnapshots =
+      $DoubleEliminationSnapshotsTable(this);
+  late final $DoubleEliminationOutboxTable doubleEliminationOutbox =
+      $DoubleEliminationOutboxTable(this);
+  late final $DoubleEliminationCheckpointsTable doubleEliminationCheckpoints =
+      $DoubleEliminationCheckpointsTable(this);
   late final $MatchResultRevisionsTable matchResultRevisions =
       $MatchResultRevisionsTable(this);
   late final Index playersDisplayNameIdx = Index(
@@ -15269,6 +16288,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     roundRobinSnapshots,
     roundRobinOutbox,
     roundRobinCheckpoints,
+    doubleEliminationSnapshots,
+    doubleEliminationOutbox,
+    doubleEliminationCheckpoints,
     matchResultRevisions,
     playersDisplayNameIdx,
     eventsStatusScheduledAtIdx,
@@ -17484,6 +18506,58 @@ final class $$EventDivisionsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<
+    $DoubleEliminationSnapshotsTable,
+    List<DoubleEliminationSnapshot>
+  >
+  _doubleEliminationSnapshotsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.doubleEliminationSnapshots,
+        aliasName:
+            'event_divisions__id__double_elimination_snapshots__division_id',
+      );
+
+  $$DoubleEliminationSnapshotsTableProcessedTableManager
+  get doubleEliminationSnapshotsRefs {
+    final manager = $$DoubleEliminationSnapshotsTableTableManager(
+      $_db,
+      $_db.doubleEliminationSnapshots,
+    ).filter((f) => f.divisionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _doubleEliminationSnapshotsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $DoubleEliminationOutboxTable,
+    List<DoubleEliminationOutboxData>
+  >
+  _doubleEliminationOutboxRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.doubleEliminationOutbox,
+        aliasName:
+            'event_divisions__id__double_elimination_outbox__division_id',
+      );
+
+  $$DoubleEliminationOutboxTableProcessedTableManager
+  get doubleEliminationOutboxRefs {
+    final manager = $$DoubleEliminationOutboxTableTableManager(
+      $_db,
+      $_db.doubleEliminationOutbox,
+    ).filter((f) => f.divisionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _doubleEliminationOutboxRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$EventDivisionsTableFilterComposer
@@ -17887,6 +18961,59 @@ class $$EventDivisionsTableFilterComposer
                 $removeJoinBuilderFromRootComposer,
           ),
     );
+    return f(composer);
+  }
+
+  Expression<bool> doubleEliminationSnapshotsRefs(
+    Expression<bool> Function($$DoubleEliminationSnapshotsTableFilterComposer f)
+    f,
+  ) {
+    final $$DoubleEliminationSnapshotsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.doubleEliminationSnapshots,
+          getReferencedColumn: (t) => t.divisionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$DoubleEliminationSnapshotsTableFilterComposer(
+                $db: $db,
+                $table: $db.doubleEliminationSnapshots,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<bool> doubleEliminationOutboxRefs(
+    Expression<bool> Function($$DoubleEliminationOutboxTableFilterComposer f) f,
+  ) {
+    final $$DoubleEliminationOutboxTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.doubleEliminationOutbox,
+          getReferencedColumn: (t) => t.divisionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$DoubleEliminationOutboxTableFilterComposer(
+                $db: $db,
+                $table: $db.doubleEliminationOutbox,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
@@ -18358,6 +19485,62 @@ class $$EventDivisionsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> doubleEliminationSnapshotsRefs<T extends Object>(
+    Expression<T> Function(
+      $$DoubleEliminationSnapshotsTableAnnotationComposer a,
+    )
+    f,
+  ) {
+    final $$DoubleEliminationSnapshotsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.doubleEliminationSnapshots,
+          getReferencedColumn: (t) => t.divisionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$DoubleEliminationSnapshotsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.doubleEliminationSnapshots,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> doubleEliminationOutboxRefs<T extends Object>(
+    Expression<T> Function($$DoubleEliminationOutboxTableAnnotationComposer a)
+    f,
+  ) {
+    final $$DoubleEliminationOutboxTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.doubleEliminationOutbox,
+          getReferencedColumn: (t) => t.divisionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$DoubleEliminationOutboxTableAnnotationComposer(
+                $db: $db,
+                $table: $db.doubleEliminationOutbox,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$EventDivisionsTableTableManager
@@ -18388,6 +19571,8 @@ class $$EventDivisionsTableTableManager
             bool singleEliminationOutboxRefs,
             bool roundRobinSnapshotsRefs,
             bool roundRobinOutboxRefs,
+            bool doubleEliminationSnapshotsRefs,
+            bool doubleEliminationOutboxRefs,
           })
         > {
   $$EventDivisionsTableTableManager(
@@ -18471,6 +19656,8 @@ class $$EventDivisionsTableTableManager
                 singleEliminationOutboxRefs = false,
                 roundRobinSnapshotsRefs = false,
                 roundRobinOutboxRefs = false,
+                doubleEliminationSnapshotsRefs = false,
+                doubleEliminationOutboxRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -18491,6 +19678,9 @@ class $$EventDivisionsTableTableManager
                     if (singleEliminationOutboxRefs) db.singleEliminationOutbox,
                     if (roundRobinSnapshotsRefs) db.roundRobinSnapshots,
                     if (roundRobinOutboxRefs) db.roundRobinOutbox,
+                    if (doubleEliminationSnapshotsRefs)
+                      db.doubleEliminationSnapshots,
+                    if (doubleEliminationOutboxRefs) db.doubleEliminationOutbox,
                   ],
                   addJoins:
                       <
@@ -18797,6 +19987,48 @@ class $$EventDivisionsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (doubleEliminationSnapshotsRefs)
+                        await $_getPrefetchedData<
+                          LocalEventDivisionRow,
+                          $EventDivisionsTable,
+                          DoubleEliminationSnapshot
+                        >(
+                          currentTable: table,
+                          referencedTable: $$EventDivisionsTableReferences
+                              ._doubleEliminationSnapshotsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$EventDivisionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).doubleEliminationSnapshotsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.divisionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (doubleEliminationOutboxRefs)
+                        await $_getPrefetchedData<
+                          LocalEventDivisionRow,
+                          $EventDivisionsTable,
+                          DoubleEliminationOutboxData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$EventDivisionsTableReferences
+                              ._doubleEliminationOutboxRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$EventDivisionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).doubleEliminationOutboxRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.divisionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -18832,6 +20064,8 @@ typedef $$EventDivisionsTableProcessedTableManager =
         bool singleEliminationOutboxRefs,
         bool roundRobinSnapshotsRefs,
         bool roundRobinOutboxRefs,
+        bool doubleEliminationSnapshotsRefs,
+        bool doubleEliminationOutboxRefs,
       })
     >;
 typedef $$EventParticipantsTableCreateCompanionBuilder =
@@ -31843,6 +33077,858 @@ typedef $$RoundRobinCheckpointsTableProcessedTableManager =
       RoundRobinCheckpoint,
       PrefetchHooks Function()
     >;
+typedef $$DoubleEliminationSnapshotsTableCreateCompanionBuilder =
+    DoubleEliminationSnapshotsCompanion Function({
+      required String divisionId,
+      required String bracketJson,
+      Value<int> rowid,
+    });
+typedef $$DoubleEliminationSnapshotsTableUpdateCompanionBuilder =
+    DoubleEliminationSnapshotsCompanion Function({
+      Value<String> divisionId,
+      Value<String> bracketJson,
+      Value<int> rowid,
+    });
+
+final class $$DoubleEliminationSnapshotsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $DoubleEliminationSnapshotsTable,
+          DoubleEliminationSnapshot
+        > {
+  $$DoubleEliminationSnapshotsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $EventDivisionsTable _divisionIdTable(_$AppDatabase db) =>
+      db.eventDivisions.createAlias(
+        'double_elimination_snapshots__division_id__event_divisions__id',
+      );
+
+  $$EventDivisionsTableProcessedTableManager get divisionId {
+    final $_column = $_itemColumn<String>('division_id')!;
+
+    final manager = $$EventDivisionsTableTableManager(
+      $_db,
+      $_db.eventDivisions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_divisionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$DoubleEliminationSnapshotsTableFilterComposer
+    extends Composer<_$AppDatabase, $DoubleEliminationSnapshotsTable> {
+  $$DoubleEliminationSnapshotsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get bracketJson => $composableBuilder(
+    column: $table.bracketJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$EventDivisionsTableFilterComposer get divisionId {
+    final $$EventDivisionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableFilterComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DoubleEliminationSnapshotsTableOrderingComposer
+    extends Composer<_$AppDatabase, $DoubleEliminationSnapshotsTable> {
+  $$DoubleEliminationSnapshotsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get bracketJson => $composableBuilder(
+    column: $table.bracketJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$EventDivisionsTableOrderingComposer get divisionId {
+    final $$EventDivisionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DoubleEliminationSnapshotsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DoubleEliminationSnapshotsTable> {
+  $$DoubleEliminationSnapshotsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get bracketJson => $composableBuilder(
+    column: $table.bracketJson,
+    builder: (column) => column,
+  );
+
+  $$EventDivisionsTableAnnotationComposer get divisionId {
+    final $$EventDivisionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DoubleEliminationSnapshotsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DoubleEliminationSnapshotsTable,
+          DoubleEliminationSnapshot,
+          $$DoubleEliminationSnapshotsTableFilterComposer,
+          $$DoubleEliminationSnapshotsTableOrderingComposer,
+          $$DoubleEliminationSnapshotsTableAnnotationComposer,
+          $$DoubleEliminationSnapshotsTableCreateCompanionBuilder,
+          $$DoubleEliminationSnapshotsTableUpdateCompanionBuilder,
+          (
+            DoubleEliminationSnapshot,
+            $$DoubleEliminationSnapshotsTableReferences,
+          ),
+          DoubleEliminationSnapshot,
+          PrefetchHooks Function({bool divisionId})
+        > {
+  $$DoubleEliminationSnapshotsTableTableManager(
+    _$AppDatabase db,
+    $DoubleEliminationSnapshotsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DoubleEliminationSnapshotsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$DoubleEliminationSnapshotsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$DoubleEliminationSnapshotsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> divisionId = const Value.absent(),
+                Value<String> bracketJson = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DoubleEliminationSnapshotsCompanion(
+                divisionId: divisionId,
+                bracketJson: bracketJson,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String divisionId,
+                required String bracketJson,
+                Value<int> rowid = const Value.absent(),
+              }) => DoubleEliminationSnapshotsCompanion.insert(
+                divisionId: divisionId,
+                bracketJson: bracketJson,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$DoubleEliminationSnapshotsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({divisionId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (divisionId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.divisionId,
+                        referencedTable:
+                            $$DoubleEliminationSnapshotsTableReferences
+                                ._divisionIdTable(db),
+                        referencedColumn:
+                            $$DoubleEliminationSnapshotsTableReferences
+                                ._divisionIdTable(db)
+                                .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$DoubleEliminationSnapshotsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DoubleEliminationSnapshotsTable,
+      DoubleEliminationSnapshot,
+      $$DoubleEliminationSnapshotsTableFilterComposer,
+      $$DoubleEliminationSnapshotsTableOrderingComposer,
+      $$DoubleEliminationSnapshotsTableAnnotationComposer,
+      $$DoubleEliminationSnapshotsTableCreateCompanionBuilder,
+      $$DoubleEliminationSnapshotsTableUpdateCompanionBuilder,
+      (DoubleEliminationSnapshot, $$DoubleEliminationSnapshotsTableReferences),
+      DoubleEliminationSnapshot,
+      PrefetchHooks Function({bool divisionId})
+    >;
+typedef $$DoubleEliminationOutboxTableCreateCompanionBuilder =
+    DoubleEliminationOutboxCompanion Function({
+      required String id,
+      required String divisionId,
+      required String payloadJson,
+      required String status,
+      required DateTime createdAt,
+      Value<String?> failure,
+      Value<String?> remoteJson,
+      Value<int> rowid,
+    });
+typedef $$DoubleEliminationOutboxTableUpdateCompanionBuilder =
+    DoubleEliminationOutboxCompanion Function({
+      Value<String> id,
+      Value<String> divisionId,
+      Value<String> payloadJson,
+      Value<String> status,
+      Value<DateTime> createdAt,
+      Value<String?> failure,
+      Value<String?> remoteJson,
+      Value<int> rowid,
+    });
+
+final class $$DoubleEliminationOutboxTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $DoubleEliminationOutboxTable,
+          DoubleEliminationOutboxData
+        > {
+  $$DoubleEliminationOutboxTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $EventDivisionsTable _divisionIdTable(_$AppDatabase db) =>
+      db.eventDivisions.createAlias(
+        'double_elimination_outbox__division_id__event_divisions__id',
+      );
+
+  $$EventDivisionsTableProcessedTableManager get divisionId {
+    final $_column = $_itemColumn<String>('division_id')!;
+
+    final manager = $$EventDivisionsTableTableManager(
+      $_db,
+      $_db.eventDivisions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_divisionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$DoubleEliminationOutboxTableFilterComposer
+    extends Composer<_$AppDatabase, $DoubleEliminationOutboxTable> {
+  $$DoubleEliminationOutboxTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get failure => $composableBuilder(
+    column: $table.failure,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get remoteJson => $composableBuilder(
+    column: $table.remoteJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$EventDivisionsTableFilterComposer get divisionId {
+    final $$EventDivisionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableFilterComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DoubleEliminationOutboxTableOrderingComposer
+    extends Composer<_$AppDatabase, $DoubleEliminationOutboxTable> {
+  $$DoubleEliminationOutboxTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get failure => $composableBuilder(
+    column: $table.failure,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get remoteJson => $composableBuilder(
+    column: $table.remoteJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$EventDivisionsTableOrderingComposer get divisionId {
+    final $$EventDivisionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DoubleEliminationOutboxTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DoubleEliminationOutboxTable> {
+  $$DoubleEliminationOutboxTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get failure =>
+      $composableBuilder(column: $table.failure, builder: (column) => column);
+
+  GeneratedColumn<String> get remoteJson => $composableBuilder(
+    column: $table.remoteJson,
+    builder: (column) => column,
+  );
+
+  $$EventDivisionsTableAnnotationComposer get divisionId {
+    final $$EventDivisionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.divisionId,
+      referencedTable: $db.eventDivisions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventDivisionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.eventDivisions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DoubleEliminationOutboxTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DoubleEliminationOutboxTable,
+          DoubleEliminationOutboxData,
+          $$DoubleEliminationOutboxTableFilterComposer,
+          $$DoubleEliminationOutboxTableOrderingComposer,
+          $$DoubleEliminationOutboxTableAnnotationComposer,
+          $$DoubleEliminationOutboxTableCreateCompanionBuilder,
+          $$DoubleEliminationOutboxTableUpdateCompanionBuilder,
+          (
+            DoubleEliminationOutboxData,
+            $$DoubleEliminationOutboxTableReferences,
+          ),
+          DoubleEliminationOutboxData,
+          PrefetchHooks Function({bool divisionId})
+        > {
+  $$DoubleEliminationOutboxTableTableManager(
+    _$AppDatabase db,
+    $DoubleEliminationOutboxTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DoubleEliminationOutboxTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$DoubleEliminationOutboxTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$DoubleEliminationOutboxTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> divisionId = const Value.absent(),
+                Value<String> payloadJson = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<String?> failure = const Value.absent(),
+                Value<String?> remoteJson = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DoubleEliminationOutboxCompanion(
+                id: id,
+                divisionId: divisionId,
+                payloadJson: payloadJson,
+                status: status,
+                createdAt: createdAt,
+                failure: failure,
+                remoteJson: remoteJson,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String divisionId,
+                required String payloadJson,
+                required String status,
+                required DateTime createdAt,
+                Value<String?> failure = const Value.absent(),
+                Value<String?> remoteJson = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DoubleEliminationOutboxCompanion.insert(
+                id: id,
+                divisionId: divisionId,
+                payloadJson: payloadJson,
+                status: status,
+                createdAt: createdAt,
+                failure: failure,
+                remoteJson: remoteJson,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$DoubleEliminationOutboxTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({divisionId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (divisionId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.divisionId,
+                        referencedTable:
+                            $$DoubleEliminationOutboxTableReferences
+                                ._divisionIdTable(db),
+                        referencedColumn:
+                            $$DoubleEliminationOutboxTableReferences
+                                ._divisionIdTable(db)
+                                .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$DoubleEliminationOutboxTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DoubleEliminationOutboxTable,
+      DoubleEliminationOutboxData,
+      $$DoubleEliminationOutboxTableFilterComposer,
+      $$DoubleEliminationOutboxTableOrderingComposer,
+      $$DoubleEliminationOutboxTableAnnotationComposer,
+      $$DoubleEliminationOutboxTableCreateCompanionBuilder,
+      $$DoubleEliminationOutboxTableUpdateCompanionBuilder,
+      (DoubleEliminationOutboxData, $$DoubleEliminationOutboxTableReferences),
+      DoubleEliminationOutboxData,
+      PrefetchHooks Function({bool divisionId})
+    >;
+typedef $$DoubleEliminationCheckpointsTableCreateCompanionBuilder =
+    DoubleEliminationCheckpointsCompanion Function({
+      required String scope,
+      required DateTime updatedAt,
+      required String bracketId,
+      Value<int> rowid,
+    });
+typedef $$DoubleEliminationCheckpointsTableUpdateCompanionBuilder =
+    DoubleEliminationCheckpointsCompanion Function({
+      Value<String> scope,
+      Value<DateTime> updatedAt,
+      Value<String> bracketId,
+      Value<int> rowid,
+    });
+
+class $$DoubleEliminationCheckpointsTableFilterComposer
+    extends Composer<_$AppDatabase, $DoubleEliminationCheckpointsTable> {
+  $$DoubleEliminationCheckpointsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get scope => $composableBuilder(
+    column: $table.scope,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bracketId => $composableBuilder(
+    column: $table.bracketId,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$DoubleEliminationCheckpointsTableOrderingComposer
+    extends Composer<_$AppDatabase, $DoubleEliminationCheckpointsTable> {
+  $$DoubleEliminationCheckpointsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get scope => $composableBuilder(
+    column: $table.scope,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bracketId => $composableBuilder(
+    column: $table.bracketId,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$DoubleEliminationCheckpointsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DoubleEliminationCheckpointsTable> {
+  $$DoubleEliminationCheckpointsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get scope =>
+      $composableBuilder(column: $table.scope, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get bracketId =>
+      $composableBuilder(column: $table.bracketId, builder: (column) => column);
+}
+
+class $$DoubleEliminationCheckpointsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DoubleEliminationCheckpointsTable,
+          DoubleEliminationCheckpoint,
+          $$DoubleEliminationCheckpointsTableFilterComposer,
+          $$DoubleEliminationCheckpointsTableOrderingComposer,
+          $$DoubleEliminationCheckpointsTableAnnotationComposer,
+          $$DoubleEliminationCheckpointsTableCreateCompanionBuilder,
+          $$DoubleEliminationCheckpointsTableUpdateCompanionBuilder,
+          (
+            DoubleEliminationCheckpoint,
+            BaseReferences<
+              _$AppDatabase,
+              $DoubleEliminationCheckpointsTable,
+              DoubleEliminationCheckpoint
+            >,
+          ),
+          DoubleEliminationCheckpoint,
+          PrefetchHooks Function()
+        > {
+  $$DoubleEliminationCheckpointsTableTableManager(
+    _$AppDatabase db,
+    $DoubleEliminationCheckpointsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DoubleEliminationCheckpointsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$DoubleEliminationCheckpointsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$DoubleEliminationCheckpointsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> scope = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<String> bracketId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DoubleEliminationCheckpointsCompanion(
+                scope: scope,
+                updatedAt: updatedAt,
+                bracketId: bracketId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String scope,
+                required DateTime updatedAt,
+                required String bracketId,
+                Value<int> rowid = const Value.absent(),
+              }) => DoubleEliminationCheckpointsCompanion.insert(
+                scope: scope,
+                updatedAt: updatedAt,
+                bracketId: bracketId,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$DoubleEliminationCheckpointsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DoubleEliminationCheckpointsTable,
+      DoubleEliminationCheckpoint,
+      $$DoubleEliminationCheckpointsTableFilterComposer,
+      $$DoubleEliminationCheckpointsTableOrderingComposer,
+      $$DoubleEliminationCheckpointsTableAnnotationComposer,
+      $$DoubleEliminationCheckpointsTableCreateCompanionBuilder,
+      $$DoubleEliminationCheckpointsTableUpdateCompanionBuilder,
+      (
+        DoubleEliminationCheckpoint,
+        BaseReferences<
+          _$AppDatabase,
+          $DoubleEliminationCheckpointsTable,
+          DoubleEliminationCheckpoint
+        >,
+      ),
+      DoubleEliminationCheckpoint,
+      PrefetchHooks Function()
+    >;
 typedef $$MatchResultRevisionsTableCreateCompanionBuilder =
     MatchResultRevisionsCompanion Function({
       required String operationId,
@@ -32285,6 +34371,23 @@ class $AppDatabaseManager {
       $$RoundRobinOutboxTableTableManager(_db, _db.roundRobinOutbox);
   $$RoundRobinCheckpointsTableTableManager get roundRobinCheckpoints =>
       $$RoundRobinCheckpointsTableTableManager(_db, _db.roundRobinCheckpoints);
+  $$DoubleEliminationSnapshotsTableTableManager
+  get doubleEliminationSnapshots =>
+      $$DoubleEliminationSnapshotsTableTableManager(
+        _db,
+        _db.doubleEliminationSnapshots,
+      );
+  $$DoubleEliminationOutboxTableTableManager get doubleEliminationOutbox =>
+      $$DoubleEliminationOutboxTableTableManager(
+        _db,
+        _db.doubleEliminationOutbox,
+      );
+  $$DoubleEliminationCheckpointsTableTableManager
+  get doubleEliminationCheckpoints =>
+      $$DoubleEliminationCheckpointsTableTableManager(
+        _db,
+        _db.doubleEliminationCheckpoints,
+      );
   $$MatchResultRevisionsTableTableManager get matchResultRevisions =>
       $$MatchResultRevisionsTableTableManager(_db, _db.matchResultRevisions);
 }

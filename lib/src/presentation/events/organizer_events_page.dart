@@ -150,6 +150,18 @@ class _EventCard extends ConsumerWidget {
                 label: Text('${division.name}: Single Elimination bracket'),
               ),
             for (final division in setup.divisions.where(
+              (division) =>
+                  !division.metadata.isDeleted &&
+                  division.format == TournamentFormat.doubleElimination,
+            ))
+              OutlinedButton.icon(
+                onPressed: () => context.push(
+                  '/organizer/events/${setup.event.id.value}/divisions/${division.id.value}/double-elimination/generate',
+                ),
+                icon: const Icon(Icons.account_tree),
+                label: Text('${division.name}: Double Elimination bracket'),
+              ),
+            for (final division in setup.divisions.where(
               (d) =>
                   !d.metadata.isDeleted &&
                   (d.format == TournamentFormat.singleRoundRobin ||

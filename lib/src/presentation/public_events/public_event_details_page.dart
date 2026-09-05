@@ -107,6 +107,8 @@ class _Details extends StatelessWidget {
                           division.format ==
                                   TournamentFormat.singleElimination ||
                               division.format ==
+                                  TournamentFormat.doubleElimination ||
+                              division.format ==
                                   TournamentFormat.singleRoundRobin ||
                               division.format ==
                                   TournamentFormat.doubleRoundRobin
@@ -116,6 +118,8 @@ class _Details extends StatelessWidget {
                           division.format !=
                                   TournamentFormat.singleElimination &&
                               division.format !=
+                                  TournamentFormat.doubleElimination &&
+                              division.format !=
                                   TournamentFormat.singleRoundRobin &&
                               division.format !=
                                   TournamentFormat.doubleRoundRobin
@@ -124,6 +128,9 @@ class _Details extends StatelessWidget {
                               division.format ==
                                       TournamentFormat.singleElimination
                                   ? '/events/${event.id.value}/divisions/${division.id.value}/bracket'
+                                  : division.format ==
+                                        TournamentFormat.doubleElimination
+                                  ? '/events/${event.id.value}/divisions/${division.id.value}/double-elimination'
                                   : division.format ==
                                             TournamentFormat.singleRoundRobin ||
                                         division.format ==

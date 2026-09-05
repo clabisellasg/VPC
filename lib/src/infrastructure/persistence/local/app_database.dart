@@ -800,6 +800,39 @@ class RoundRobinCheckpoints extends Table {
   Set<Column<Object>> get primaryKey => {scope};
 }
 
+class DoubleEliminationSnapshots extends Table {
+  TextColumn get divisionId =>
+      text().references(EventDivisions, #id, onDelete: KeyAction.restrict)();
+  TextColumn get bracketJson =>
+      text().customConstraint('NOT NULL CHECK(json_valid(bracket_json))')();
+  @override
+  Set<Column<Object>> get primaryKey => {divisionId};
+}
+
+class DoubleEliminationOutbox extends Table {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+  TextColumn get divisionId =>
+      text().references(EventDivisions, #id, onDelete: KeyAction.restrict)();
+  TextColumn get payloadJson =>
+      text().customConstraint('NOT NULL CHECK(json_valid(payload_json))')();
+  TextColumn get status => text().customConstraint(
+    "NOT NULL CHECK(status IN ('pending','blocked','failed','conflicted','accepted'))",
+  )();
+  DateTimeColumn get createdAt => dateTime()();
+  TextColumn get failure => text().nullable()();
+  TextColumn get remoteJson => text().nullable()();
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class DoubleEliminationCheckpoints extends Table {
+  TextColumn get scope => text()();
+  DateTimeColumn get updatedAt => dateTime()();
+  TextColumn get bracketId => text().withLength(min: 36, max: 36)();
+  @override
+  Set<Column<Object>> get primaryKey => {scope};
+}
+
 class MatchResultRevisions extends Table {
   TextColumn get operationId => text().withLength(min: 36, max: 36)();
   TextColumn get matchId =>
@@ -845,6 +878,9 @@ class MatchResultRevisions extends Table {
     RoundRobinSnapshots,
     RoundRobinOutbox,
     RoundRobinCheckpoints,
+    DoubleEliminationSnapshots,
+    DoubleEliminationOutbox,
+    DoubleEliminationCheckpoints,
     MatchResultRevisions,
   ],
 )
@@ -879,7 +915,7 @@ final class AppDatabase extends _$AppDatabase {
       });
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -960,10 +996,35 @@ final class AppDatabase extends _$AppDatabase {
         }
         if (to == 7) return;
       }
-      if (from <= 7 && to == 8) {
+      if (from <= 7 && to >= 8) {
         await migrator.createTable(roundRobinSnapshots);
         await migrator.createTable(roundRobinOutbox);
         await migrator.createTable(roundRobinCheckpoints);
+        if (to == 8) return;
+      }
+      if (from <= 8 && to == 9) {
+        await migrator.createTable(doubleEliminationSnapshots);
+        await migrator.createTable(doubleEliminationOutbox);
+        await migrator.createTable(doubleEliminationCheckpoints);
+        // The v8 export predates Drift's trigger export support. Real v8
+        // databases already contain these; migration fixtures need them
+        // restored so both paths converge on the same v9 schema.
+        for (final statement in [
+          ..._scopeAndTransitionTriggers,
+          ..._m13IntegrityTriggers,
+        ]) {
+          final match = RegExp(r'CREATE TRIGGER\s+(\w+)').firstMatch(statement);
+          if (match == null) {
+            await customStatement(statement);
+            continue;
+          }
+          final name = match.group(1)!;
+          final existing = await customSelect(
+            "SELECT 1 FROM sqlite_master WHERE type='trigger' AND name=?",
+            variables: [Variable(name)],
+          ).get();
+          if (existing.isEmpty) await customStatement(statement);
+        }
         return;
       }
       throw StateError(

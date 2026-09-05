@@ -1,5 +1,20 @@
 # Architecture Baseline
 
+## M15 Double Elimination
+
+The pure Dart engine builds deterministic Winners, Losers, Grand Final 1 and
+conditional Grand Final 2 structure from M12 canonical team order and M13 seed
+placement. Planned keys are independent of database UUID allocation. BYEs
+advance without fake matches, scores, or losses. A team is eliminated only by
+its second played loss.
+
+Android Drift schema 9 stores the aggregate snapshot, durable outbox and pull
+checkpoint alongside the existing match, dependency, revision and placement
+records. Web calls the fixed organizer-authorized cloud aggregate online and
+never initializes SQLite. Realtime only hints an authoritative pull. The UI
+renders separate horizontally scrollable Winners, Losers and Grand Finals
+sections. M16 court scheduling and queue behavior remain absent.
+
 ## M13 Single Elimination
 
 A pure deterministic generator and immutable bracket state reuse M12 contracts.

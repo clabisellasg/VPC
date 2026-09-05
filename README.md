@@ -6,8 +6,8 @@ single-court community. It will eventually manage reusable community players,
 participation, check-in, payment status, temporary teams, approved tournament
 formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 14 — Single and Double Round Robin (`COMPLETED`).
-M0–M14 are completed; M15–M21 remain NOT STARTED.
+**Current status:** Milestone 15 — Double Elimination (`COMPLETED`).
+M0–M15 are completed; M16–M21 remain NOT STARTED.
 
 ## Version 1 technology stack
 
@@ -55,6 +55,7 @@ scope, replace the stack, or begin a later milestone.
 - [Milestone 12 implementation record](docs/milestones/M12_TOURNAMENT_ENGINE_FOUNDATION.md)
 - [Milestone 13 implementation record](docs/milestones/M13_SINGLE_ELIMINATION.md)
 - [Milestone 14 implementation record](docs/milestones/M14_ROUND_ROBIN.md)
+- [Milestone 15 implementation record](docs/milestones/M15_DOUBLE_ELIMINATION.md)
 
 ## Development setup
 

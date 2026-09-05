@@ -52,11 +52,12 @@ EventsCompanion eventCompanion({
 EventDivisionsCompanion divisionCompanion({
   String id = divisionOneId,
   String eventId = eventOneId,
+  String? format = 'singleElimination',
 }) => EventDivisionsCompanion.insert(
   id: id,
   eventId: eventId,
   name: 'Open',
-  tournamentFormat: const Value('singleElimination'),
+  tournamentFormat: Value(format),
   createdAt: createdAt,
   updatedAt: updatedAt,
   version: 0,

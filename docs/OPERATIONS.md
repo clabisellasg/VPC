@@ -1,5 +1,20 @@
 # Operations Outline
 
+## M15 double-elimination acceptance
+
+Use only synthetic Registration divisions configured as Double Elimination.
+Preview seed order before confirming. Inspect Winners, Losers, Grand Final 1,
+and the clearly conditional reset final; BYEs must not create scores or losses.
+Start and score only Ready matches with the M12 rule. Verify both grand-final
+outcomes, placements, allowed correction before downstream play, and blocked
+correction afterward. Android pending work must survive restart and converge
+once after reconnect; Web remains online-only. Guest views are read-only.
+
+Append-only hosted migrations must never be rewritten. The M15 schema,
+version-guard repairs, diagnostic repair, rollback assertion, and deterministic
+reset-match identity repair are ordered through `20260905151500`; assertions
+leave no synthetic rows. The user confirmed both mandatory walkthroughs.
+
 ## M13 validation and manual operations
 
 Use the existing configured Android/Web run commands and synthetic teams only.

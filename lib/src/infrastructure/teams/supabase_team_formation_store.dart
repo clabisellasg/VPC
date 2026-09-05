@@ -46,6 +46,8 @@ final class SupabaseTeamFormationStore
         },
       );
       return RepositorySuccess(_snapshot(response));
+    } on DomainFailure catch (failure) {
+      return RepositoryFailure(failure);
     } on PostgrestException catch (error) {
       return RepositoryFailure(
         error.code == '42501'
@@ -143,6 +145,15 @@ final class SupabaseTeamFormationStore
           .map((id) => byId[id as String])
           .whereType<EligibleTeamPlayer>()
           .toList();
+      if (players.length != (row['player_ids'] as List).length) {
+        throw const ValidationFailure(
+          field: 'teamEligibility',
+          message:
+              'An existing team includes a player who is no longer checked in '
+              'or assigned to this division. Review the participant roster '
+              'and restore eligibility before managing these pairs.',
+        );
+      }
       return TeamDraft(
         id: TeamId(row['id'] as String),
         players: players,

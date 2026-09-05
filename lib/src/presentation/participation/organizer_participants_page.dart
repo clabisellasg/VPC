@@ -160,13 +160,16 @@ class _OrganizerParticipantsPageState
             for (final division in setup.divisions.where(
               (item) => !item.metadata.isDeleted,
             ))
-              ListTile(
-                leading: const Icon(Icons.groups_outlined),
-                title: Text(division.name),
-                subtitle: const Text('Checked-in division participants only'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => context.push(
-                  '/organizer/events/${widget.eventId}/divisions/${division.id.value}/teams',
+              Material(
+                type: MaterialType.transparency,
+                child: ListTile(
+                  leading: const Icon(Icons.groups_outlined),
+                  title: Text(division.name),
+                  subtitle: const Text('Checked-in division participants only'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push(
+                    '/organizer/events/${widget.eventId}/divisions/${division.id.value}/teams',
+                  ),
                 ),
               ),
           ],

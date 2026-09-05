@@ -6,6 +6,25 @@ import 'package:vpc/src/infrastructure/persistence/local/app_database.dart';
 import '../../../generated_migrations/schema.dart';
 
 void main() {
+  test('v8 to v9 preserves round robin data and adds double elimination durability', () async {
+    final verifier = SchemaVerifier(GeneratedHelper());
+    final schema = await verifier.schemaAt(8);
+    schema.rawDatabase.execute('''
+INSERT INTO events(id,name,scheduled_at,event_type,status,court_label,created_at,updated_at,version)
+VALUES('15000000-0000-4000-8000-000000000001','VPC M15 Migration','2026-09-05T00:00:00.000Z','formal','registration','Sample Court','2026-09-05T00:00:00.000Z','2026-09-05T00:00:00.000Z',3);
+INSERT INTO event_divisions(id,event_id,name,tournament_format,created_at,updated_at,version)
+VALUES('15000000-0000-4000-8000-000000000002','15000000-0000-4000-8000-000000000001','Open','doubleElimination','2026-09-05T00:00:00.000Z','2026-09-05T00:00:00.000Z',4);
+''');
+    final db = AppDatabase(schema.newConnection());
+    await verifier.migrateAndValidate(db, 9);
+    expect((await db.select(db.eventDivisions).getSingle()).version, 4);
+    expect(await db.select(db.doubleEliminationSnapshots).get(), isEmpty);
+    expect(await db.select(db.doubleEliminationOutbox).get(), isEmpty);
+    expect(await db.select(db.doubleEliminationCheckpoints).get(), isEmpty);
+    await db.close();
+    schema.close();
+  });
+
   test(
     'v7 to v8 preserves bracket data and adds round-robin durability',
     () async {

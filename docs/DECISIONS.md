@@ -117,6 +117,14 @@ M14 planner approval:
   criterion. Both legs count in Double Round Robin; incomplete matches do not
   count and UUID/database ordering is never a tie-breaker.
 
+M15 planner approval:
+
+- **V1-080 — ACCEPTED (OPEN-006):** Double Elimination uses a grand-final
+  reset. The winners-bracket finalist reaches Grand Final 1 undefeated. If
+  that team wins, the tournament ends without a played reset match. If the
+  losers-bracket finalist wins, deterministic Grand Final 2 is activated and
+  decides champion and runner-up. The reset policy is not configurable in V1.
+
 ## Open decisions
 
 The “resolve by” milestone is the latest point at which an explicit accepted
@@ -125,7 +133,7 @@ decision is required before affected implementation proceeds.
 | ID | Open question | Resolve by | Status |
 | --- | --- | --- | --- |
 | OPEN-005 | What is the round-robin tie-breaker order? | Before M14 implementation | RESOLVED by V1-079 |
-| OPEN-006 | Does double elimination use a grand-final bracket reset? | Before M15 implementation | OPEN |
+| OPEN-006 | Does double elimination use a grand-final bracket reset? | Before M15 implementation | RESOLVED by V1-080 |
 | OPEN-009 | What is the exact simultaneous-organizer conflict/control policy? | Before M5 implementation | OPEN |
 | OPEN-010 | Which free static hosting provider will serve the Flutter Web/PWA? | Before M19 implementation | OPEN |
 
@@ -135,6 +143,7 @@ decision is required before affected implementation proceeds.
 | --- | --- | --- | --- |
 | OPEN-004 | M13 planner specification | Resolved by V1-078: audited correction of an In Progress Single Elimination result only within the unstarted downstream boundary. | RESOLVED |
 | OPEN-005 | M14 planner specification, 2026-09-04 | Resolved by V1-079 with wins, recursive mini-table wins/differential, overall differential, points scored, then original seed. | RESOLVED |
+| OPEN-006 | M15 planner specification, 2026-09-05 | Resolved by V1-080: Grand Final 2 is activated only when the once-defeated losers-bracket finalist wins Grand Final 1. | RESOLVED |
 | OPEN-003 | M12 planner specification, 2026-09-03 | Resolved by V1-075: one game to 11, win by two, no cap, score-derived winner. | RESOLVED |
 | OPEN-001 | M7 planner specification, 2026-08-28 | Resolved by V1-055: an authenticated member requests an existing player link and an organizer approves or rejects it. | RESOLVED |
 | OPEN-011 | M7 planner specification, 2026-08-28 | Resolved by V1-054: initial V1 authentication is email/password with hosted confirmation preserved. Other providers remain deferred, not accepted. | RESOLVED |

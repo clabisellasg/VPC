@@ -1,5 +1,21 @@
 # Conceptual Database Model
 
+## M15 double-elimination mapping
+
+PostgreSQL adds `double_elimination_brackets` as the public aggregate root and
+a private idempotency receipt table. Existing `matches`,
+`match_dependencies`, `match_result_revisions`, and `division_placements`
+remain the normalized tournament record. Dependencies explicitly route both
+winners and losers. Grand Final 2 has a deterministic planned identity but no
+played Match row until the reset condition is met; an unnecessary reset is
+never persisted as a fake match.
+
+Drift schema 9 adds `double_elimination_snapshots`,
+`double_elimination_outbox`, and `double_elimination_checkpoints` through a
+real v8-to-v9 migration. Existing rows and integrity triggers are preserved.
+No statistics, losers-bracket-specific team identity, or court-queue columns
+are added.
+
 ## M13 schema addition
 
 PostgreSQL adds public single_elimination_brackets (plan/seed metadata),

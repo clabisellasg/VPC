@@ -1,5 +1,20 @@
 # Android Synchronization Design
 
+## M15 bounded double-elimination slice
+
+Generation/regeneration, match start/result, Grand Final reset, and audited
+correction use one fixed aggregate command with a stable operation UUID.
+Android commits local bracket state and its outbox entry atomically, retains
+pending work across restart, and imports authoritative cloud state through a
+durable checkpoint without creating another outbox operation. Pull stops at
+protected pending/conflicted intent rather than silently overwriting it.
+
+The cloud function independently validates organizer authority, lifecycle,
+format, canonical plan shape, winner/loser source resolution, scores,
+optimistic versions, reset activation, placements, and replay identity.
+Identical replay is safe and changed payload reuse fails. Realtime is only a
+refresh hint. This slice adds no round-robin changes or M16 queue data.
+
 ## M13 bounded bracket slice
 
 Generation/regeneration, start, score and audited correction use fixed command
