@@ -3,6 +3,7 @@ import 'dart:convert';
 import '../../domain/common/domain_failure.dart';
 import '../../domain/common/entity_id.dart';
 import '../../domain/common/repository_result.dart';
+import '../sync/outbox_ordering.dart';
 import 'bracket_codec.dart';
 import 'drift_bracket_repository.dart';
 import 'supabase_bracket_repository.dart';
@@ -34,6 +35,11 @@ final class BracketSynchronizer {
         final command = decodeBracketCommand(
           jsonDecode(row['payload_json'] as String),
         );
+        final earlierCourt = await local.rows(
+          "SELECT 1 FROM court_queue_outbox WHERE event_id=? AND status<>'accepted' AND created_at<? LIMIT 1",
+          [command.eventId.value, outboxCreatedAt(row)],
+        );
+        if (earlierCourt.isNotEmpty) break;
         final result = await remote.apply(command);
         if (_disposed) return;
         if (result case RepositoryFailure(:final failure)) {

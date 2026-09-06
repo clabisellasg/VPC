@@ -178,6 +178,13 @@ class _EventCard extends ConsumerWidget {
               spacing: 8,
               runSpacing: 8,
               children: [
+                FilledButton.tonalIcon(
+                  onPressed: () => context.push(
+                    '/organizer/events/${setup.event.id.value}/court',
+                  ),
+                  icon: const Icon(Icons.sports_tennis),
+                  label: const Text('Operate court'),
+                ),
                 OutlinedButton(
                   onPressed: () => context.push(
                     '/organizer/events/${setup.event.id.value}/participants',

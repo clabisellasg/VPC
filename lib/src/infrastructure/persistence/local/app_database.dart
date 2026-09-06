@@ -846,6 +846,29 @@ class MatchResultRevisions extends Table {
   Set<Column<Object>> get primaryKey => {operationId};
 }
 
+class CourtQueueOutbox extends Table {
+  TextColumn get id => text().withLength(min: 36, max: 36)();
+  TextColumn get eventId =>
+      text().references(Events, #id, onDelete: KeyAction.restrict)();
+  TextColumn get payloadJson =>
+      text().customConstraint('NOT NULL CHECK(json_valid(payload_json))')();
+  TextColumn get status => text().customConstraint(
+    "NOT NULL CHECK(status IN ('pending','blocked','failed','conflicted','accepted'))",
+  )();
+  DateTimeColumn get createdAt => dateTime()();
+  TextColumn get failure => text().nullable()();
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class CourtQueueCheckpoints extends Table {
+  TextColumn get scope => text()();
+  DateTimeColumn get updatedAt => dateTime()();
+  TextColumn get queueEntryId => text().withLength(min: 36, max: 36)();
+  @override
+  Set<Column<Object>> get primaryKey => {scope};
+}
+
 @DriftDatabase(
   tables: [
     Players,
@@ -882,6 +905,8 @@ class MatchResultRevisions extends Table {
     DoubleEliminationOutbox,
     DoubleEliminationCheckpoints,
     MatchResultRevisions,
+    CourtQueueOutbox,
+    CourtQueueCheckpoints,
   ],
 )
 final class AppDatabase extends _$AppDatabase {
@@ -915,7 +940,7 @@ final class AppDatabase extends _$AppDatabase {
       });
 
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 10;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -1002,7 +1027,7 @@ final class AppDatabase extends _$AppDatabase {
         await migrator.createTable(roundRobinCheckpoints);
         if (to == 8) return;
       }
-      if (from <= 8 && to == 9) {
+      if (from <= 8 && to >= 9) {
         await migrator.createTable(doubleEliminationSnapshots);
         await migrator.createTable(doubleEliminationOutbox);
         await migrator.createTable(doubleEliminationCheckpoints);
@@ -1025,6 +1050,11 @@ final class AppDatabase extends _$AppDatabase {
           ).get();
           if (existing.isEmpty) await customStatement(statement);
         }
+        if (to == 9) return;
+      }
+      if (from <= 9 && to == 10) {
+        await migrator.createTable(courtQueueOutbox);
+        await migrator.createTable(courtQueueCheckpoints);
         return;
       }
       throw StateError(

@@ -6,6 +6,27 @@ import 'package:vpc/src/infrastructure/persistence/local/app_database.dart';
 import '../../../generated_migrations/schema.dart';
 
 void main() {
+  test(
+    'v9 to v10 preserves queue rows and adds court command durability',
+    () async {
+      final verifier = SchemaVerifier(GeneratedHelper());
+      final schema = await verifier.schemaAt(9);
+      schema.rawDatabase.execute('''
+INSERT INTO events(id,name,scheduled_at,event_type,status,court_label,created_at,updated_at,version)
+VALUES('16000000-0000-4000-8000-000000000001','VPC M16 Migration','2026-09-06T00:00:00.000Z','formal','inProgress','Sample Court','2026-09-06T00:00:00.000Z','2026-09-06T00:00:00.000Z',3);
+INSERT INTO event_divisions(id,event_id,name,tournament_format,created_at,updated_at,version)
+VALUES('16000000-0000-4000-8000-000000000002','16000000-0000-4000-8000-000000000001','Open','singleElimination','2026-09-06T00:00:00.000Z','2026-09-06T00:00:00.000Z',4);
+''');
+      final db = AppDatabase(schema.newConnection());
+      await verifier.migrateAndValidate(db, 10);
+      expect((await db.select(db.events).getSingle()).version, 3);
+      expect(await db.select(db.courtQueueOutbox).get(), isEmpty);
+      expect(await db.select(db.courtQueueCheckpoints).get(), isEmpty);
+      await db.close();
+      schema.close();
+    },
+  );
+
   test('v8 to v9 preserves round robin data and adds double elimination durability', () async {
     final verifier = SchemaVerifier(GeneratedHelper());
     final schema = await verifier.schemaAt(8);

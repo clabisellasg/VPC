@@ -24,6 +24,7 @@ import 'package:vpc/src/presentation/events/organizer_event_setup_page.dart';
 import 'package:vpc/src/presentation/participation/add_participant_page.dart';
 import 'package:vpc/src/presentation/participation/organizer_participants_page.dart';
 import 'package:vpc/src/domain/common/domain_enums.dart';
+import 'package:vpc/src/presentation/court/event_court_page.dart';
 
 GoRouter createAppRouter() {
   // Organizer drill-downs use push so Android system back returns through the
@@ -37,6 +38,18 @@ GoRouter createAppRouter() {
         builder: (context, state, child) =>
             PublicAppShell(location: state.uri.path, child: child),
         routes: [
+          GoRoute(
+            path: '/events/:eventId/court',
+            builder: (context, state) =>
+                EventCourtPage(eventId: state.pathParameters['eventId']!),
+          ),
+          GoRoute(
+            path: '/organizer/events/:eventId/court',
+            builder: (context, state) => EventCourtPage(
+              eventId: state.pathParameters['eventId']!,
+              organizerRoute: true,
+            ),
+          ),
           GoRoute(
             path: '/events/:eventId/divisions/:divisionId/bracket',
             builder: (context, state) => SingleEliminationPage(

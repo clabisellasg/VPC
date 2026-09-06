@@ -1,5 +1,22 @@
 # Android Synchronization Design
 
+## M16 bounded court-queue slice
+
+Android reconciliation/start writes queue state and one fixed outbox command in
+a SQLite transaction. Operations carry stable UUIDs and survive restart.
+Organizer authority is rechecked in PostgreSQL; authorization blocks and
+optimistic conflicts remain explicit. Once protected local intent clears, the
+synchronizer imports authoritative current/waiting entries without generating
+another operation. Existing tournament synchronizers continue to own results,
+progression, placements, and tombstones.
+
+The cloud command accepts only reconcile or start, locks the event, validates
+READY membership/version, prevents two current matches, and stores its response
+with a private idempotency receipt. Identical replay is safe and changed-payload
+reuse fails. Realtime for matches/queue rows only triggers a debounced refetch.
+Web calls the same online protocol without Drift. M17 retains ownership of full
+offline tournament-operation hardening; OPEN-009 remains unresolved.
+
 ## M15 bounded double-elimination slice
 
 Generation/regeneration, match start/result, Grand Final reset, and audited

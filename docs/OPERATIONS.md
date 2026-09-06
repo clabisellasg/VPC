@@ -1,5 +1,21 @@
 # Operations Outline
 
+## M16 court operation
+
+Use synthetic event data only. Generate tournament structures and move the
+event to In Progress so at least two matches are READY. Open **Operate court**
+from Manage events. Refresh/reconcile, verify Now Playing and Up Next, then use
+**Start next match**; no match starts automatically. Open the current match in
+its existing tournament view to enter the result, return to the court, and
+refresh to observe the newly unlocked match. An offline Android action must say
+pending, survive restart, and converge once after reconnection. Guests/members
+may view but never see organizer court controls.
+
+Hosted migrations are append-only. Apply the M16 schema then assertion
+migration, verify linked history, run linked lint, and use only publishable-key
+reads for anonymous smoke checks. Never print or place a service-role key in
+Flutter. See [M16](milestones/M16_ONE_COURT_SCHEDULING_QUEUE.md).
+
 ## M15 double-elimination acceptance
 
 Use only synthetic Registration divisions configured as Double Elimination.

@@ -6,8 +6,8 @@ single-court community. It will eventually manage reusable community players,
 participation, check-in, payment status, temporary teams, approved tournament
 formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 15 — Double Elimination (`COMPLETED`).
-M0–M15 are completed; M16–M21 remain NOT STARTED.
+**Current status:** Milestone 16 — One-Court Scheduling and Queue (`COMPLETED`).
+M0–M16 are completed; M17–M21 remain NOT STARTED.
 
 ## Version 1 technology stack
 
@@ -56,6 +56,7 @@ scope, replace the stack, or begin a later milestone.
 - [Milestone 13 implementation record](docs/milestones/M13_SINGLE_ELIMINATION.md)
 - [Milestone 14 implementation record](docs/milestones/M14_ROUND_ROBIN.md)
 - [Milestone 15 implementation record](docs/milestones/M15_DOUBLE_ELIMINATION.md)
+- [Milestone 16 implementation record](docs/milestones/M16_ONE_COURT_SCHEDULING_QUEUE.md)
 
 ## Development setup
 

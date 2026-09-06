@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import '../../domain/common/domain_failure.dart';
 import '../../domain/common/repository_result.dart';
+import '../sync/outbox_ordering.dart';
 import 'drift_round_robin_repository.dart';
 import 'round_robin_codec.dart';
 import 'supabase_round_robin_repository.dart';
@@ -27,6 +28,11 @@ final class RoundRobinSynchronizer {
         final command = decodeRoundRobinCommand(
           jsonDecode(row['payload_json'] as String),
         );
+        final earlierCourt = await local.rows(
+          "SELECT 1 FROM court_queue_outbox WHERE event_id=? AND status<>'accepted' AND created_at<? LIMIT 1",
+          [command.eventId.value, outboxCreatedAt(row)],
+        );
+        if (earlierCourt.isNotEmpty) break;
         final result = await remote.apply(command);
         if (_disposed) return;
         if (result case RepositoryFailure(:final failure)) {

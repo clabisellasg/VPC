@@ -178,11 +178,14 @@ final class DriftRoundRobinRepository implements RoundRobinRepository {
     final division = tournament.plan.divisionId.value,
         stamp = tournament.metadata.updatedAt.toIso8601String();
     for (final revision in tournament.revisions) {
-      final existing = await rows(
+      final matchExists = await rows('SELECT id FROM matches WHERE id=?', [
+        revision.previous.id.value,
+      ]);
+      final revisionExists = await rows(
         'SELECT operation_id FROM match_result_revisions WHERE operation_id=?',
         [revision.operationId.value],
       );
-      if (existing.isEmpty) {
+      if (matchExists.isNotEmpty && revisionExists.isEmpty) {
         await write(
           'INSERT INTO match_result_revisions(operation_id,match_id,previous_result,reason,recorded_at) VALUES(?,?,?,?,?)',
           [
@@ -233,6 +236,26 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET side_one_team_
             j[k],
         ],
       );
+    }
+    // Match rows must exist before immutable revisions reference them when a
+    // fresh Android database imports authoritative history.
+    for (final revision in tournament.revisions) {
+      final existing = await rows(
+        'SELECT operation_id FROM match_result_revisions WHERE operation_id=?',
+        [revision.operationId.value],
+      );
+      if (existing.isEmpty) {
+        await write(
+          'INSERT INTO match_result_revisions(operation_id,match_id,previous_result,reason,recorded_at) VALUES(?,?,?,?,?)',
+          [
+            revision.operationId.value,
+            revision.previous.id.value,
+            jsonEncode(matchJson(revision.previous)),
+            revision.reason,
+            revision.recordedAt.toIso8601String(),
+          ],
+        );
+      }
     }
     if (tournament.complete &&
         command != null &&

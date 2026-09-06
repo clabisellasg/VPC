@@ -1,5 +1,26 @@
 # Testing Strategy
 
+## M16 validation
+
+M16 focused tests cover READY eligibility, excluded states/BYEs, duplicate-free
+reconciliation, durable order, immediate-repeat avoidance and fallback, rest
+distance, nonstarvation, stable ordering across four formats/divisions,
+organizer-only explicit start, exactly one current match, atomic outbox rollback,
+idempotent replay, current-entry reconciliation, v9-to-v10 migration, malformed
+remote data, guest read-only behavior, responsive layout, and semantics.
+
+Final M16 validation passed all 354 Flutter tests, formatting, static analysis,
+deterministic build-runner freshness, generated migration helpers, Web build,
+and Android debug APK build. Linked migration history agrees through
+`20260906123500`; the dry run is empty; linked lint reports no errors, with only
+the pre-existing M13/M14 PL/pgSQL warnings. The M16 catalog, RLS, idempotency,
+stale-version, concurrent-start, and deterministic-order assertions passed
+again against the hosted project and rolled back their synthetic fixtures.
+The project owner confirmed both mandatory physical Android and Web
+walkthroughs. Ordinary tests use fakes/in-memory Drift and make no network
+calls. Local pgTAP was skipped because Docker Desktop's Linux engine was not
+available.
+
 ## M15 validation
 
 M15 tests deterministic 2-, 3-, 4-, 5-, and 8-team generation, standard seed

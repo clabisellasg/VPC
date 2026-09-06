@@ -1,5 +1,21 @@
 # Conceptual Database Model
 
+## M16 court-queue mapping
+
+Existing `court_queue_entries` remain the public durable wait-order records.
+They reference an event, optional division, and match with restrictive foreign
+keys, optimistic versions, UTC metadata, and tombstones. M16 adds only a
+private hosted operation-receipt table and an active event/position index.
+Public context returns the current and waiting queue without payment, Auth,
+profile, role, or claim data. A match trigger prevents two active `inProgress`
+matches in one event.
+
+Drift schema 10 adds `court_queue_outbox` and `court_queue_checkpoints` through
+a real v9-to-v10 migration. Existing queue and tournament rows are preserved.
+The current queue entry is retained during cloud reconciliation; result and
+progression records remain in the existing tournament tables. No multiple-court,
+reservation, estimated-duration, fairness-total, or M17 table is introduced.
+
 ## M15 double-elimination mapping
 
 PostgreSQL adds `double_elimination_brackets` as the public aggregate root and

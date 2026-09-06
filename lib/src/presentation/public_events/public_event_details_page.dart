@@ -87,6 +87,12 @@ class _Details extends StatelessWidget {
                 label: 'Court',
                 value: event.courtLabel,
               ),
+              OutlinedButton.icon(
+                onPressed: () =>
+                    context.push('/events/${event.id.value}/court'),
+                icon: const Icon(Icons.sports_tennis),
+                label: const Text('View court queue'),
+              ),
               const SizedBox(height: 28),
               Text('Divisions', style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 12),

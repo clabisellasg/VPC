@@ -143,7 +143,8 @@ authorized proceeding.
 - **Purpose:** Implement Now Playing, Up Next, queue progression, and reasonable
   rest/fairness ordering across formats.
 - **Dependencies:** M13, M14, and M15.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED; automated/hosted validation and user-confirmed
+  physical Android/Web walkthroughs passed.
 
 ### M17 — Complete Offline Tournament Operation and Sync Hardening
 

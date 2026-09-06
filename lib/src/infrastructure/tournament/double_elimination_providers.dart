@@ -46,7 +46,7 @@ final doubleEliminationServiceProvider = Provider<DoubleEliminationService?>((
         );
 });
 final doubleEliminationSynchronizerProvider =
-    Provider.autoDispose<DoubleEliminationSynchronizer?>((ref) {
+    Provider<DoubleEliminationSynchronizer?>((ref) {
       final local = ref.watch(localDoubleEliminationRepositoryProvider);
       final remote = ref.watch(remoteDoubleEliminationRepositoryProvider);
       if (local == null || remote == null) return null;

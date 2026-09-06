@@ -166,12 +166,18 @@ final class DriftBracketRepository implements BracketRepository {
   }) async {
     final stamp = bracket.metadata.updatedAt.toIso8601String(),
         division = bracket.plan.divisionId.value;
+    // Existing completed matches need their audit row before a corrected
+    // result update can pass the immutable-result trigger. Fresh imports defer
+    // the same revision until its referenced match has been inserted below.
     for (final revision in bracket.revisions) {
-      final existing = await rows(
+      final matchExists = await rows('SELECT id FROM matches WHERE id=?', [
+        revision.previous.id.value,
+      ]);
+      final revisionExists = await rows(
         'SELECT operation_id FROM match_result_revisions WHERE operation_id=?',
         [revision.operationId.value],
       );
-      if (existing.isEmpty) {
+      if (matchExists.isNotEmpty && revisionExists.isEmpty) {
         await write(
           'INSERT INTO match_result_revisions(operation_id,match_id,previous_result,reason,recorded_at) VALUES(?,?,?,?,?)',
           [
@@ -244,6 +250,27 @@ side_one_score=excluded.side_one_score,side_two_score=excluded.side_two_score,wi
             m[key],
         ],
       );
+    }
+    // A fresh database has no referenced match rows yet. Import matches before
+    // their immutable result-revision audit records so foreign keys remain
+    // valid during authoritative pull reconciliation.
+    for (final revision in bracket.revisions) {
+      final existing = await rows(
+        'SELECT operation_id FROM match_result_revisions WHERE operation_id=?',
+        [revision.operationId.value],
+      );
+      if (existing.isEmpty) {
+        await write(
+          'INSERT INTO match_result_revisions(operation_id,match_id,previous_result,reason,recorded_at) VALUES(?,?,?,?,?)',
+          [
+            revision.operationId.value,
+            revision.previous.id.value,
+            jsonEncode(matchJson(revision.previous)),
+            revision.reason,
+            revision.recordedAt.toIso8601String(),
+          ],
+        );
+      }
     }
     for (final match in bracket.plan.matches) {
       final sources = [match.sideOne, match.sideTwo];

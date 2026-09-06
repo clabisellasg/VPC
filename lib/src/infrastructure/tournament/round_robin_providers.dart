@@ -35,15 +35,14 @@ final roundRobinServiceProvider = Provider<RoundRobinService?>((ref) {
       ? null
       : RoundRobinService(repository: repo, ids: p, clock: p);
 });
-final roundRobinSynchronizerProvider =
-    Provider.autoDispose<RoundRobinSynchronizer?>((ref) {
-      final local = ref.watch(localRoundRobinRepositoryProvider),
-          remote = ref.watch(remoteRoundRobinRepositoryProvider);
-      if (local == null || remote == null) return null;
-      final sync = RoundRobinSynchronizer(local: local, remote: remote);
-      ref.onDispose(sync.dispose);
-      return sync;
-    });
+final roundRobinSynchronizerProvider = Provider<RoundRobinSynchronizer?>((ref) {
+  final local = ref.watch(localRoundRobinRepositoryProvider),
+      remote = ref.watch(remoteRoundRobinRepositoryProvider);
+  if (local == null || remote == null) return null;
+  final sync = RoundRobinSynchronizer(local: local, remote: remote);
+  ref.onDispose(sync.dispose);
+  return sync;
+});
 final roundRobinRefreshHintsProvider = StreamProvider.autoDispose<void>((ref) {
   final client = ref.watch(supabaseClientProvider);
   if (client == null) return const Stream.empty();

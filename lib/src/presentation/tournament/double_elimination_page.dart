@@ -17,6 +17,7 @@ import '../../domain/matches/match.dart';
 import '../../domain/tournament/double_elimination_generator.dart';
 import '../../domain/tournament/tournament_contracts.dart';
 import '../../infrastructure/events/event_setup_providers.dart';
+import '../../infrastructure/court/court_queue_providers.dart';
 import '../../infrastructure/teams/team_formation_providers.dart';
 import '../../infrastructure/tournament/double_elimination_providers.dart';
 import '../accounts/account_controller.dart';
@@ -104,10 +105,23 @@ class _DoubleEliminationPageState extends ConsumerState<DoubleEliminationPage> {
       }
 
       present(await repository.load(eventId, divisionId));
+      if (!mounted || request != _request) return;
       final local = ref.read(localDoubleEliminationRepositoryProvider);
       if (local != null && _role == AuthorizationState.organizer) {
         await ref.read(eventSetupSynchronizerProvider)?.synchronize();
+        if (!mounted || request != _request) return;
         await ref.read(teamFormationSynchronizerProvider)?.synchronize();
+        if (!mounted ||
+            request != _request ||
+            _role != AuthorizationState.organizer) {
+          return;
+        }
+        await ref.read(courtQueueSynchronizerProvider)?.synchronize();
+        if (!mounted ||
+            request != _request ||
+            _role != AuthorizationState.organizer) {
+          return;
+        }
         await ref.read(doubleEliminationSynchronizerProvider)?.synchronize();
         if (mounted) present(await local.load(eventId, divisionId));
       } else if (local != null && _context?.bracket == null) {

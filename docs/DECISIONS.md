@@ -125,6 +125,15 @@ M15 planner approval:
   losers-bracket finalist wins, deterministic Grand Final 2 is activated and
   decides champion and runner-up. The reset policy is not configurable in V1.
 
+M16 planner approval (2026-09-06):
+
+- **V1-081 — ACCEPTED:** Version 1 operates one physical court for one event.
+  Only READY matches enter a durable queue. The deterministic recommendation
+  avoids an immediate team repeat when possible, then uses waiting age,
+  least-rested-team distance, and stable event/division/match identity. Starting
+  is explicit, one match is Now Playing at most, and completion never
+  automatically starts another match.
+
 ## Open decisions
 
 The “resolve by” milestone is the latest point at which an explicit accepted

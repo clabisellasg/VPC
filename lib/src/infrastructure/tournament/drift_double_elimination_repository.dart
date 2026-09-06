@@ -214,11 +214,14 @@ final class DriftDoubleEliminationRepository
     final stamp = bracket.metadata.updatedAt.toIso8601String();
     final division = bracket.plan.divisionId.value;
     for (final revision in bracket.revisions) {
-      final old = await rows(
+      final matchExists = await rows('SELECT id FROM matches WHERE id=?', [
+        revision.previous.id.value,
+      ]);
+      final revisionExists = await rows(
         'SELECT operation_id FROM match_result_revisions WHERE operation_id=?',
         [revision.operationId.value],
       );
-      if (old.isEmpty) {
+      if (matchExists.isNotEmpty && revisionExists.isEmpty) {
         await write(
           'INSERT INTO match_result_revisions(operation_id,match_id,previous_result,reason,recorded_at) VALUES(?,?,?,?,?)',
           [
@@ -290,6 +293,26 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET side_one_team_
             encoded[key],
         ],
       );
+    }
+    // Match rows precede revision rows so a new cache can restore audited
+    // results without transient foreign-key failures.
+    for (final revision in bracket.revisions) {
+      final old = await rows(
+        'SELECT operation_id FROM match_result_revisions WHERE operation_id=?',
+        [revision.operationId.value],
+      );
+      if (old.isEmpty) {
+        await write(
+          'INSERT INTO match_result_revisions(operation_id,match_id,previous_result,reason,recorded_at) VALUES(?,?,?,?,?)',
+          [
+            revision.operationId.value,
+            revision.previous.id.value,
+            jsonEncode(matchJson(revision.previous)),
+            revision.reason,
+            revision.recordedAt.toIso8601String(),
+          ],
+        );
+      }
     }
     await write(
       'UPDATE match_dependencies SET deleted_at=?,updated_at=?,version=version+1 WHERE destination_match_id IN (SELECT id FROM matches WHERE division_id=?) AND deleted_at IS NULL',

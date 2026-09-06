@@ -16076,6 +16076,708 @@ class MatchResultRevisionsCompanion
   }
 }
 
+class $CourtQueueOutboxTable extends CourtQueueOutbox
+    with TableInfo<$CourtQueueOutboxTable, CourtQueueOutboxData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CourtQueueOutboxTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _eventIdMeta = const VerificationMeta(
+    'eventId',
+  );
+  @override
+  late final GeneratedColumn<String> eventId = GeneratedColumn<String>(
+    'event_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES events (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
+    'payloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
+    'payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK(json_valid(payload_json))',
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK(status IN (\'pending\',\'blocked\',\'failed\',\'conflicted\',\'accepted\'))',
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _failureMeta = const VerificationMeta(
+    'failure',
+  );
+  @override
+  late final GeneratedColumn<String> failure = GeneratedColumn<String>(
+    'failure',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    eventId,
+    payloadJson,
+    status,
+    createdAt,
+    failure,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'court_queue_outbox';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CourtQueueOutboxData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('event_id')) {
+      context.handle(
+        _eventIdMeta,
+        eventId.isAcceptableOrUnknown(data['event_id']!, _eventIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_eventIdMeta);
+    }
+    if (data.containsKey('payload_json')) {
+      context.handle(
+        _payloadJsonMeta,
+        payloadJson.isAcceptableOrUnknown(
+          data['payload_json']!,
+          _payloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadJsonMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('failure')) {
+      context.handle(
+        _failureMeta,
+        failure.isAcceptableOrUnknown(data['failure']!, _failureMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CourtQueueOutboxData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CourtQueueOutboxData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      eventId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}event_id'],
+      )!,
+      payloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_json'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      failure: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}failure'],
+      ),
+    );
+  }
+
+  @override
+  $CourtQueueOutboxTable createAlias(String alias) {
+    return $CourtQueueOutboxTable(attachedDatabase, alias);
+  }
+}
+
+class CourtQueueOutboxData extends DataClass
+    implements Insertable<CourtQueueOutboxData> {
+  final String id;
+  final String eventId;
+  final String payloadJson;
+  final String status;
+  final DateTime createdAt;
+  final String? failure;
+  const CourtQueueOutboxData({
+    required this.id,
+    required this.eventId,
+    required this.payloadJson,
+    required this.status,
+    required this.createdAt,
+    this.failure,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['event_id'] = Variable<String>(eventId);
+    map['payload_json'] = Variable<String>(payloadJson);
+    map['status'] = Variable<String>(status);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || failure != null) {
+      map['failure'] = Variable<String>(failure);
+    }
+    return map;
+  }
+
+  CourtQueueOutboxCompanion toCompanion(bool nullToAbsent) {
+    return CourtQueueOutboxCompanion(
+      id: Value(id),
+      eventId: Value(eventId),
+      payloadJson: Value(payloadJson),
+      status: Value(status),
+      createdAt: Value(createdAt),
+      failure: failure == null && nullToAbsent
+          ? const Value.absent()
+          : Value(failure),
+    );
+  }
+
+  factory CourtQueueOutboxData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CourtQueueOutboxData(
+      id: serializer.fromJson<String>(json['id']),
+      eventId: serializer.fromJson<String>(json['eventId']),
+      payloadJson: serializer.fromJson<String>(json['payloadJson']),
+      status: serializer.fromJson<String>(json['status']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      failure: serializer.fromJson<String?>(json['failure']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'eventId': serializer.toJson<String>(eventId),
+      'payloadJson': serializer.toJson<String>(payloadJson),
+      'status': serializer.toJson<String>(status),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'failure': serializer.toJson<String?>(failure),
+    };
+  }
+
+  CourtQueueOutboxData copyWith({
+    String? id,
+    String? eventId,
+    String? payloadJson,
+    String? status,
+    DateTime? createdAt,
+    Value<String?> failure = const Value.absent(),
+  }) => CourtQueueOutboxData(
+    id: id ?? this.id,
+    eventId: eventId ?? this.eventId,
+    payloadJson: payloadJson ?? this.payloadJson,
+    status: status ?? this.status,
+    createdAt: createdAt ?? this.createdAt,
+    failure: failure.present ? failure.value : this.failure,
+  );
+  CourtQueueOutboxData copyWithCompanion(CourtQueueOutboxCompanion data) {
+    return CourtQueueOutboxData(
+      id: data.id.present ? data.id.value : this.id,
+      eventId: data.eventId.present ? data.eventId.value : this.eventId,
+      payloadJson: data.payloadJson.present
+          ? data.payloadJson.value
+          : this.payloadJson,
+      status: data.status.present ? data.status.value : this.status,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      failure: data.failure.present ? data.failure.value : this.failure,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CourtQueueOutboxData(')
+          ..write('id: $id, ')
+          ..write('eventId: $eventId, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('failure: $failure')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, eventId, payloadJson, status, createdAt, failure);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CourtQueueOutboxData &&
+          other.id == this.id &&
+          other.eventId == this.eventId &&
+          other.payloadJson == this.payloadJson &&
+          other.status == this.status &&
+          other.createdAt == this.createdAt &&
+          other.failure == this.failure);
+}
+
+class CourtQueueOutboxCompanion extends UpdateCompanion<CourtQueueOutboxData> {
+  final Value<String> id;
+  final Value<String> eventId;
+  final Value<String> payloadJson;
+  final Value<String> status;
+  final Value<DateTime> createdAt;
+  final Value<String?> failure;
+  final Value<int> rowid;
+  const CourtQueueOutboxCompanion({
+    this.id = const Value.absent(),
+    this.eventId = const Value.absent(),
+    this.payloadJson = const Value.absent(),
+    this.status = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.failure = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CourtQueueOutboxCompanion.insert({
+    required String id,
+    required String eventId,
+    required String payloadJson,
+    required String status,
+    required DateTime createdAt,
+    this.failure = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       eventId = Value(eventId),
+       payloadJson = Value(payloadJson),
+       status = Value(status),
+       createdAt = Value(createdAt);
+  static Insertable<CourtQueueOutboxData> custom({
+    Expression<String>? id,
+    Expression<String>? eventId,
+    Expression<String>? payloadJson,
+    Expression<String>? status,
+    Expression<DateTime>? createdAt,
+    Expression<String>? failure,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (eventId != null) 'event_id': eventId,
+      if (payloadJson != null) 'payload_json': payloadJson,
+      if (status != null) 'status': status,
+      if (createdAt != null) 'created_at': createdAt,
+      if (failure != null) 'failure': failure,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CourtQueueOutboxCompanion copyWith({
+    Value<String>? id,
+    Value<String>? eventId,
+    Value<String>? payloadJson,
+    Value<String>? status,
+    Value<DateTime>? createdAt,
+    Value<String?>? failure,
+    Value<int>? rowid,
+  }) {
+    return CourtQueueOutboxCompanion(
+      id: id ?? this.id,
+      eventId: eventId ?? this.eventId,
+      payloadJson: payloadJson ?? this.payloadJson,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      failure: failure ?? this.failure,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (eventId.present) {
+      map['event_id'] = Variable<String>(eventId.value);
+    }
+    if (payloadJson.present) {
+      map['payload_json'] = Variable<String>(payloadJson.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (failure.present) {
+      map['failure'] = Variable<String>(failure.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CourtQueueOutboxCompanion(')
+          ..write('id: $id, ')
+          ..write('eventId: $eventId, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('status: $status, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('failure: $failure, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CourtQueueCheckpointsTable extends CourtQueueCheckpoints
+    with TableInfo<$CourtQueueCheckpointsTable, CourtQueueCheckpoint> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CourtQueueCheckpointsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _scopeMeta = const VerificationMeta('scope');
+  @override
+  late final GeneratedColumn<String> scope = GeneratedColumn<String>(
+    'scope',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _queueEntryIdMeta = const VerificationMeta(
+    'queueEntryId',
+  );
+  @override
+  late final GeneratedColumn<String> queueEntryId = GeneratedColumn<String>(
+    'queue_entry_id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [scope, updatedAt, queueEntryId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'court_queue_checkpoints';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CourtQueueCheckpoint> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('scope')) {
+      context.handle(
+        _scopeMeta,
+        scope.isAcceptableOrUnknown(data['scope']!, _scopeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_scopeMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('queue_entry_id')) {
+      context.handle(
+        _queueEntryIdMeta,
+        queueEntryId.isAcceptableOrUnknown(
+          data['queue_entry_id']!,
+          _queueEntryIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_queueEntryIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {scope};
+  @override
+  CourtQueueCheckpoint map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CourtQueueCheckpoint(
+      scope: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}scope'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      queueEntryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}queue_entry_id'],
+      )!,
+    );
+  }
+
+  @override
+  $CourtQueueCheckpointsTable createAlias(String alias) {
+    return $CourtQueueCheckpointsTable(attachedDatabase, alias);
+  }
+}
+
+class CourtQueueCheckpoint extends DataClass
+    implements Insertable<CourtQueueCheckpoint> {
+  final String scope;
+  final DateTime updatedAt;
+  final String queueEntryId;
+  const CourtQueueCheckpoint({
+    required this.scope,
+    required this.updatedAt,
+    required this.queueEntryId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['scope'] = Variable<String>(scope);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['queue_entry_id'] = Variable<String>(queueEntryId);
+    return map;
+  }
+
+  CourtQueueCheckpointsCompanion toCompanion(bool nullToAbsent) {
+    return CourtQueueCheckpointsCompanion(
+      scope: Value(scope),
+      updatedAt: Value(updatedAt),
+      queueEntryId: Value(queueEntryId),
+    );
+  }
+
+  factory CourtQueueCheckpoint.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CourtQueueCheckpoint(
+      scope: serializer.fromJson<String>(json['scope']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      queueEntryId: serializer.fromJson<String>(json['queueEntryId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'scope': serializer.toJson<String>(scope),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'queueEntryId': serializer.toJson<String>(queueEntryId),
+    };
+  }
+
+  CourtQueueCheckpoint copyWith({
+    String? scope,
+    DateTime? updatedAt,
+    String? queueEntryId,
+  }) => CourtQueueCheckpoint(
+    scope: scope ?? this.scope,
+    updatedAt: updatedAt ?? this.updatedAt,
+    queueEntryId: queueEntryId ?? this.queueEntryId,
+  );
+  CourtQueueCheckpoint copyWithCompanion(CourtQueueCheckpointsCompanion data) {
+    return CourtQueueCheckpoint(
+      scope: data.scope.present ? data.scope.value : this.scope,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      queueEntryId: data.queueEntryId.present
+          ? data.queueEntryId.value
+          : this.queueEntryId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CourtQueueCheckpoint(')
+          ..write('scope: $scope, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('queueEntryId: $queueEntryId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(scope, updatedAt, queueEntryId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CourtQueueCheckpoint &&
+          other.scope == this.scope &&
+          other.updatedAt == this.updatedAt &&
+          other.queueEntryId == this.queueEntryId);
+}
+
+class CourtQueueCheckpointsCompanion
+    extends UpdateCompanion<CourtQueueCheckpoint> {
+  final Value<String> scope;
+  final Value<DateTime> updatedAt;
+  final Value<String> queueEntryId;
+  final Value<int> rowid;
+  const CourtQueueCheckpointsCompanion({
+    this.scope = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.queueEntryId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CourtQueueCheckpointsCompanion.insert({
+    required String scope,
+    required DateTime updatedAt,
+    required String queueEntryId,
+    this.rowid = const Value.absent(),
+  }) : scope = Value(scope),
+       updatedAt = Value(updatedAt),
+       queueEntryId = Value(queueEntryId);
+  static Insertable<CourtQueueCheckpoint> custom({
+    Expression<String>? scope,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? queueEntryId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (scope != null) 'scope': scope,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (queueEntryId != null) 'queue_entry_id': queueEntryId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CourtQueueCheckpointsCompanion copyWith({
+    Value<String>? scope,
+    Value<DateTime>? updatedAt,
+    Value<String>? queueEntryId,
+    Value<int>? rowid,
+  }) {
+    return CourtQueueCheckpointsCompanion(
+      scope: scope ?? this.scope,
+      updatedAt: updatedAt ?? this.updatedAt,
+      queueEntryId: queueEntryId ?? this.queueEntryId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (scope.present) {
+      map['scope'] = Variable<String>(scope.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (queueEntryId.present) {
+      map['queue_entry_id'] = Variable<String>(queueEntryId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CourtQueueCheckpointsCompanion(')
+          ..write('scope: $scope, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('queueEntryId: $queueEntryId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -16141,6 +16843,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $DoubleEliminationCheckpointsTable(this);
   late final $MatchResultRevisionsTable matchResultRevisions =
       $MatchResultRevisionsTable(this);
+  late final $CourtQueueOutboxTable courtQueueOutbox = $CourtQueueOutboxTable(
+    this,
+  );
+  late final $CourtQueueCheckpointsTable courtQueueCheckpoints =
+      $CourtQueueCheckpointsTable(this);
   late final Index playersDisplayNameIdx = Index(
     'players_display_name_idx',
     'CREATE INDEX players_display_name_idx ON players (display_name)',
@@ -16292,6 +16999,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     doubleEliminationOutbox,
     doubleEliminationCheckpoints,
     matchResultRevisions,
+    courtQueueOutbox,
+    courtQueueCheckpoints,
     playersDisplayNameIdx,
     eventsStatusScheduledAtIdx,
     eventDivisionsEventIdIdx,
@@ -17271,6 +17980,26 @@ final class $$EventsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$CourtQueueOutboxTable, List<CourtQueueOutboxData>>
+  _courtQueueOutboxRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.courtQueueOutbox,
+    aliasName: 'events__id__court_queue_outbox__event_id',
+  );
+
+  $$CourtQueueOutboxTableProcessedTableManager get courtQueueOutboxRefs {
+    final manager = $$CourtQueueOutboxTableTableManager(
+      $_db,
+      $_db.courtQueueOutbox,
+    ).filter((f) => f.eventId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _courtQueueOutboxRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$EventsTableFilterComposer
@@ -17522,6 +18251,31 @@ class $$EventsTableFilterComposer
                     $removeJoinBuilderFromRootComposer,
               ),
         );
+    return f(composer);
+  }
+
+  Expression<bool> courtQueueOutboxRefs(
+    Expression<bool> Function($$CourtQueueOutboxTableFilterComposer f) f,
+  ) {
+    final $$CourtQueueOutboxTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.courtQueueOutbox,
+      getReferencedColumn: (t) => t.eventId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CourtQueueOutboxTableFilterComposer(
+            $db: $db,
+            $table: $db.courtQueueOutbox,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return f(composer);
   }
 }
@@ -17836,6 +18590,31 @@ class $$EventsTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> courtQueueOutboxRefs<T extends Object>(
+    Expression<T> Function($$CourtQueueOutboxTableAnnotationComposer a) f,
+  ) {
+    final $$CourtQueueOutboxTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.courtQueueOutbox,
+      getReferencedColumn: (t) => t.eventId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CourtQueueOutboxTableAnnotationComposer(
+            $db: $db,
+            $table: $db.courtQueueOutbox,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$EventsTableTableManager
@@ -17859,6 +18638,7 @@ class $$EventsTableTableManager
             bool eventSetupPullCheckpointsRefs,
             bool eventSetupConflictsRefs,
             bool teamFormationOutboxOperationsRefs,
+            bool courtQueueOutboxRefs,
           })
         > {
   $$EventsTableTableManager(_$AppDatabase db, $EventsTable table)
@@ -17947,6 +18727,7 @@ class $$EventsTableTableManager
                 eventSetupPullCheckpointsRefs = false,
                 eventSetupConflictsRefs = false,
                 teamFormationOutboxOperationsRefs = false,
+                courtQueueOutboxRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -17961,6 +18742,7 @@ class $$EventsTableTableManager
                     if (eventSetupConflictsRefs) db.eventSetupConflicts,
                     if (teamFormationOutboxOperationsRefs)
                       db.teamFormationOutboxOperations,
+                    if (courtQueueOutboxRefs) db.courtQueueOutbox,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
@@ -18112,6 +18894,27 @@ class $$EventsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (courtQueueOutboxRefs)
+                        await $_getPrefetchedData<
+                          LocalEventRow,
+                          $EventsTable,
+                          CourtQueueOutboxData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$EventsTableReferences
+                              ._courtQueueOutboxRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$EventsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).courtQueueOutboxRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.eventId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -18140,6 +18943,7 @@ typedef $$EventsTableProcessedTableManager =
         bool eventSetupPullCheckpointsRefs,
         bool eventSetupConflictsRefs,
         bool teamFormationOutboxOperationsRefs,
+        bool courtQueueOutboxRefs,
       })
     >;
 typedef $$EventDivisionsTableCreateCompanionBuilder =
@@ -34267,6 +35071,536 @@ typedef $$MatchResultRevisionsTableProcessedTableManager =
       MatchResultRevision,
       PrefetchHooks Function({bool matchId})
     >;
+typedef $$CourtQueueOutboxTableCreateCompanionBuilder =
+    CourtQueueOutboxCompanion Function({
+      required String id,
+      required String eventId,
+      required String payloadJson,
+      required String status,
+      required DateTime createdAt,
+      Value<String?> failure,
+      Value<int> rowid,
+    });
+typedef $$CourtQueueOutboxTableUpdateCompanionBuilder =
+    CourtQueueOutboxCompanion Function({
+      Value<String> id,
+      Value<String> eventId,
+      Value<String> payloadJson,
+      Value<String> status,
+      Value<DateTime> createdAt,
+      Value<String?> failure,
+      Value<int> rowid,
+    });
+
+final class $$CourtQueueOutboxTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $CourtQueueOutboxTable,
+          CourtQueueOutboxData
+        > {
+  $$CourtQueueOutboxTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $EventsTable _eventIdTable(_$AppDatabase db) =>
+      db.events.createAlias('court_queue_outbox__event_id__events__id');
+
+  $$EventsTableProcessedTableManager get eventId {
+    final $_column = $_itemColumn<String>('event_id')!;
+
+    final manager = $$EventsTableTableManager(
+      $_db,
+      $_db.events,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_eventIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$CourtQueueOutboxTableFilterComposer
+    extends Composer<_$AppDatabase, $CourtQueueOutboxTable> {
+  $$CourtQueueOutboxTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get failure => $composableBuilder(
+    column: $table.failure,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$EventsTableFilterComposer get eventId {
+    final $$EventsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.eventId,
+      referencedTable: $db.events,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventsTableFilterComposer(
+            $db: $db,
+            $table: $db.events,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$CourtQueueOutboxTableOrderingComposer
+    extends Composer<_$AppDatabase, $CourtQueueOutboxTable> {
+  $$CourtQueueOutboxTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get failure => $composableBuilder(
+    column: $table.failure,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$EventsTableOrderingComposer get eventId {
+    final $$EventsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.eventId,
+      referencedTable: $db.events,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventsTableOrderingComposer(
+            $db: $db,
+            $table: $db.events,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$CourtQueueOutboxTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CourtQueueOutboxTable> {
+  $$CourtQueueOutboxTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get failure =>
+      $composableBuilder(column: $table.failure, builder: (column) => column);
+
+  $$EventsTableAnnotationComposer get eventId {
+    final $$EventsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.eventId,
+      referencedTable: $db.events,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.events,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$CourtQueueOutboxTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CourtQueueOutboxTable,
+          CourtQueueOutboxData,
+          $$CourtQueueOutboxTableFilterComposer,
+          $$CourtQueueOutboxTableOrderingComposer,
+          $$CourtQueueOutboxTableAnnotationComposer,
+          $$CourtQueueOutboxTableCreateCompanionBuilder,
+          $$CourtQueueOutboxTableUpdateCompanionBuilder,
+          (CourtQueueOutboxData, $$CourtQueueOutboxTableReferences),
+          CourtQueueOutboxData,
+          PrefetchHooks Function({bool eventId})
+        > {
+  $$CourtQueueOutboxTableTableManager(
+    _$AppDatabase db,
+    $CourtQueueOutboxTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CourtQueueOutboxTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CourtQueueOutboxTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CourtQueueOutboxTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> eventId = const Value.absent(),
+                Value<String> payloadJson = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<String?> failure = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CourtQueueOutboxCompanion(
+                id: id,
+                eventId: eventId,
+                payloadJson: payloadJson,
+                status: status,
+                createdAt: createdAt,
+                failure: failure,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String eventId,
+                required String payloadJson,
+                required String status,
+                required DateTime createdAt,
+                Value<String?> failure = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CourtQueueOutboxCompanion.insert(
+                id: id,
+                eventId: eventId,
+                payloadJson: payloadJson,
+                status: status,
+                createdAt: createdAt,
+                failure: failure,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$CourtQueueOutboxTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({eventId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (eventId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.eventId,
+                        referencedTable: $$CourtQueueOutboxTableReferences
+                            ._eventIdTable(db),
+                        referencedColumn: $$CourtQueueOutboxTableReferences
+                            ._eventIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$CourtQueueOutboxTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CourtQueueOutboxTable,
+      CourtQueueOutboxData,
+      $$CourtQueueOutboxTableFilterComposer,
+      $$CourtQueueOutboxTableOrderingComposer,
+      $$CourtQueueOutboxTableAnnotationComposer,
+      $$CourtQueueOutboxTableCreateCompanionBuilder,
+      $$CourtQueueOutboxTableUpdateCompanionBuilder,
+      (CourtQueueOutboxData, $$CourtQueueOutboxTableReferences),
+      CourtQueueOutboxData,
+      PrefetchHooks Function({bool eventId})
+    >;
+typedef $$CourtQueueCheckpointsTableCreateCompanionBuilder =
+    CourtQueueCheckpointsCompanion Function({
+      required String scope,
+      required DateTime updatedAt,
+      required String queueEntryId,
+      Value<int> rowid,
+    });
+typedef $$CourtQueueCheckpointsTableUpdateCompanionBuilder =
+    CourtQueueCheckpointsCompanion Function({
+      Value<String> scope,
+      Value<DateTime> updatedAt,
+      Value<String> queueEntryId,
+      Value<int> rowid,
+    });
+
+class $$CourtQueueCheckpointsTableFilterComposer
+    extends Composer<_$AppDatabase, $CourtQueueCheckpointsTable> {
+  $$CourtQueueCheckpointsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get scope => $composableBuilder(
+    column: $table.scope,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get queueEntryId => $composableBuilder(
+    column: $table.queueEntryId,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CourtQueueCheckpointsTableOrderingComposer
+    extends Composer<_$AppDatabase, $CourtQueueCheckpointsTable> {
+  $$CourtQueueCheckpointsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get scope => $composableBuilder(
+    column: $table.scope,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get queueEntryId => $composableBuilder(
+    column: $table.queueEntryId,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CourtQueueCheckpointsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CourtQueueCheckpointsTable> {
+  $$CourtQueueCheckpointsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get scope =>
+      $composableBuilder(column: $table.scope, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get queueEntryId => $composableBuilder(
+    column: $table.queueEntryId,
+    builder: (column) => column,
+  );
+}
+
+class $$CourtQueueCheckpointsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CourtQueueCheckpointsTable,
+          CourtQueueCheckpoint,
+          $$CourtQueueCheckpointsTableFilterComposer,
+          $$CourtQueueCheckpointsTableOrderingComposer,
+          $$CourtQueueCheckpointsTableAnnotationComposer,
+          $$CourtQueueCheckpointsTableCreateCompanionBuilder,
+          $$CourtQueueCheckpointsTableUpdateCompanionBuilder,
+          (
+            CourtQueueCheckpoint,
+            BaseReferences<
+              _$AppDatabase,
+              $CourtQueueCheckpointsTable,
+              CourtQueueCheckpoint
+            >,
+          ),
+          CourtQueueCheckpoint,
+          PrefetchHooks Function()
+        > {
+  $$CourtQueueCheckpointsTableTableManager(
+    _$AppDatabase db,
+    $CourtQueueCheckpointsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CourtQueueCheckpointsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$CourtQueueCheckpointsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$CourtQueueCheckpointsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> scope = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<String> queueEntryId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CourtQueueCheckpointsCompanion(
+                scope: scope,
+                updatedAt: updatedAt,
+                queueEntryId: queueEntryId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String scope,
+                required DateTime updatedAt,
+                required String queueEntryId,
+                Value<int> rowid = const Value.absent(),
+              }) => CourtQueueCheckpointsCompanion.insert(
+                scope: scope,
+                updatedAt: updatedAt,
+                queueEntryId: queueEntryId,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CourtQueueCheckpointsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CourtQueueCheckpointsTable,
+      CourtQueueCheckpoint,
+      $$CourtQueueCheckpointsTableFilterComposer,
+      $$CourtQueueCheckpointsTableOrderingComposer,
+      $$CourtQueueCheckpointsTableAnnotationComposer,
+      $$CourtQueueCheckpointsTableCreateCompanionBuilder,
+      $$CourtQueueCheckpointsTableUpdateCompanionBuilder,
+      (
+        CourtQueueCheckpoint,
+        BaseReferences<
+          _$AppDatabase,
+          $CourtQueueCheckpointsTable,
+          CourtQueueCheckpoint
+        >,
+      ),
+      CourtQueueCheckpoint,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -34390,4 +35724,8 @@ class $AppDatabaseManager {
       );
   $$MatchResultRevisionsTableTableManager get matchResultRevisions =>
       $$MatchResultRevisionsTableTableManager(_db, _db.matchResultRevisions);
+  $$CourtQueueOutboxTableTableManager get courtQueueOutbox =>
+      $$CourtQueueOutboxTableTableManager(_db, _db.courtQueueOutbox);
+  $$CourtQueueCheckpointsTableTableManager get courtQueueCheckpoints =>
+      $$CourtQueueCheckpointsTableTableManager(_db, _db.courtQueueCheckpoints);
 }

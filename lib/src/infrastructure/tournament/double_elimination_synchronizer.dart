@@ -3,6 +3,7 @@ import 'dart:convert';
 import '../../domain/common/domain_failure.dart';
 import '../../domain/common/entity_id.dart';
 import '../../domain/common/repository_result.dart';
+import '../sync/outbox_ordering.dart';
 import 'double_elimination_codec.dart';
 import 'drift_double_elimination_repository.dart';
 import 'supabase_double_elimination_repository.dart';
@@ -57,6 +58,11 @@ final class DoubleEliminationSynchronizer {
             MatchId(reservedResetMatchId),
           );
         }
+        final earlierCourt = await local.rows(
+          "SELECT 1 FROM court_queue_outbox WHERE event_id=? AND status<>'accepted' AND created_at<? LIMIT 1",
+          [command.eventId.value, outboxCreatedAt(row)],
+        );
+        if (earlierCourt.isNotEmpty) break;
         final result = await remote.apply(command);
         if (result case RepositoryFailure(:final failure)) {
           blocked.add(division);

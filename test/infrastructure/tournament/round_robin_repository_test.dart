@@ -186,5 +186,16 @@ void main() {
       ),
       hasLength(3),
     );
+
+    final authoritative = (await load()).tournament!;
+    final fresh = AppDatabase.inMemory();
+    addTearDown(fresh.close);
+    await seedRoundRobinTeams(fresh, 3);
+    final freshRepository = DriftRoundRobinRepository(fresh);
+    await fresh.importBracketHistory(
+      () => freshRepository.persist(authoritative),
+    );
+    expect(await fresh.select(fresh.matches).get(), hasLength(3));
+    expect(await fresh.select(fresh.matchResultRevisions).get(), hasLength(1));
   });
 }

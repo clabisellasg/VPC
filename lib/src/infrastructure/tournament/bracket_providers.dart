@@ -55,9 +55,7 @@ final singleEliminationServiceProvider = Provider<SingleEliminationService?>((
           clock: primitives,
         );
 });
-final bracketSynchronizerProvider = Provider.autoDispose<BracketSynchronizer?>((
-  ref,
-) {
+final bracketSynchronizerProvider = Provider<BracketSynchronizer?>((ref) {
   final local = ref.watch(localBracketRepositoryProvider),
       remote = ref.watch(remoteBracketRepositoryProvider);
   if (local == null || remote == null) return null;

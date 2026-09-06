@@ -1,5 +1,19 @@
 # Architecture Baseline
 
+## M16 One-Court Scheduling and Queue
+
+Pure Dart application contracts reconcile READY matches from every supported
+format into one durable event queue. The deterministic policy first avoids an
+immediate team repeat when an alternative exists, then uses waiting position,
+least-rested-team distance, and stable event/division/match identity. Starting
+is explicit and exactly one match may be Now Playing.
+
+Android Drift schema 10 adds a bounded queue outbox/checkpoint and commits local
+queue actions atomically. Web calls fixed Supabase functions and never opens
+SQLite. The court page is guest-readable and reuses existing tournament result
+pipelines. Realtime is a refresh hint; M17 owns full sync hardening. See the
+[M16 record](milestones/M16_ONE_COURT_SCHEDULING_QUEUE.md).
+
 ## M15 Double Elimination
 
 The pure Dart engine builds deterministic Winners, Losers, Grand Final 1 and
@@ -13,7 +27,7 @@ checkpoint alongside the existing match, dependency, revision and placement
 records. Web calls the fixed organizer-authorized cloud aggregate online and
 never initializes SQLite. Realtime only hints an authoritative pull. The UI
 renders separate horizontally scrollable Winners, Losers and Grand Finals
-sections. M16 court scheduling and queue behavior remain absent.
+sections. M16 now schedules its READY matches without changing this structure.
 
 ## M13 Single Elimination
 
