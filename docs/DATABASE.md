@@ -1,5 +1,14 @@
 # Conceptual Database Model
 
+## M17 synchronization hardening
+
+The complete offline boundary covers the 12 operational tables already in the
+schema. SQLite v11 adds `sync_resolution_audit` for immutable local evidence of
+explicit conflict choices; it does not duplicate cloud receipts or add private
+account data. The accepted hosted tables and fixed RPCs already represent the
+required aggregate writes, versions, tombstones, idempotency, and RLS, so M17
+requires no hosted schema change.
+
 ## M16 court-queue mapping
 
 Existing `court_queue_entries` remain the public durable wait-order records.

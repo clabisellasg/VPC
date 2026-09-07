@@ -1,5 +1,19 @@
 # Operations Outline
 
+## M17 synchronization operations
+
+An organizer opens **Account → Synchronization** to inspect pending, retryable,
+authorization-blocked, and conflicting Android work. **Retry now** runs the
+existing bounded streams in dependency order. Conflict actions always require
+confirmation. Use cloud cancels the stale local command after audit; reapply
+creates a new operation and is rechecked against current cloud/domain rules.
+Never copy raw payloads, account identifiers, or provider errors into support
+messages.
+
+Uploads require a live cloud-confirmed organizer role. Signing out or losing
+the role stops authorization-dependent processing without deleting queued
+work. Web has no local outbox and remains online-only.
+
 ## M16 court operation
 
 Use synthetic event data only. Generate tournament structures and move the

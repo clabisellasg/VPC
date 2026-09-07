@@ -1,5 +1,20 @@
 # Android Synchronization Design
 
+## M17 complete operational synchronization
+
+M17 composes the bounded M5–M16 protocols across all 12 operational tables in
+parent-before-child order. Android retains atomic local record/outbox writes,
+bounded retries, durable checkpoints, tombstones, authoritative UTC metadata,
+and conflict preservation. A conflict blocks only its affected aggregate.
+Unrelated work continues through the coordinator.
+
+OPEN-009 is resolved as optimistic first-writer-wins without organizer locks.
+The private SQLite `sync_resolution_audit` preserves the stale intent and cloud
+evidence before **Use cloud version** cancels it or **Reapply local change**
+creates a newly identified, revalidated operation. Realtime remains a refresh
+hint. Profiles, roles, claims, Auth state, and receipts are not synchronized as
+application data. See the [M17 record](milestones/M17_COMPLETE_OFFLINE_OPERATION_SYNC_HARDENING.md).
+
 ## M16 bounded court-queue slice
 
 Android reconciliation/start writes queue state and one fixed outbox command in
@@ -14,8 +29,8 @@ The cloud command accepts only reconcile or start, locks the event, validates
 READY membership/version, prevents two current matches, and stores its response
 with a private idempotency receipt. Identical replay is safe and changed-payload
 reuse fails. Realtime for matches/queue rows only triggers a debounced refetch.
-Web calls the same online protocol without Drift. M17 retains ownership of full
-offline tournament-operation hardening; OPEN-009 remains unresolved.
+Web calls the same online protocol without Drift. M17 now composes and hardens
+the complete operational boundary without changing M16 scheduling rules.
 
 ## M15 bounded double-elimination slice
 

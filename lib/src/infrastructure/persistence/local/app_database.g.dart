@@ -16778,6 +16778,589 @@ class CourtQueueCheckpointsCompanion
   }
 }
 
+class $SyncResolutionAuditTable extends SyncResolutionAudit
+    with TableInfo<$SyncResolutionAuditTable, SyncResolutionAuditData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SyncResolutionAuditTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _operationIdMeta = const VerificationMeta(
+    'operationId',
+  );
+  @override
+  late final GeneratedColumn<String> operationId = GeneratedColumn<String>(
+    'operation_id',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 36,
+      maxTextLength: 36,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _replacementOperationIdMeta =
+      const VerificationMeta('replacementOperationId');
+  @override
+  late final GeneratedColumn<String> replacementOperationId =
+      GeneratedColumn<String>(
+        'replacement_operation_id',
+        aliasedName,
+        true,
+        additionalChecks: GeneratedColumn.checkTextLength(
+          minTextLength: 36,
+          maxTextLength: 36,
+        ),
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _streamMeta = const VerificationMeta('stream');
+  @override
+  late final GeneratedColumn<String> stream = GeneratedColumn<String>(
+    'stream',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK(stream IN (\'players\',\'events\',\'participation\',\'teams\',\'singleElimination\',\'roundRobin\',\'doubleElimination\',\'courtQueue\'))',
+  );
+  static const VerificationMeta _aggregateIdMeta = const VerificationMeta(
+    'aggregateId',
+  );
+  @override
+  late final GeneratedColumn<String> aggregateId = GeneratedColumn<String>(
+    'aggregate_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _resolutionActionMeta = const VerificationMeta(
+    'resolutionAction',
+  );
+  @override
+  late final GeneratedColumn<String> resolutionAction = GeneratedColumn<String>(
+    'resolution_action',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints:
+        'NOT NULL CHECK(resolution_action IN (\'useCloud\',\'reapplyLocal\'))',
+  );
+  static const VerificationMeta _localPayloadJsonMeta = const VerificationMeta(
+    'localPayloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> localPayloadJson = GeneratedColumn<String>(
+    'local_payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL CHECK(json_valid(local_payload_json))',
+  );
+  static const VerificationMeta _remotePayloadJsonMeta = const VerificationMeta(
+    'remotePayloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> remotePayloadJson =
+      GeneratedColumn<String>(
+        'remote_payload_json',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _resolvedAtMeta = const VerificationMeta(
+    'resolvedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> resolvedAt = GeneratedColumn<DateTime>(
+    'resolved_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    operationId,
+    replacementOperationId,
+    stream,
+    aggregateId,
+    resolutionAction,
+    localPayloadJson,
+    remotePayloadJson,
+    resolvedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sync_resolution_audit';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SyncResolutionAuditData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('operation_id')) {
+      context.handle(
+        _operationIdMeta,
+        operationId.isAcceptableOrUnknown(
+          data['operation_id']!,
+          _operationIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_operationIdMeta);
+    }
+    if (data.containsKey('replacement_operation_id')) {
+      context.handle(
+        _replacementOperationIdMeta,
+        replacementOperationId.isAcceptableOrUnknown(
+          data['replacement_operation_id']!,
+          _replacementOperationIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('stream')) {
+      context.handle(
+        _streamMeta,
+        stream.isAcceptableOrUnknown(data['stream']!, _streamMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_streamMeta);
+    }
+    if (data.containsKey('aggregate_id')) {
+      context.handle(
+        _aggregateIdMeta,
+        aggregateId.isAcceptableOrUnknown(
+          data['aggregate_id']!,
+          _aggregateIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_aggregateIdMeta);
+    }
+    if (data.containsKey('resolution_action')) {
+      context.handle(
+        _resolutionActionMeta,
+        resolutionAction.isAcceptableOrUnknown(
+          data['resolution_action']!,
+          _resolutionActionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_resolutionActionMeta);
+    }
+    if (data.containsKey('local_payload_json')) {
+      context.handle(
+        _localPayloadJsonMeta,
+        localPayloadJson.isAcceptableOrUnknown(
+          data['local_payload_json']!,
+          _localPayloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_localPayloadJsonMeta);
+    }
+    if (data.containsKey('remote_payload_json')) {
+      context.handle(
+        _remotePayloadJsonMeta,
+        remotePayloadJson.isAcceptableOrUnknown(
+          data['remote_payload_json']!,
+          _remotePayloadJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('resolved_at')) {
+      context.handle(
+        _resolvedAtMeta,
+        resolvedAt.isAcceptableOrUnknown(data['resolved_at']!, _resolvedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_resolvedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {operationId};
+  @override
+  SyncResolutionAuditData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SyncResolutionAuditData(
+      operationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}operation_id'],
+      )!,
+      replacementOperationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}replacement_operation_id'],
+      ),
+      stream: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}stream'],
+      )!,
+      aggregateId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}aggregate_id'],
+      )!,
+      resolutionAction: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}resolution_action'],
+      )!,
+      localPayloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}local_payload_json'],
+      )!,
+      remotePayloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_payload_json'],
+      ),
+      resolvedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}resolved_at'],
+      )!,
+    );
+  }
+
+  @override
+  $SyncResolutionAuditTable createAlias(String alias) {
+    return $SyncResolutionAuditTable(attachedDatabase, alias);
+  }
+}
+
+class SyncResolutionAuditData extends DataClass
+    implements Insertable<SyncResolutionAuditData> {
+  final String operationId;
+  final String? replacementOperationId;
+  final String stream;
+  final String aggregateId;
+  final String resolutionAction;
+  final String localPayloadJson;
+  final String? remotePayloadJson;
+  final DateTime resolvedAt;
+  const SyncResolutionAuditData({
+    required this.operationId,
+    this.replacementOperationId,
+    required this.stream,
+    required this.aggregateId,
+    required this.resolutionAction,
+    required this.localPayloadJson,
+    this.remotePayloadJson,
+    required this.resolvedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['operation_id'] = Variable<String>(operationId);
+    if (!nullToAbsent || replacementOperationId != null) {
+      map['replacement_operation_id'] = Variable<String>(
+        replacementOperationId,
+      );
+    }
+    map['stream'] = Variable<String>(stream);
+    map['aggregate_id'] = Variable<String>(aggregateId);
+    map['resolution_action'] = Variable<String>(resolutionAction);
+    map['local_payload_json'] = Variable<String>(localPayloadJson);
+    if (!nullToAbsent || remotePayloadJson != null) {
+      map['remote_payload_json'] = Variable<String>(remotePayloadJson);
+    }
+    map['resolved_at'] = Variable<DateTime>(resolvedAt);
+    return map;
+  }
+
+  SyncResolutionAuditCompanion toCompanion(bool nullToAbsent) {
+    return SyncResolutionAuditCompanion(
+      operationId: Value(operationId),
+      replacementOperationId: replacementOperationId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(replacementOperationId),
+      stream: Value(stream),
+      aggregateId: Value(aggregateId),
+      resolutionAction: Value(resolutionAction),
+      localPayloadJson: Value(localPayloadJson),
+      remotePayloadJson: remotePayloadJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remotePayloadJson),
+      resolvedAt: Value(resolvedAt),
+    );
+  }
+
+  factory SyncResolutionAuditData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SyncResolutionAuditData(
+      operationId: serializer.fromJson<String>(json['operationId']),
+      replacementOperationId: serializer.fromJson<String?>(
+        json['replacementOperationId'],
+      ),
+      stream: serializer.fromJson<String>(json['stream']),
+      aggregateId: serializer.fromJson<String>(json['aggregateId']),
+      resolutionAction: serializer.fromJson<String>(json['resolutionAction']),
+      localPayloadJson: serializer.fromJson<String>(json['localPayloadJson']),
+      remotePayloadJson: serializer.fromJson<String?>(
+        json['remotePayloadJson'],
+      ),
+      resolvedAt: serializer.fromJson<DateTime>(json['resolvedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'operationId': serializer.toJson<String>(operationId),
+      'replacementOperationId': serializer.toJson<String?>(
+        replacementOperationId,
+      ),
+      'stream': serializer.toJson<String>(stream),
+      'aggregateId': serializer.toJson<String>(aggregateId),
+      'resolutionAction': serializer.toJson<String>(resolutionAction),
+      'localPayloadJson': serializer.toJson<String>(localPayloadJson),
+      'remotePayloadJson': serializer.toJson<String?>(remotePayloadJson),
+      'resolvedAt': serializer.toJson<DateTime>(resolvedAt),
+    };
+  }
+
+  SyncResolutionAuditData copyWith({
+    String? operationId,
+    Value<String?> replacementOperationId = const Value.absent(),
+    String? stream,
+    String? aggregateId,
+    String? resolutionAction,
+    String? localPayloadJson,
+    Value<String?> remotePayloadJson = const Value.absent(),
+    DateTime? resolvedAt,
+  }) => SyncResolutionAuditData(
+    operationId: operationId ?? this.operationId,
+    replacementOperationId: replacementOperationId.present
+        ? replacementOperationId.value
+        : this.replacementOperationId,
+    stream: stream ?? this.stream,
+    aggregateId: aggregateId ?? this.aggregateId,
+    resolutionAction: resolutionAction ?? this.resolutionAction,
+    localPayloadJson: localPayloadJson ?? this.localPayloadJson,
+    remotePayloadJson: remotePayloadJson.present
+        ? remotePayloadJson.value
+        : this.remotePayloadJson,
+    resolvedAt: resolvedAt ?? this.resolvedAt,
+  );
+  SyncResolutionAuditData copyWithCompanion(SyncResolutionAuditCompanion data) {
+    return SyncResolutionAuditData(
+      operationId: data.operationId.present
+          ? data.operationId.value
+          : this.operationId,
+      replacementOperationId: data.replacementOperationId.present
+          ? data.replacementOperationId.value
+          : this.replacementOperationId,
+      stream: data.stream.present ? data.stream.value : this.stream,
+      aggregateId: data.aggregateId.present
+          ? data.aggregateId.value
+          : this.aggregateId,
+      resolutionAction: data.resolutionAction.present
+          ? data.resolutionAction.value
+          : this.resolutionAction,
+      localPayloadJson: data.localPayloadJson.present
+          ? data.localPayloadJson.value
+          : this.localPayloadJson,
+      remotePayloadJson: data.remotePayloadJson.present
+          ? data.remotePayloadJson.value
+          : this.remotePayloadJson,
+      resolvedAt: data.resolvedAt.present
+          ? data.resolvedAt.value
+          : this.resolvedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncResolutionAuditData(')
+          ..write('operationId: $operationId, ')
+          ..write('replacementOperationId: $replacementOperationId, ')
+          ..write('stream: $stream, ')
+          ..write('aggregateId: $aggregateId, ')
+          ..write('resolutionAction: $resolutionAction, ')
+          ..write('localPayloadJson: $localPayloadJson, ')
+          ..write('remotePayloadJson: $remotePayloadJson, ')
+          ..write('resolvedAt: $resolvedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    operationId,
+    replacementOperationId,
+    stream,
+    aggregateId,
+    resolutionAction,
+    localPayloadJson,
+    remotePayloadJson,
+    resolvedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SyncResolutionAuditData &&
+          other.operationId == this.operationId &&
+          other.replacementOperationId == this.replacementOperationId &&
+          other.stream == this.stream &&
+          other.aggregateId == this.aggregateId &&
+          other.resolutionAction == this.resolutionAction &&
+          other.localPayloadJson == this.localPayloadJson &&
+          other.remotePayloadJson == this.remotePayloadJson &&
+          other.resolvedAt == this.resolvedAt);
+}
+
+class SyncResolutionAuditCompanion
+    extends UpdateCompanion<SyncResolutionAuditData> {
+  final Value<String> operationId;
+  final Value<String?> replacementOperationId;
+  final Value<String> stream;
+  final Value<String> aggregateId;
+  final Value<String> resolutionAction;
+  final Value<String> localPayloadJson;
+  final Value<String?> remotePayloadJson;
+  final Value<DateTime> resolvedAt;
+  final Value<int> rowid;
+  const SyncResolutionAuditCompanion({
+    this.operationId = const Value.absent(),
+    this.replacementOperationId = const Value.absent(),
+    this.stream = const Value.absent(),
+    this.aggregateId = const Value.absent(),
+    this.resolutionAction = const Value.absent(),
+    this.localPayloadJson = const Value.absent(),
+    this.remotePayloadJson = const Value.absent(),
+    this.resolvedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SyncResolutionAuditCompanion.insert({
+    required String operationId,
+    this.replacementOperationId = const Value.absent(),
+    required String stream,
+    required String aggregateId,
+    required String resolutionAction,
+    required String localPayloadJson,
+    this.remotePayloadJson = const Value.absent(),
+    required DateTime resolvedAt,
+    this.rowid = const Value.absent(),
+  }) : operationId = Value(operationId),
+       stream = Value(stream),
+       aggregateId = Value(aggregateId),
+       resolutionAction = Value(resolutionAction),
+       localPayloadJson = Value(localPayloadJson),
+       resolvedAt = Value(resolvedAt);
+  static Insertable<SyncResolutionAuditData> custom({
+    Expression<String>? operationId,
+    Expression<String>? replacementOperationId,
+    Expression<String>? stream,
+    Expression<String>? aggregateId,
+    Expression<String>? resolutionAction,
+    Expression<String>? localPayloadJson,
+    Expression<String>? remotePayloadJson,
+    Expression<DateTime>? resolvedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (operationId != null) 'operation_id': operationId,
+      if (replacementOperationId != null)
+        'replacement_operation_id': replacementOperationId,
+      if (stream != null) 'stream': stream,
+      if (aggregateId != null) 'aggregate_id': aggregateId,
+      if (resolutionAction != null) 'resolution_action': resolutionAction,
+      if (localPayloadJson != null) 'local_payload_json': localPayloadJson,
+      if (remotePayloadJson != null) 'remote_payload_json': remotePayloadJson,
+      if (resolvedAt != null) 'resolved_at': resolvedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SyncResolutionAuditCompanion copyWith({
+    Value<String>? operationId,
+    Value<String?>? replacementOperationId,
+    Value<String>? stream,
+    Value<String>? aggregateId,
+    Value<String>? resolutionAction,
+    Value<String>? localPayloadJson,
+    Value<String?>? remotePayloadJson,
+    Value<DateTime>? resolvedAt,
+    Value<int>? rowid,
+  }) {
+    return SyncResolutionAuditCompanion(
+      operationId: operationId ?? this.operationId,
+      replacementOperationId:
+          replacementOperationId ?? this.replacementOperationId,
+      stream: stream ?? this.stream,
+      aggregateId: aggregateId ?? this.aggregateId,
+      resolutionAction: resolutionAction ?? this.resolutionAction,
+      localPayloadJson: localPayloadJson ?? this.localPayloadJson,
+      remotePayloadJson: remotePayloadJson ?? this.remotePayloadJson,
+      resolvedAt: resolvedAt ?? this.resolvedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (operationId.present) {
+      map['operation_id'] = Variable<String>(operationId.value);
+    }
+    if (replacementOperationId.present) {
+      map['replacement_operation_id'] = Variable<String>(
+        replacementOperationId.value,
+      );
+    }
+    if (stream.present) {
+      map['stream'] = Variable<String>(stream.value);
+    }
+    if (aggregateId.present) {
+      map['aggregate_id'] = Variable<String>(aggregateId.value);
+    }
+    if (resolutionAction.present) {
+      map['resolution_action'] = Variable<String>(resolutionAction.value);
+    }
+    if (localPayloadJson.present) {
+      map['local_payload_json'] = Variable<String>(localPayloadJson.value);
+    }
+    if (remotePayloadJson.present) {
+      map['remote_payload_json'] = Variable<String>(remotePayloadJson.value);
+    }
+    if (resolvedAt.present) {
+      map['resolved_at'] = Variable<DateTime>(resolvedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncResolutionAuditCompanion(')
+          ..write('operationId: $operationId, ')
+          ..write('replacementOperationId: $replacementOperationId, ')
+          ..write('stream: $stream, ')
+          ..write('aggregateId: $aggregateId, ')
+          ..write('resolutionAction: $resolutionAction, ')
+          ..write('localPayloadJson: $localPayloadJson, ')
+          ..write('remotePayloadJson: $remotePayloadJson, ')
+          ..write('resolvedAt: $resolvedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -16848,6 +17431,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final $CourtQueueCheckpointsTable courtQueueCheckpoints =
       $CourtQueueCheckpointsTable(this);
+  late final $SyncResolutionAuditTable syncResolutionAudit =
+      $SyncResolutionAuditTable(this);
   late final Index playersDisplayNameIdx = Index(
     'players_display_name_idx',
     'CREATE INDEX players_display_name_idx ON players (display_name)',
@@ -17001,6 +17586,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     matchResultRevisions,
     courtQueueOutbox,
     courtQueueCheckpoints,
+    syncResolutionAudit,
     playersDisplayNameIdx,
     eventsStatusScheduledAtIdx,
     eventDivisionsEventIdIdx,
@@ -35601,6 +36187,293 @@ typedef $$CourtQueueCheckpointsTableProcessedTableManager =
       CourtQueueCheckpoint,
       PrefetchHooks Function()
     >;
+typedef $$SyncResolutionAuditTableCreateCompanionBuilder =
+    SyncResolutionAuditCompanion Function({
+      required String operationId,
+      Value<String?> replacementOperationId,
+      required String stream,
+      required String aggregateId,
+      required String resolutionAction,
+      required String localPayloadJson,
+      Value<String?> remotePayloadJson,
+      required DateTime resolvedAt,
+      Value<int> rowid,
+    });
+typedef $$SyncResolutionAuditTableUpdateCompanionBuilder =
+    SyncResolutionAuditCompanion Function({
+      Value<String> operationId,
+      Value<String?> replacementOperationId,
+      Value<String> stream,
+      Value<String> aggregateId,
+      Value<String> resolutionAction,
+      Value<String> localPayloadJson,
+      Value<String?> remotePayloadJson,
+      Value<DateTime> resolvedAt,
+      Value<int> rowid,
+    });
+
+class $$SyncResolutionAuditTableFilterComposer
+    extends Composer<_$AppDatabase, $SyncResolutionAuditTable> {
+  $$SyncResolutionAuditTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get operationId => $composableBuilder(
+    column: $table.operationId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get replacementOperationId => $composableBuilder(
+    column: $table.replacementOperationId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get stream => $composableBuilder(
+    column: $table.stream,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get aggregateId => $composableBuilder(
+    column: $table.aggregateId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get resolutionAction => $composableBuilder(
+    column: $table.resolutionAction,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get localPayloadJson => $composableBuilder(
+    column: $table.localPayloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get remotePayloadJson => $composableBuilder(
+    column: $table.remotePayloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get resolvedAt => $composableBuilder(
+    column: $table.resolvedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SyncResolutionAuditTableOrderingComposer
+    extends Composer<_$AppDatabase, $SyncResolutionAuditTable> {
+  $$SyncResolutionAuditTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get operationId => $composableBuilder(
+    column: $table.operationId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get replacementOperationId => $composableBuilder(
+    column: $table.replacementOperationId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get stream => $composableBuilder(
+    column: $table.stream,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get aggregateId => $composableBuilder(
+    column: $table.aggregateId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get resolutionAction => $composableBuilder(
+    column: $table.resolutionAction,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get localPayloadJson => $composableBuilder(
+    column: $table.localPayloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get remotePayloadJson => $composableBuilder(
+    column: $table.remotePayloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get resolvedAt => $composableBuilder(
+    column: $table.resolvedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SyncResolutionAuditTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SyncResolutionAuditTable> {
+  $$SyncResolutionAuditTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get operationId => $composableBuilder(
+    column: $table.operationId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get replacementOperationId => $composableBuilder(
+    column: $table.replacementOperationId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get stream =>
+      $composableBuilder(column: $table.stream, builder: (column) => column);
+
+  GeneratedColumn<String> get aggregateId => $composableBuilder(
+    column: $table.aggregateId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get resolutionAction => $composableBuilder(
+    column: $table.resolutionAction,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get localPayloadJson => $composableBuilder(
+    column: $table.localPayloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get remotePayloadJson => $composableBuilder(
+    column: $table.remotePayloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get resolvedAt => $composableBuilder(
+    column: $table.resolvedAt,
+    builder: (column) => column,
+  );
+}
+
+class $$SyncResolutionAuditTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SyncResolutionAuditTable,
+          SyncResolutionAuditData,
+          $$SyncResolutionAuditTableFilterComposer,
+          $$SyncResolutionAuditTableOrderingComposer,
+          $$SyncResolutionAuditTableAnnotationComposer,
+          $$SyncResolutionAuditTableCreateCompanionBuilder,
+          $$SyncResolutionAuditTableUpdateCompanionBuilder,
+          (
+            SyncResolutionAuditData,
+            BaseReferences<
+              _$AppDatabase,
+              $SyncResolutionAuditTable,
+              SyncResolutionAuditData
+            >,
+          ),
+          SyncResolutionAuditData,
+          PrefetchHooks Function()
+        > {
+  $$SyncResolutionAuditTableTableManager(
+    _$AppDatabase db,
+    $SyncResolutionAuditTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SyncResolutionAuditTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SyncResolutionAuditTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$SyncResolutionAuditTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> operationId = const Value.absent(),
+                Value<String?> replacementOperationId = const Value.absent(),
+                Value<String> stream = const Value.absent(),
+                Value<String> aggregateId = const Value.absent(),
+                Value<String> resolutionAction = const Value.absent(),
+                Value<String> localPayloadJson = const Value.absent(),
+                Value<String?> remotePayloadJson = const Value.absent(),
+                Value<DateTime> resolvedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SyncResolutionAuditCompanion(
+                operationId: operationId,
+                replacementOperationId: replacementOperationId,
+                stream: stream,
+                aggregateId: aggregateId,
+                resolutionAction: resolutionAction,
+                localPayloadJson: localPayloadJson,
+                remotePayloadJson: remotePayloadJson,
+                resolvedAt: resolvedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String operationId,
+                Value<String?> replacementOperationId = const Value.absent(),
+                required String stream,
+                required String aggregateId,
+                required String resolutionAction,
+                required String localPayloadJson,
+                Value<String?> remotePayloadJson = const Value.absent(),
+                required DateTime resolvedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => SyncResolutionAuditCompanion.insert(
+                operationId: operationId,
+                replacementOperationId: replacementOperationId,
+                stream: stream,
+                aggregateId: aggregateId,
+                resolutionAction: resolutionAction,
+                localPayloadJson: localPayloadJson,
+                remotePayloadJson: remotePayloadJson,
+                resolvedAt: resolvedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SyncResolutionAuditTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SyncResolutionAuditTable,
+      SyncResolutionAuditData,
+      $$SyncResolutionAuditTableFilterComposer,
+      $$SyncResolutionAuditTableOrderingComposer,
+      $$SyncResolutionAuditTableAnnotationComposer,
+      $$SyncResolutionAuditTableCreateCompanionBuilder,
+      $$SyncResolutionAuditTableUpdateCompanionBuilder,
+      (
+        SyncResolutionAuditData,
+        BaseReferences<
+          _$AppDatabase,
+          $SyncResolutionAuditTable,
+          SyncResolutionAuditData
+        >,
+      ),
+      SyncResolutionAuditData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -35728,4 +36601,6 @@ class $AppDatabaseManager {
       $$CourtQueueOutboxTableTableManager(_db, _db.courtQueueOutbox);
   $$CourtQueueCheckpointsTableTableManager get courtQueueCheckpoints =>
       $$CourtQueueCheckpointsTableTableManager(_db, _db.courtQueueCheckpoints);
+  $$SyncResolutionAuditTableTableManager get syncResolutionAudit =>
+      $$SyncResolutionAuditTableTableManager(_db, _db.syncResolutionAudit);
 }

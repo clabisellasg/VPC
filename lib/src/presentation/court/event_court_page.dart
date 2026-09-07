@@ -11,10 +11,7 @@ import '../../domain/common/domain_failure.dart';
 import '../../domain/common/entity_id.dart';
 import '../../domain/common/repository_result.dart';
 import '../../infrastructure/court/court_queue_providers.dart';
-import '../../infrastructure/events/event_setup_providers.dart';
-import '../../infrastructure/tournament/bracket_providers.dart';
-import '../../infrastructure/tournament/double_elimination_providers.dart';
-import '../../infrastructure/tournament/round_robin_providers.dart';
+import '../../infrastructure/sync/operational_sync_providers.dart';
 import '../accounts/account_controller.dart';
 
 class EventCourtPage extends ConsumerStatefulWidget {
@@ -71,20 +68,25 @@ class _EventCourtPageState extends ConsumerState<EventCourtPage> {
       return;
     }
     try {
+      var refreshUnavailable = false;
       RepositoryResult<CourtQueueSnapshot> result = await repository.load(
         EventId(widget.eventId),
       );
       final local = ref.read(localCourtQueueRepositoryProvider);
       if (_role == AuthorizationState.organizer) {
-        await ref.read(eventSetupSynchronizerProvider)?.synchronize();
-        await ref.read(bracketSynchronizerProvider)?.synchronize();
-        await ref.read(roundRobinSynchronizerProvider)?.synchronize();
-        await ref.read(doubleEliminationSynchronizerProvider)?.synchronize();
         final service = ref.read(courtQueueServiceProvider);
         if (service != null) {
           result = await service.refresh(EventId(widget.eventId));
         }
-        await ref.read(courtQueueSynchronizerProvider)?.synchronize();
+        // Reconcile the local queue before attempting the network so Android
+        // remains fully operable offline. The unified coordinator preserves
+        // dependency order; a network failure must not discard the local
+        // snapshot that was just produced.
+        try {
+          await ref.read(operationalSyncCoordinatorProvider)?.synchronize();
+        } on Exception {
+          refreshUnavailable = true;
+        }
         if (local != null) result = await local.load(EventId(widget.eventId));
       } else if (local != null) {
         // A freshly installed Android app has no cached matches yet. Preserve
@@ -102,7 +104,9 @@ class _EventCourtPageState extends ConsumerState<EventCourtPage> {
         result.when(
           success: (value) {
             _snapshot = value;
-            _message = null;
+            _message = refreshUnavailable
+                ? 'Offline. Cached court information is available; synchronization remains pending.'
+                : null;
           },
           failure: (failure) => _message = failure.message,
         );

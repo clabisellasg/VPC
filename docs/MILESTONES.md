@@ -151,7 +151,8 @@ authorized proceeding.
 - **Purpose:** Verify every required Android organizer operation works offline
   and synchronizes safely.
 - **Dependencies:** M8 through M16.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED; final automated/hosted validation and user-confirmed
+  Android/Web walkthrough categories A–F passed.
 
 ### M18 — Tournament History and Statistics
 

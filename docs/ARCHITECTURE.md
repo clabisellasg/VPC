@@ -1,5 +1,17 @@
 # Architecture Baseline
 
+## M17 offline operation and sync hardening
+
+The Android composition root now exposes one organizer operational coordinator
+over the existing player, event, participation/payment, team, tournament, and
+court slices. It serializes parent-before-child work and coalesces concurrent
+requests. Each bounded protocol retains its own fixed payload, cloud RPC,
+checkpoint, validation, and reconciliation logic. The organizer sync screen is
+an application/provider client; widgets never call Drift or Supabase directly.
+
+SQLite schema v11 adds a private conflict-resolution audit. Web continues to
+select online adapters and never constructs this database or coordinator.
+
 ## M16 One-Court Scheduling and Queue
 
 Pure Dart application contracts reconcile READY matches from every supported

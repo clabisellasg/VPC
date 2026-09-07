@@ -143,7 +143,7 @@ decision is required before affected implementation proceeds.
 | --- | --- | --- | --- |
 | OPEN-005 | What is the round-robin tie-breaker order? | Before M14 implementation | RESOLVED by V1-079 |
 | OPEN-006 | Does double elimination use a grand-final bracket reset? | Before M15 implementation | RESOLVED by V1-080 |
-| OPEN-009 | What is the exact simultaneous-organizer conflict/control policy? | Before M5 implementation | OPEN |
+| OPEN-009 | Multiple authorized organizers use optimistic first-writer-wins. There is no lock or lease: stale aggregate commands become explicit conflicts; unrelated work continues. Organizers may archive/cancel local intent with **Use cloud version**, or revalidate it as a new operation with **Reapply local change**. Neither action silently merges or overwrites. | Resolved by M17 | ACCEPTED |
 | OPEN-010 | Which free static hosting provider will serve the Flutter Web/PWA? | Before M19 implementation | OPEN |
 
 ## Explicitly approved changes

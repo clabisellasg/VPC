@@ -50,7 +50,8 @@ void main() {
     () async {
       final tables = await database
           .customSelect(
-            "SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE 'sync_%'",
+            "SELECT name FROM sqlite_master WHERE type='table' AND name IN "
+            "('sync_outbox_operations','sync_pull_checkpoints','sync_conflicts')",
           )
           .get();
       expect(tables, hasLength(3));

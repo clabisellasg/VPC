@@ -156,6 +156,12 @@ class _AuthenticatedAccount extends ConsumerWidget {
                 icon: const Icon(Icons.event_note_outlined),
                 label: const Text('Manage events'),
               ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: () => context.push('/organizer/synchronization'),
+                icon: const Icon(Icons.sync_outlined),
+                label: const Text('Synchronization'),
+              ),
             ],
             const SizedBox(height: 24),
             TextButton.icon(

@@ -12,6 +12,7 @@ import '../../domain/players/permanent_player.dart';
 import '../../infrastructure/accounts/account_providers.dart';
 import '../../infrastructure/sync/sync_providers.dart';
 import '../../infrastructure/events/event_setup_providers.dart';
+import '../../infrastructure/sync/operational_sync_providers.dart';
 import 'auth_controller.dart';
 
 enum AccountPhase { guest, loading, content, unavailable, unconfigured }
@@ -67,11 +68,13 @@ final class AccountController extends Notifier<AccountViewState> {
     _disposed = false;
     ref.onDispose(() => _disposed = true);
     if (auth is AuthUnconfigured) {
+      ref.invalidate(operationalSyncCoordinatorProvider);
       ref.invalidate(syncRuntimeProvider);
       ref.invalidate(eventSetupRealtimeRuntimeProvider);
       return const AccountViewState(phase: AccountPhase.unconfigured);
     }
     if (auth is! AuthAuthenticated) {
+      ref.invalidate(operationalSyncCoordinatorProvider);
       ref.invalidate(syncRuntimeProvider);
       ref.invalidate(eventSetupRealtimeRuntimeProvider);
       return const AccountViewState(phase: AccountPhase.guest);
@@ -98,24 +101,15 @@ final class AccountController extends Notifier<AccountViewState> {
           snapshot: snapshot,
         );
         if (snapshot.authorization == AuthorizationState.organizer) {
-          final runtime = ref.read(syncRuntimeProvider);
-          if (runtime != null) {
-            unawaited(runtime.start());
-          }
-          final eventSync = ref.read(eventSetupSynchronizerProvider);
-          if (eventSync != null) {
-            unawaited(eventSync.synchronize());
-          }
-          final eventRuntime = ref.read(eventSetupRealtimeRuntimeProvider);
-          if (eventRuntime != null) {
-            unawaited(eventRuntime.start());
-          }
+          unawaited(_startOrganizerSynchronization());
         } else {
+          ref.invalidate(operationalSyncCoordinatorProvider);
           ref.invalidate(syncRuntimeProvider);
           ref.invalidate(eventSetupRealtimeRuntimeProvider);
         }
       },
       failure: (_) {
+        ref.invalidate(operationalSyncCoordinatorProvider);
         ref.invalidate(syncRuntimeProvider);
         ref.invalidate(eventSetupRealtimeRuntimeProvider);
         state = const AccountViewState(
@@ -124,6 +118,17 @@ final class AccountController extends Notifier<AccountViewState> {
         );
       },
     );
+  }
+
+  Future<void> _startOrganizerSynchronization() async {
+    final operational = ref.read(operationalSyncCoordinatorProvider);
+    if (operational != null) await operational.synchronize();
+    if (_disposed ||
+        state.snapshot?.authorization != AuthorizationState.organizer) {
+      return;
+    }
+    await ref.read(syncRuntimeProvider)?.start();
+    await ref.read(eventSetupRealtimeRuntimeProvider)?.start();
   }
 
   Future<void> searchPlayers(String query) async {

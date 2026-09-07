@@ -25,6 +25,7 @@ import 'package:vpc/src/presentation/participation/add_participant_page.dart';
 import 'package:vpc/src/presentation/participation/organizer_participants_page.dart';
 import 'package:vpc/src/domain/common/domain_enums.dart';
 import 'package:vpc/src/presentation/court/event_court_page.dart';
+import 'package:vpc/src/presentation/sync/operational_sync_page.dart';
 
 GoRouter createAppRouter() {
   // Organizer drill-downs use push so Android system back returns through the
@@ -152,6 +153,10 @@ GoRouter createAppRouter() {
           GoRoute(
             path: '/organizer/claims',
             builder: (context, state) => const OrganizerClaimsPage(),
+          ),
+          GoRoute(
+            path: '/organizer/synchronization',
+            builder: (context, state) => const OperationalSyncPage(),
           ),
           GoRoute(
             path: '/organizer/players/new',

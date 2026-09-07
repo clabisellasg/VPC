@@ -36,6 +36,7 @@ final class FakeRemoteGateway implements SyncRemoteGateway {
     required this.applyResult,
     RemotePullResult? pullResult,
     this.applyBlocker,
+    this.apply,
   }) : pullResult =
            pullResult ??
            const RemotePullSuccess(RemotePullPage(players: [], hasMore: false));
@@ -43,6 +44,7 @@ final class FakeRemoteGateway implements SyncRemoteGateway {
   RemoteApplyResult applyResult;
   RemotePullResult pullResult;
   Completer<void>? applyBlocker;
+  final RemoteApplyResult Function(SyncOperation operation)? apply;
   int applyCalls = 0;
   int pullCalls = 0;
 
@@ -52,7 +54,7 @@ final class FakeRemoteGateway implements SyncRemoteGateway {
   ) async {
     applyCalls++;
     await applyBlocker?.future;
-    return applyResult;
+    return apply?.call(operation) ?? applyResult;
   }
 
   @override
@@ -127,6 +129,41 @@ void main() {
       );
     },
   );
+
+  test('a conflicted player does not block an unrelated player', () async {
+    const otherPlayerId = '40000000-0000-4000-8000-000000000002';
+    final repository = DriftSyncingPlayerRepository(
+      database: database,
+      idFactory: ids,
+      clock: clock,
+    );
+    await repository.save(
+      PermanentPlayer(
+        id: PlayerId(otherPlayerId),
+        displayName: 'Independent Player',
+        metadata: RecordMetadata(
+          createdAt: now,
+          updatedAt: now,
+          recordVersion: 0,
+        ),
+      ),
+    );
+    final remote = FakeRemoteGateway(
+      applyResult: RemoteApplyConflict(
+        remotePlayer: player(name: 'Cloud', version: 1),
+      ),
+      apply: (operation) => operation.entityId.value == playerId
+          ? RemoteApplyConflict(remotePlayer: player(name: 'Cloud', version: 1))
+          : RemoteApplyAccepted(
+              player: operation.payload.toPlayer(),
+              replayed: false,
+            ),
+    );
+    final report = await coordinator(remote).synchronize();
+    expect(report.conflicts, 1);
+    expect(report.uploaded, 1);
+    expect(remote.applyCalls, 2);
+  });
 
   test(
     'authorization block leaves operation pending without pulling',

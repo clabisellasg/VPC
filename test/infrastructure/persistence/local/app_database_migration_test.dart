@@ -6,6 +6,24 @@ import 'package:vpc/src/infrastructure/persistence/local/app_database.dart';
 import '../../../generated_migrations/schema.dart';
 
 void main() {
+  test('v10 to v11 preserves operations and adds resolution audit', () async {
+    final verifier = SchemaVerifier(GeneratedHelper());
+    final schema = await verifier.schemaAt(10);
+    schema.rawDatabase.execute('''
+INSERT INTO players(id,display_name,skill_level,created_at,updated_at,version)
+VALUES('17000000-0000-4000-8000-000000000001','VPC M17 Migration',NULL,'2026-09-07T00:00:00.000Z','2026-09-07T00:00:00.000Z',2);
+INSERT INTO sync_outbox_operations(id,entity_type,entity_id,operation_kind,base_version,payload_json,created_at,attempt_count,next_eligible_at,status)
+VALUES('17000000-0000-4000-8000-000000000002','player','17000000-0000-4000-8000-000000000001','upsert',2,'{}','2026-09-07T00:00:00.000Z',0,'2026-09-07T00:00:00.000Z','pending');
+''');
+    final db = AppDatabase(schema.newConnection());
+    await verifier.migrateAndValidate(db, 11);
+    expect((await db.select(db.players).getSingle()).version, 2);
+    expect(await db.select(db.syncOutboxOperations).get(), hasLength(1));
+    expect(await db.select(db.syncResolutionAudit).get(), isEmpty);
+    await db.close();
+    schema.close();
+  });
+
   test(
     'v9 to v10 preserves queue rows and adds court command durability',
     () async {

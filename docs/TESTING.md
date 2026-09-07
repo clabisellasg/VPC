@@ -1,5 +1,25 @@
 # Testing Strategy
 
+## M17 validation
+
+M17 adds deterministic coverage for dependency-ordered/coalesced operational
+synchronization, conflict isolation, private local resolution audit, use-cloud
+reconciliation, reapply with a new operation/version, and immediate retry of a
+retryable player command after connectivity returns. Ordinary Flutter tests use
+fakes and in-memory Drift; they make no live network request.
+
+The final M17 validation passed all 364 Flutter tests, formatting, static
+analysis, deterministic build-runner and migration-helper generation, Web
+production build, and Android debug APK build. Linked migration history agrees
+through `20260906123500`; dry-run reported no pending migration; linked lint
+reported no errors, with only pre-existing M13/M14 PL/pgSQL warnings. The
+direct Windows Drift schema dump stalled in its documented build hook, while
+build-runner and schema-helper generation completed and their generated output
+was checked for freshness. Hosted publishable-key smoke checks retained public
+event reads and private payment/profile/mutation denial. The user confirmed
+the Android and Web A–F manual walkthroughs. Local pgTAP was skipped because
+Docker's Linux engine was unavailable.
+
 ## M16 validation
 
 M16 focused tests cover READY eligibility, excluded states/BYEs, duplicate-free

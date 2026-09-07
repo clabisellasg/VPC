@@ -869,6 +869,30 @@ class CourtQueueCheckpoints extends Table {
   Set<Column<Object>> get primaryKey => {scope};
 }
 
+/// Durable, provider-neutral audit of an organizer's explicit conflict choice.
+/// Payloads are retained for diagnosis/reapplication but are never presented
+/// raw in the UI.
+class SyncResolutionAudit extends Table {
+  TextColumn get operationId => text().withLength(min: 36, max: 36)();
+  TextColumn get replacementOperationId =>
+      text().withLength(min: 36, max: 36).nullable()();
+  TextColumn get stream => text().customConstraint(
+    "NOT NULL CHECK(stream IN ('players','events','participation','teams','singleElimination','roundRobin','doubleElimination','courtQueue'))",
+  )();
+  TextColumn get aggregateId => text()();
+  TextColumn get resolutionAction => text().customConstraint(
+    "NOT NULL CHECK(resolution_action IN ('useCloud','reapplyLocal'))",
+  )();
+  TextColumn get localPayloadJson => text().customConstraint(
+    'NOT NULL CHECK(json_valid(local_payload_json))',
+  )();
+  TextColumn get remotePayloadJson => text().nullable()();
+  DateTimeColumn get resolvedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {operationId};
+}
+
 @DriftDatabase(
   tables: [
     Players,
@@ -907,6 +931,7 @@ class CourtQueueCheckpoints extends Table {
     MatchResultRevisions,
     CourtQueueOutbox,
     CourtQueueCheckpoints,
+    SyncResolutionAudit,
   ],
 )
 final class AppDatabase extends _$AppDatabase {
@@ -940,7 +965,7 @@ final class AppDatabase extends _$AppDatabase {
       });
 
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -1052,9 +1077,13 @@ final class AppDatabase extends _$AppDatabase {
         }
         if (to == 9) return;
       }
-      if (from <= 9 && to == 10) {
+      if (from <= 9 && to >= 10) {
         await migrator.createTable(courtQueueOutbox);
         await migrator.createTable(courtQueueCheckpoints);
+        if (to == 10) return;
+      }
+      if (from <= 10 && to == 11) {
+        await migrator.createTable(syncResolutionAudit);
         return;
       }
       throw StateError(

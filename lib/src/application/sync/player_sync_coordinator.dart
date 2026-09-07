@@ -54,9 +54,14 @@ final class PlayerSyncCoordinator implements SyncCoordinator {
       now: now,
       limit: batchSize,
     );
+    final conflictedEntities = <String>{};
 
     for (var index = 0; index < operations.length; index++) {
       final operation = operations[index];
+      if (conflictedEntities.contains(operation.entityId.value)) {
+        await store.releaseClaims([operation]);
+        continue;
+      }
       if (_disposed) {
         await store.releaseClaims(operations.skip(index));
         break;
@@ -74,12 +79,10 @@ final class PlayerSyncCoordinator implements SyncCoordinator {
             conflictId: idFactory.conflictId(),
           );
           conflicts++;
-          await store.releaseClaims(operations.skip(index + 1));
-          return SyncReport(
-            status: SyncRunStatus.completed,
-            uploaded: uploaded,
-            conflicts: conflicts,
-          );
+          conflictedEntities.add(operation.entityId.value);
+        // The store excludes later work for this player while the conflict
+        // remains unresolved. Continue unrelated player aggregates so one
+        // organizer conflict does not stall the whole outbox.
         case RemoteApplyFailure(kind: SyncFailureKind.authorizationBlocked):
           await store.markAuthorizationBlocked(
             operation,
