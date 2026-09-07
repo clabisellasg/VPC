@@ -159,7 +159,8 @@ authorized proceeding.
 - **Purpose:** Preserve and browse completed events and derive individual and
   partner statistics.
 - **Dependencies:** M13 through M17.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED; automated/hosted validation and user-confirmed
+  Android/Web walkthrough categories A–E passed.
 
 ### M19 — iPhone Web/PWA Parity and Deployment
 

@@ -1,5 +1,12 @@
 # Conceptual Database Model
 
+## M18 derived-history boundary
+
+`read_public_player_history(uuid)` derives approved public history from active
+operational records. It returns no profile, role, claim, payment, Auth, receipt,
+or conflict columns. M18 adds no counter table, trigger-maintained totals, or
+materialized statistics.
+
 ## M17 synchronization hardening
 
 The complete offline boundary covers the 12 operational tables already in the

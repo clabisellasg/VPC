@@ -1,5 +1,14 @@
 # Decision Register
 
+## M18 derived-statistics definitions
+
+Version 1 counts only current active completed match results. Corrections replace
+their prior contribution and audit revisions do not add another match. Event
+appearances require checked-in participation in a completed or archived event;
+placements use active positions. Partner identity is an unordered pair of
+permanent player IDs. A zero-match win rate is 0%. Values are derived and are
+never editable counters or rankings.
+
 Stable decision IDs are never reused. An `OPEN` entry is a question, not a
 recommendation or accepted design. It moves to another section only after
 explicit planner/architect approval, with the approval and date recorded.

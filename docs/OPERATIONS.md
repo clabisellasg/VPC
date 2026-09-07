@@ -1,5 +1,12 @@
 # Operations Outline
 
+## M18 history verification
+
+Compare a synthetic completed player's public profile on Android and Web after
+synchronization. Android retains synchronized history offline; Web remains
+online-only. Check zero history, corrected results, responsive text, and the
+absence of payment/account data. No statistics refresh job is operated.
+
 ## M17 synchronization operations
 
 An organizer opens **Account → Synchronization** to inspect pending, retryable,

@@ -4,16 +4,24 @@ import 'package:go_router/go_router.dart';
 
 import '../../application/accounts/account_models.dart';
 import '../../application/players/player_directory_models.dart';
+import '../../application/history/player_history_models.dart';
 import '../../domain/common/entity_id.dart';
 import '../../domain/common/repository_result.dart';
 import '../../domain/players/player_skill.dart';
 import '../../infrastructure/players/player_directory_providers.dart';
+import '../../infrastructure/history/player_history_providers.dart';
 import '../accounts/account_controller.dart';
 
 final publicPlayerProfileProvider = FutureProvider.autoDispose
     .family<RepositoryResult<PlayerDirectoryEntry>, PlayerId>(
       (ref, id) => ref.watch(playerDirectoryReaderProvider).getById(id),
     );
+
+final publicPlayerHistoryProvider = FutureProvider.autoDispose
+    .family<RepositoryResult<PlayerHistorySnapshot>?, PlayerId>((ref, id) {
+      final reader = ref.watch(playerHistoryReaderProvider);
+      return reader?.read(id);
+    });
 
 class PublicPlayerProfilePage extends ConsumerWidget {
   const PublicPlayerProfilePage({required this.playerId, super.key});
@@ -89,9 +97,108 @@ class _Profile extends ConsumerWidget {
               const Divider(height: 32),
               Text(_organizerSyncMessage(entry.syncState)),
             ],
+            const Divider(height: 32),
+            _HistorySection(playerId: entry.profile.id),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _HistorySection extends ConsumerWidget {
+  const _HistorySection({required this.playerId});
+  final PlayerId playerId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final history = ref.watch(publicPlayerHistoryProvider(playerId));
+    return history.when(
+      loading: () => const Padding(
+        padding: EdgeInsets.all(12),
+        child: Text('Loading history…'),
+      ),
+      error: (_, _) => const Text(
+        'History is temporarily unavailable. Pull to refresh and try again.',
+      ),
+      data: (result) {
+        if (result == null) {
+          return const Text(
+            'History is unavailable until online data is configured.',
+          );
+        }
+        return result.when(
+          failure: (_) => const Text(
+            'History is temporarily unavailable. Pull to refresh and try again.',
+          ),
+          success: (snapshot) => _HistoryContents(snapshot: snapshot),
+        );
+      },
+    );
+  }
+}
+
+class _HistoryContents extends StatelessWidget {
+  const _HistoryContents({required this.snapshot});
+  final PlayerHistorySnapshot snapshot;
+  @override
+  Widget build(BuildContext context) {
+    final s = snapshot.summary;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Career summary', style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 8),
+        Text(
+          '${s.matchesPlayed} matches · ${s.wins} wins · ${s.losses} losses · ${s.winRate.toStringAsFixed(0)}% win rate',
+        ),
+        Text(
+          '${s.eventAppearances} event appearances · ${s.divisionAppearances} division appearances',
+        ),
+        Text(
+          '${s.championships} championships · ${s.runnerUpFinishes} runner-up finishes',
+        ),
+        Text(
+          '${s.pointsFor} points for · ${s.pointsAgainst} against · ${s.pointDifferential >= 0 ? '+' : ''}${s.pointDifferential} differential',
+        ),
+        if (snapshot.hasPendingSync)
+          const Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: Text('Includes local results pending synchronization.'),
+          ),
+        if (snapshot.hasConflict)
+          const Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: Text(
+              'A synchronization conflict may affect these local totals.',
+            ),
+          ),
+        const Divider(height: 32),
+        Text('Recent matches', style: Theme.of(context).textTheme.titleMedium),
+        if (snapshot.matches.entries.isEmpty)
+          const Text('No completed matches yet.'),
+        ...snapshot.matches.entries.map(
+          (match) => ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(
+              '${match.won ? 'Won' : 'Lost'} ${match.pointsFor}–${match.pointsAgainst} · ${match.opponentName}',
+            ),
+            subtitle: Text('${match.eventName} · ${match.divisionName}'),
+          ),
+        ),
+        const Divider(height: 32),
+        Text(
+          'Partner statistics',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        if (snapshot.partners.isEmpty)
+          const Text('No completed partnerships yet.'),
+        ...snapshot.partners.map(
+          (partner) => Text(
+            '${partner.partnerName}: ${partner.wins}–${partner.losses} (${partner.winRate.toStringAsFixed(0)}%)',
+          ),
+        ),
+      ],
     );
   }
 }

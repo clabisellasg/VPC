@@ -1,5 +1,12 @@
 # Android Synchronization Design
 
+## M18 history derivation
+
+History introduces no synchronized table, outbox command, or checkpoint.
+Android derives from the operational records synchronized through M17,
+including locally pending results. Web derives from current PostgreSQL records.
+Pending/conflict presentation warns when the two views may not yet converge.
+
 ## M17 complete operational synchronization
 
 M17 composes the bounded M5–M16 protocols across all 12 operational tables in

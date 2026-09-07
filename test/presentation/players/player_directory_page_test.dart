@@ -11,6 +11,7 @@ import 'package:vpc/src/domain/common/record_metadata.dart';
 import 'package:vpc/src/domain/common/repository_result.dart';
 import 'package:vpc/src/infrastructure/persistence/local/local_persistence_providers.dart';
 import 'package:vpc/src/infrastructure/players/player_directory_providers.dart';
+import 'package:vpc/src/infrastructure/history/player_history_providers.dart';
 
 void main() {
   testWidgets('guest opens directory, searches, and opens a basic profile', (
@@ -83,6 +84,7 @@ Future<VpcApp> pumpApp(
           LocalPersistencePlatform.web,
         ),
         playerDirectoryReaderProvider.overrideWithValue(reader),
+        playerHistoryReaderProvider.overrideWithValue(null),
       ],
       child: app,
     ),

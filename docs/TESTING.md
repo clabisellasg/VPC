@@ -1,5 +1,12 @@
 # Testing Strategy
 
+## M18 history coverage
+
+M18 deterministic tests cover zero history, wins/losses, points and win rate,
+partner identity, public mapping, and M8 profile regressions. Hosted migration
+history/lint validates the fixed public read boundary. The user confirmed the
+Android/Web manual categories A–E on 2026-09-08.
+
 ## M17 validation
 
 M17 adds deterministic coverage for dependency-ordered/coalesced operational

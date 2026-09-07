@@ -1,5 +1,13 @@
 # Architecture Baseline
 
+## M18 Tournament History and Statistics
+
+M18 adds a provider-neutral, read-only player-history boundary. Android derives
+career and partner summaries from synchronized Drift operational records; Web
+calls a fixed public PostgreSQL function and never initializes SQLite. Current
+matches, memberships, checked-in participation, and placements remain the
+source of truth. No career counters or statistics sync stream exist.
+
 ## M17 offline operation and sync hardening
 
 The Android composition root now exposes one organizer operational coordinator
