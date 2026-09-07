@@ -45,35 +45,32 @@ void main() {
 
   tearDown(() => database.close());
 
-  test(
-    'fresh v2 schema has constrained outbox, checkpoint, and conflict tables',
-    () async {
-      final tables = await database
-          .customSelect(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name IN "
-            "('sync_outbox_operations','sync_pull_checkpoints','sync_conflicts')",
-          )
-          .get();
-      expect(tables, hasLength(3));
-      await expectLater(
-        database
-            .into(database.syncOutboxOperations)
-            .insert(
-              SyncOutboxOperationsCompanion.insert(
-                id: operationOne,
-                entityType: 'event',
-                entityId: playerId,
-                operationKind: 'upsert',
-                payloadJson: '{}',
-                createdAt: clock.current,
-                nextEligibleAt: clock.current,
-                status: 'pending',
-              ),
+  test('fresh v2 schema has constrained outbox, checkpoint, and conflict tables', () async {
+    final tables = await database
+        .customSelect(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name IN "
+          "('sync_outbox_operations','sync_pull_checkpoints','sync_conflicts')",
+        )
+        .get();
+    expect(tables, hasLength(3));
+    await expectLater(
+      database
+          .into(database.syncOutboxOperations)
+          .insert(
+            SyncOutboxOperationsCompanion.insert(
+              id: operationOne,
+              entityType: 'event',
+              entityId: playerId,
+              operationKind: 'upsert',
+              payloadJson: '{}',
+              createdAt: clock.current,
+              nextEligibleAt: clock.current,
+              status: 'pending',
             ),
-        throwsA(anything),
-      );
-    },
-  );
+          ),
+      throwsA(anything),
+    );
+  });
 
   test('player mutation and outbox operation commit atomically', () async {
     final repository = DriftSyncingPlayerRepository(

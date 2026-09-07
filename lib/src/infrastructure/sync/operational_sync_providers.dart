@@ -39,14 +39,14 @@ final operationalSyncCoordinatorProvider =
         if (ref.watch(courtQueueSynchronizerProvider) case final runner?)
           _Runner(runner.synchronize),
       ];
-  final coordinator = OperationalSyncCoordinator(
-    store: store,
-    runners: runners,
-    nowUtc: DateTime.now,
-  );
-  ref.onDispose(coordinator.dispose);
-  return coordinator;
-});
+      final coordinator = OperationalSyncCoordinator(
+        store: store,
+        runners: runners,
+        nowUtc: DateTime.now,
+      );
+      ref.onDispose(coordinator.dispose);
+      return coordinator;
+    });
 
 final class _Runner implements OperationalSyncRunner {
   const _Runner(this._run);
