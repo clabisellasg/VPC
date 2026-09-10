@@ -10,6 +10,8 @@ import '../../domain/common/record_metadata.dart';
 import '../../domain/common/repository_result.dart';
 import '../../domain/events/event.dart';
 import '../../domain/events/event_division.dart';
+import '../common/public_supabase_request.dart';
+import '../../core/supabase/public_supabase_rest_client.dart';
 
 typedef PublicEventClock = DateTime Function();
 
@@ -29,30 +31,61 @@ final class SupabasePublicRowsGateway implements PublicRowsGateway {
 
   @override
   Future<List<Map<String, Object?>>> fetchEvents() async {
-    final rows = await client
-        .from(eventTable)
-        .select(
-          'id,name,scheduled_at,event_type,status,entry_fee_minor_units,'
-          'entry_fee_currency,court_label,created_at,updated_at,version,deleted_at',
-        )
-        .isFilter('deleted_at', null)
-        .order('scheduled_at')
-        .order('id');
+    final rows = await runPublicSupabaseRequest(
+      () => client
+          .from(eventTable)
+          .select(
+            'id,name,scheduled_at,event_type,status,entry_fee_minor_units,'
+            'entry_fee_currency,court_label,created_at,updated_at,version,deleted_at',
+          )
+          .isFilter('deleted_at', null)
+          .order('scheduled_at')
+          .order('id'),
+    );
     return rows.map<Map<String, Object?>>((row) => Map.of(row)).toList();
   }
 
   @override
   Future<List<Map<String, Object?>>> fetchEventDivisions() async {
-    final rows = await client
-        .from(divisionTable)
-        .select(
-          'id,event_id,name,tournament_format,created_at,updated_at,version,deleted_at',
-        )
-        .isFilter('deleted_at', null)
-        .order('name')
-        .order('id');
+    final rows = await runPublicSupabaseRequest(
+      () => client
+          .from(divisionTable)
+          .select(
+            'id,event_id,name,tournament_format,created_at,updated_at,version,deleted_at',
+          )
+          .isFilter('deleted_at', null)
+          .order('name')
+          .order('id'),
+    );
     return rows.map<Map<String, Object?>>((row) => Map.of(row)).toList();
   }
+}
+
+final class HttpPublicEventRowsGateway implements PublicRowsGateway {
+  const HttpPublicEventRowsGateway(this.client);
+
+  final PublicSupabaseRestClient client;
+
+  @override
+  Future<List<Map<String, Object?>>> fetchEvents() => runPublicSupabaseRequest(
+    () => client.select('events', const {
+      'select':
+          'id,name,scheduled_at,event_type,status,entry_fee_minor_units,'
+          'entry_fee_currency,court_label,created_at,updated_at,version,deleted_at',
+      'deleted_at': 'is.null',
+      'order': 'scheduled_at.asc,id.asc',
+    }),
+  );
+
+  @override
+  Future<List<Map<String, Object?>>> fetchEventDivisions() =>
+      runPublicSupabaseRequest(
+        () => client.select('event_divisions', const {
+          'select': 'id,event_id,name,tournament_format,created_at,updated_at,version,deleted_at',
+          'deleted_at': 'is.null',
+          'order': 'name.asc,id.asc',
+        }),
+      );
 }
 
 final class SupabasePublicEventSource implements PublicEventRemoteSource {
@@ -99,11 +132,7 @@ final class SupabasePublicEventSource implements PublicEventRemoteSource {
       if (error is Error) {
         rethrow;
       }
-      return const RepositoryFailure(
-        UnknownRepositoryFailure(
-          message: 'Public event data could not be loaded safely.',
-        ),
-      );
+      return RepositoryFailure(safePublicReadFailure(error, 'Public events'));
     }
   }
 }

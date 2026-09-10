@@ -1,5 +1,27 @@
 # Architecture Baseline
 
+## M19 iPhone Web/PWA parity and deployment
+
+The production Flutter Web client is a static, JavaScript-based Cloudflare
+Pages application using path URLs and Pages' automatic SPA fallback. A
+cross-platform release script validates build-time Supabase configuration,
+passes it through a temporary Dart-define file, disables the obsolete generated
+service worker, and deploys only `build/web`. Web uses the existing online
+Supabase adapters and never constructs Drift, SQLite, IndexedDB, or an outbox.
+
+The manifest, touch icons, safe-area viewport, responsive presentation, and
+standalone metadata support iPhone Safari and Add to Home Screen. Installation
+does not provide Android-style offline tournament operation. Browser network
+loss is presented honestly and mutations remain cloud-authoritative.
+
+Public Web reads use a minimal RLS-governed GET transport. The browser-visible
+publishable key is carried as a query parameter because the validated iPhone
+WebKit environment blocked the otherwise standard `apikey` and client-info
+headers. Authenticated account and organizer commands continue through the
+official Supabase client. On iPhone/iPad, CanvasKit uses its supported CPU
+surface to reduce stale WebGL-frame compositing during history navigation;
+other browsers retain the normal renderer configuration.
+
 ## M18 Tournament History and Statistics
 
 M18 adds a provider-neutral, read-only player-history boundary. Android derives

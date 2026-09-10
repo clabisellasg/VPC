@@ -7,21 +7,53 @@ import '../../domain/common/domain_enums.dart';
 import '../../domain/common/domain_failure.dart';
 import '../../domain/common/entity_id.dart';
 import '../../domain/common/repository_result.dart';
+import '../common/public_supabase_request.dart';
+import '../../core/supabase/public_supabase_rest_client.dart';
 
-final class SupabasePlayerHistoryReader implements PlayerHistoryReader {
-  const SupabasePlayerHistoryReader(this.client);
+abstract interface class PublicPlayerHistoryGateway {
+  Future<Object?> read(PlayerId playerId);
+}
+
+final class SupabasePublicPlayerHistoryGateway
+    implements PublicPlayerHistoryGateway {
+  const SupabasePublicPlayerHistoryGateway(this.client);
 
   final SupabaseClient client;
+
+  @override
+  Future<Object?> read(PlayerId playerId) => runPublicSupabaseRequest(
+    () => client.rpc<Object?>(
+      'read_public_player_history',
+      params: {'p_player_id': playerId.value},
+    ),
+  );
+}
+
+final class HttpPublicPlayerHistoryGateway
+    implements PublicPlayerHistoryGateway {
+  const HttpPublicPlayerHistoryGateway(this.client);
+
+  final PublicSupabaseRestClient client;
+
+  @override
+  Future<Object?> read(PlayerId playerId) => runPublicSupabaseRequest(
+    () => client.rpc('read_public_player_history', {
+      'p_player_id': playerId.value,
+    }),
+  );
+}
+
+final class SupabasePlayerHistoryReader implements PlayerHistoryReader {
+  const SupabasePlayerHistoryReader(this.gateway);
+
+  final PublicPlayerHistoryGateway gateway;
 
   @override
   Future<RepositoryResult<PlayerHistorySnapshot>> read(
     PlayerId playerId,
   ) async {
     try {
-      final value = await client.rpc<Object?>(
-        'read_public_player_history',
-        params: {'p_player_id': playerId.value},
-      );
+      final value = await gateway.read(playerId);
       if (value == null) {
         return RepositoryFailure(
           NotFoundFailure(entity: 'Player', identifier: playerId.value),
@@ -34,11 +66,7 @@ final class SupabasePlayerHistoryReader implements PlayerHistoryReader {
       return RepositoryFailure(failure);
     } catch (error) {
       if (error is Error) rethrow;
-      return const RepositoryFailure(
-        UnknownRepositoryFailure(
-          message: 'Player history could not be loaded safely.',
-        ),
-      );
+      return RepositoryFailure(safePublicReadFailure(error, 'Player history'));
     }
   }
 

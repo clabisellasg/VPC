@@ -14,9 +14,13 @@ final playerHistoryReaderProvider = Provider<PlayerHistoryReader?>((ref) {
   }
   if (ref.watch(localPersistencePlatformProvider) ==
       LocalPersistencePlatform.web) {
-    final client = ref.watch(supabaseClientProvider);
-    return client == null ? null : SupabasePlayerHistoryReader(client);
+    final client = ref.watch(publicSupabaseRestClientProvider);
+    return client == null
+        ? null
+        : SupabasePlayerHistoryReader(HttpPublicPlayerHistoryGateway(client));
   }
-  final client = ref.watch(supabaseClientProvider);
-  return client == null ? null : SupabasePlayerHistoryReader(client);
+  final client = ref.watch(publicSupabaseRestClientProvider);
+  return client == null
+      ? null
+      : SupabasePlayerHistoryReader(HttpPublicPlayerHistoryGateway(client));
 });

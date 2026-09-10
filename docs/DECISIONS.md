@@ -143,6 +143,15 @@ M16 planner approval (2026-09-06):
   is explicit, one match is Now Playing at most, and completion never
   automatically starts another match.
 
+M19 planner approval (2026-09-08):
+
+- **V1-082 — ACCEPTED (OPEN-010):** Version 1 deploys the Flutter Web/PWA as
+  static files on the free Cloudflare Pages tier in the
+  `volta-paddle-club` project. It uses the generated HTTPS `pages.dev` domain;
+  no Functions, Workers, KV, D1, R2, paid service, or custom domain is required.
+  Free-tier limits must be monitored and are not guaranteed beyond the
+  provider's current offering.
+
 ## Open decisions
 
 The “resolve by” milestone is the latest point at which an explicit accepted
@@ -153,7 +162,7 @@ decision is required before affected implementation proceeds.
 | OPEN-005 | What is the round-robin tie-breaker order? | Before M14 implementation | RESOLVED by V1-079 |
 | OPEN-006 | Does double elimination use a grand-final bracket reset? | Before M15 implementation | RESOLVED by V1-080 |
 | OPEN-009 | Multiple authorized organizers use optimistic first-writer-wins. There is no lock or lease: stale aggregate commands become explicit conflicts; unrelated work continues. Organizers may archive/cancel local intent with **Use cloud version**, or revalidate it as a new operation with **Reapply local change**. Neither action silently merges or overwrites. | Resolved by M17 | ACCEPTED |
-| OPEN-010 | Which free static hosting provider will serve the Flutter Web/PWA? | Before M19 implementation | OPEN |
+| OPEN-010 | Which free static hosting provider will serve the Flutter Web/PWA? | Before M19 implementation | RESOLVED by V1-082 |
 
 ## Explicitly approved changes
 
@@ -169,6 +178,7 @@ decision is required before affected implementation proceeds.
 | OPEN-008 | M10 planner specification, 2026-09-01 | Resolved by V1-069 for M10: registration uses one event-scoped Paid/Unpaid record; division-scoped rows are not created by the M10 UI. | RESOLVED |
 | OPEN-002 | M11 planner specification, 2026-09-02 | Resolved by V1-071 with the permanent 1–5/null community scale. | RESOLVED |
 | OPEN-012 | M11 planner specification, 2026-09-02 | Resolved by V1-072: Version 1 team formation creates complete two-player doubles teams. | RESOLVED |
+| OPEN-010 | M19 planner specification, 2026-09-08 | Resolved by V1-082: static Cloudflare Pages on its free tier using `volta-paddle-club.pages.dev`. | RESOLVED |
 
 ## Future-version suggestions
 

@@ -20,8 +20,12 @@ final playerClaimRepositoryProvider = Provider<PlayerClaimRepository?>((ref) {
 });
 
 final authRedirectProvider = Provider<String>((ref) {
-  if (kIsWeb) {
-    return Uri.base.resolve('/account/confirm').toString();
+  return buildAuthRedirect(isWeb: kIsWeb, browserUri: Uri.base);
+});
+
+String buildAuthRedirect({required bool isWeb, required Uri browserUri}) {
+  if (isWeb) {
+    return browserUri.resolve('/account/confirm').toString();
   }
   return 'com.voltapaddleclub.vpc://auth-callback/account/confirm';
-});
+}

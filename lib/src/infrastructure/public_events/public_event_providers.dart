@@ -15,11 +15,11 @@ final publicEventClockProvider = Provider<PublicEventClock>(
 final publicEventRemoteSourceProvider = Provider<PublicEventRemoteSource?>((
   ref,
 ) {
-  final client = ref.watch(supabaseClientProvider);
+  final client = ref.watch(publicSupabaseRestClientProvider);
   return client == null
       ? null
       : SupabasePublicEventSource(
-          SupabasePublicRowsGateway(client),
+          HttpPublicEventRowsGateway(client),
           clock: ref.watch(publicEventClockProvider),
         );
 });

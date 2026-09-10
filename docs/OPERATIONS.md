@@ -294,16 +294,34 @@ Remove either only through a reviewed later data migration after clearing its
 exact test claim history and private profile link; do not delete by display-name
 pattern, unrelated permanent players, or intended organizer accounts.
 
-## PWA deployment — PRELIMINARY / FUTURE
+## M19 Cloudflare Pages production deployment
 
-- Select the free static hosting provider through an approved decision before
-  M19 implementation.
-- Document reproducible production build and deployment steps, environment
-  configuration, HTTPS/domain behavior, cache/update behavior, rollback, and
-  iPhone Safari installation/use.
-- Verify public access and authenticated online organizer workflows against
-  production RLS. Version 1 does not promise native iPhone offline support.
-- Monitor free-tier constraints and do not enable paid services implicitly.
+Set `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` locally, then run
+`dart run tool/build_web_release.dart`. The script creates a temporary define
+file, runs the JavaScript release build with `--pwa-strategy=none`, removes the
+temporary file, and never prints configuration values.
+
+The `Deploy production Web` workflow runs only for `main` or a manual dispatch
+whose selected ref is `main`. Configure GitHub environment `production` with:
+
+- repository variable `SUPABASE_URL`;
+- repository secrets `SUPABASE_PUBLISHABLE_KEY`, `CLOUDFLARE_API_TOKEN`, and
+  `CLOUDFLARE_ACCOUNT_ID`.
+
+Limit the Cloudflare token to Pages deployment for the account. The workflow
+deploys only `build/web` to `volta-paddle-club`. Roll back by selecting a
+known-good production deployment in Cloudflare Pages. `_headers` prevents a
+stale application shell and adds conservative response protections. No CSP is
+shipped because Flutter/Supabase compatibility has not yet been proven.
+
+Supabase Authentication must allow the exact production callback
+`https://volta-paddle-club.pages.dev/account/confirm` while retaining the
+Android callback and approved localhost callbacks. Keep email confirmation
+enabled and do not authorize production or preview wildcards.
+
+On iPhone Safari, use Share → Add to Home Screen. The installed application is
+online-first: disconnection prevents cloud reads and organizer mutations, and
+reconnect plus retry is required. It is not a native iOS application.
 
 ## Pilot tournament — PRELIMINARY / FUTURE
 

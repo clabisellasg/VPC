@@ -1,5 +1,13 @@
 # Android Synchronization Design
 
+## M19 platform boundary
+
+Cloudflare Pages serves only the online Flutter Web client. It initializes no
+Drift database, offline repository, outbox, or synchronization coordinator and
+does not cache Supabase responses or authenticated data for offline use. The
+Flutter-generated service worker is disabled for production to avoid trapping
+users on a stale shell. Android retains the complete M17 offline-first model.
+
 ## M18 history derivation
 
 History introduces no synchronized table, outbox command, or checkpoint.

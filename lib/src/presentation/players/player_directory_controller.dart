@@ -144,6 +144,8 @@ final class PlayerDirectoryController
           query: state.query,
           message: failure is PersistenceUnavailableFailure
               ? 'Public player data is not configured for this build.'
+              : failure is RemoteReadFailure
+              ? '${failure.message} Please try again.'
               : 'Players could not be loaded. Please try again.',
         );
       },

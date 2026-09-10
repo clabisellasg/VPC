@@ -133,5 +133,7 @@ final class PublicEventsController extends Notifier<PublicEventsViewState> {
   String _messageFor(DomainFailure failure) =>
       failure is PersistenceUnavailableFailure
       ? 'Public event data is not configured for this build.'
+      : failure is RemoteReadFailure
+      ? '${failure.message} Please try again.'
       : 'Public events could not be refreshed. Please try again.';
 }

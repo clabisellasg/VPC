@@ -1,5 +1,43 @@
 # Testing Strategy
 
+## M19 Web/PWA validation
+
+Automated coverage validates release configuration redaction, exact production
+and Android authentication callbacks, installable manifest/icon metadata,
+path-based deep links, static SPA fallback, cache/security headers, main-only
+secret-backed deployment, no generated service worker, and honest Web offline
+presentation. The full M0–M18 regression suite, production Web build, and
+Android debug build remain mandatory.
+
+The M19 automated run passed all 383 Flutter tests, strict formatting, static
+analysis, build-runner freshness, the configured JavaScript Web release build,
+the Android debug APK build, linked migration agreement, and linked database
+lint with no errors. The deployed `https://volta-paddle-club.pages.dev` root,
+deep routes, manifest, icons, MIME types, cache/security headers, public event
+reads, and browser console passed. No source map or generated service-worker
+asset was deployed. The standalone Drift schema-dump command repeatedly
+stalled in its Windows build-hook startup; M19 changes no Drift input, tracked
+generated files remained unchanged, and all migration/database tests passed.
+
+Deployment acceptance checks the actual HTTPS root, representative direct
+routes, manifest/assets and MIME types, response headers, guest reads, RLS,
+authentication, refresh/back navigation, version freshness, and browser
+console. Physical iPhone Safari/Home Screen and Android regression walkthroughs
+were required before M19 could be marked complete.
+
+Hosted publishable-key smoke checks returned `200` for public events, players,
+and player history; private profile, role, claim, and payment relations were not
+exposed, and anonymous player mutation returned `401`. The user confirmed the
+physical Android regression categories A–E on 2026-09-08, including fresh-install
+launch, public history after synchronization, offline cached reading, reconnect,
+authentication, text scaling, and USB-independent relaunch. The physical iPhone
+walkthrough categories A–F passed on a physical iPhone 15 running iOS 18.7.8,
+covering Safari, Home Screen installation, public data, authentication,
+organizer behavior, online-only recovery, responsive layouts, and relaunch.
+The device still occasionally shows a brief previous-frame image during native
+back/forward traversal; navigation reaches the correct route and data remains
+available. This is recorded as an iOS WebKit/CanvasKit presentation limitation.
+
 ## M18 history coverage
 
 M18 deterministic tests cover zero history, wins/losses, points and win rate,

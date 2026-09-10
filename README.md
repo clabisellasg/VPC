@@ -6,8 +6,8 @@ single-court community. It will eventually manage reusable community players,
 participation, check-in, payment status, temporary teams, approved tournament
 formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 18 — Tournament History and Statistics
-(`COMPLETED`). M0–M18 are completed; M19–M21 remain NOT STARTED.
+**Current status:** Milestone 19 — iPhone Web/PWA Parity and Deployment
+(`COMPLETED`). M0–M19 are completed; M20–M21 remain NOT STARTED.
 
 ## Version 1 technology stack
 
@@ -59,6 +59,7 @@ scope, replace the stack, or begin a later milestone.
 - [Milestone 16 implementation record](docs/milestones/M16_ONE_COURT_SCHEDULING_QUEUE.md)
 - [Milestone 17 implementation record](docs/milestones/M17_COMPLETE_OFFLINE_OPERATION_SYNC_HARDENING.md)
 - [Milestone 18 implementation record](docs/milestones/M18_HISTORY_DERIVED_STATISTICS.md)
+- [Milestone 19 implementation record](docs/milestones/M19_IPHONE_WEB_PWA_PARITY_DEPLOYMENT.md)
 
 ## Development setup
 
@@ -161,7 +162,11 @@ supabase db push --linked --dry-run --skip-vault
 supabase db lint --linked
 ```
 
-The Web output is written to `build/web`. The Android debug APK is written to
+The Web output is written to `build/web`. For a production release, set
+`SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` in the local environment and run
+`dart run tool/build_web_release.dart`. The script validates complete
+configuration without printing values, uses the standard JavaScript Web build,
+and disables the obsolete generated service worker. The Android debug APK is written to
 `build/app/outputs/flutter-apk/app-debug.apk`. These are local build artifacts,
 not deployments or releases. Android participant changes commit with a durable
 local outbox and may remain pending until a confirmed organizer session and

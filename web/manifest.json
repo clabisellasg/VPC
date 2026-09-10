@@ -1,12 +1,13 @@
 {
     "name": "Volta Paddle Club",
     "short_name": "VPC",
-    "start_url": ".",
+    "id": "/",
+    "start_url": "/",
+    "scope": "/",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "Bootstrap foundation for Volta Paddle Club.",
-    "orientation": "portrait-primary",
+    "background_color": "#061B45",
+    "theme_color": "#061B45",
+    "description": "Community pickleball events, players, tournaments, and results.",
     "prefer_related_applications": false,
     "icons": [
         {

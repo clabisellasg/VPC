@@ -87,3 +87,8 @@ final class UnknownRepositoryFailure extends DomainFailure {
   const UnknownRepositoryFailure({required super.message})
     : super(code: 'unknown_repository_failure');
 }
+
+/// A safe, provider-neutral failure for public cloud reads.
+final class RemoteReadFailure extends DomainFailure {
+  const RemoteReadFailure({required super.code, required super.message});
+}

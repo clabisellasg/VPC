@@ -7,6 +7,8 @@ import '../../domain/common/entity_id.dart';
 import '../../domain/common/record_metadata.dart';
 import '../../domain/common/repository_result.dart';
 import '../../domain/players/player_skill.dart';
+import '../common/public_supabase_request.dart';
+import '../../core/supabase/public_supabase_rest_client.dart';
 
 abstract interface class PublicPlayerRowsGateway {
   Future<List<Map<String, Object?>>> search(PlayerDirectoryQuery query);
@@ -24,14 +26,16 @@ final class SupabasePublicPlayerRowsGateway implements PublicPlayerRowsGateway {
 
   @override
   Future<List<Map<String, Object?>>> search(PlayerDirectoryQuery query) async {
-    final response = await client.rpc<List<dynamic>>(
-      'search_public_players',
-      params: <String, Object?>{
-        'p_query': query.searchText,
-        'p_after_name': query.after?.normalizedName,
-        'p_after_id': query.after?.id.value,
-        'p_limit': query.limit,
-      },
+    final response = await runPublicSupabaseRequest(
+      () => client.rpc<List<dynamic>>(
+        'search_public_players',
+        params: <String, Object?>{
+          'p_query': query.searchText,
+          'p_after_name': query.after?.normalizedName,
+          'p_after_id': query.after?.id.value,
+          'p_limit': query.limit,
+        },
+      ),
     );
     return response
         .map((row) => Map<String, Object?>.from(row as Map))
@@ -40,16 +44,53 @@ final class SupabasePublicPlayerRowsGateway implements PublicPlayerRowsGateway {
 
   @override
   Future<Map<String, Object?>?> getById(PlayerId id) async {
-    final rows = await client
-        .from('players')
-        .select(selectedColumns)
-        .eq('id', id.value)
-        .isFilter('deleted_at', null)
-        .limit(1);
+    final rows = await runPublicSupabaseRequest(
+      () => client
+          .from('players')
+          .select(selectedColumns)
+          .eq('id', id.value)
+          .isFilter('deleted_at', null)
+          .limit(1),
+    );
     if (rows.isEmpty) {
       return null;
     }
     return Map<String, Object?>.from(rows.single);
+  }
+}
+
+final class HttpPublicPlayerRowsGateway implements PublicPlayerRowsGateway {
+  const HttpPublicPlayerRowsGateway(this.client);
+
+  final PublicSupabaseRestClient client;
+
+  @override
+  Future<List<Map<String, Object?>>> search(PlayerDirectoryQuery query) async {
+    final value = await runPublicSupabaseRequest(
+      () => client.rpc('search_public_players', {
+        'p_query': query.searchText,
+        'p_after_name': query.after?.normalizedName,
+        'p_after_id': query.after?.id.value,
+        'p_limit': query.limit,
+      }),
+    );
+    if (value is! List) throw const PublicRestProtocolException();
+    return value
+        .map((row) => Map<String, Object?>.from(row as Map))
+        .toList(growable: false);
+  }
+
+  @override
+  Future<Map<String, Object?>?> getById(PlayerId id) async {
+    final rows = await runPublicSupabaseRequest(
+      () => client.select('players', {
+        'select': SupabasePublicPlayerRowsGateway.selectedColumns,
+        'id': 'eq.${id.value}',
+        'deleted_at': 'is.null',
+        'limit': '1',
+      }),
+    );
+    return rows.isEmpty ? null : rows.single;
   }
 }
 
@@ -98,11 +139,7 @@ final class SupabasePublicPlayerSource implements PlayerDirectoryRemoteSource {
       if (error is Error) {
         rethrow;
       }
-      return const RepositoryFailure(
-        UnknownRepositoryFailure(
-          message: 'Public player data could not be loaded safely.',
-        ),
-      );
+      return RepositoryFailure(safePublicReadFailure(error, 'Public players'));
     }
   }
 
@@ -124,10 +161,8 @@ final class SupabasePublicPlayerSource implements PlayerDirectoryRemoteSource {
       if (error is Error) {
         rethrow;
       }
-      return const RepositoryFailure(
-        UnknownRepositoryFailure(
-          message: 'The public player profile could not be loaded safely.',
-        ),
+      return RepositoryFailure(
+        safePublicReadFailure(error, 'Public player profile'),
       );
     }
   }

@@ -66,7 +66,7 @@ void main() {
     result.when(
       success: (_) => fail('Expected repository failure.'),
       failure: (failure) {
-        expect(failure, isA<UnknownRepositoryFailure>());
+        expect(failure, isA<RemoteReadFailure>());
         expect(failure.message, isNot(contains('private-token')));
       },
     );

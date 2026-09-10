@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../application/accounts/account_models.dart';
 import '../../application/players/player_directory_models.dart';
 import '../../application/history/player_history_models.dart';
+import '../../domain/common/domain_failure.dart';
 import '../../domain/common/entity_id.dart';
 import '../../domain/common/repository_result.dart';
 import '../../domain/players/player_skill.dart';
@@ -128,8 +129,10 @@ class _HistorySection extends ConsumerWidget {
           );
         }
         return result.when(
-          failure: (_) => const Text(
-            'History is temporarily unavailable. Pull to refresh and try again.',
+          failure: (failure) => Text(
+            failure is RemoteReadFailure
+                ? '${failure.message} Pull to refresh and try again.'
+                : 'History is temporarily unavailable. Pull to refresh and try again.',
           ),
           success: (snapshot) => _HistoryContents(snapshot: snapshot),
         );

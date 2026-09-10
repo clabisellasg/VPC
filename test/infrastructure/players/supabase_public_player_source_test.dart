@@ -64,7 +64,8 @@ void main() {
     result.when(
       success: (_) => fail('Expected failure'),
       failure: (failure) {
-        expect(failure, isA<UnknownRepositoryFailure>());
+        expect(failure, isA<RemoteReadFailure>());
+        expect(failure.code, 'remote_transport');
         expect(failure.message, isNot(contains('secret-value')));
       },
     );

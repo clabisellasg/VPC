@@ -167,7 +167,8 @@ authorized proceeding.
 - **Purpose:** Verify guest, player, and online organizer functionality on
   iPhone Safari and deploy through a free static host.
 - **Dependencies:** M6 through M18.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED; automated/hosted validation, the Android regression,
+  and the physical iPhone Safari/Home Screen walkthrough passed.
 
 ### M20 — Release Hardening
 

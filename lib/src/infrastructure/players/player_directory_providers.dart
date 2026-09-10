@@ -24,10 +24,10 @@ final playerIdFactoryProvider = Provider<PlayerIdFactory>(
 
 final playerDirectoryRemoteSourceProvider =
     Provider<PlayerDirectoryRemoteSource?>((ref) {
-      final client = ref.watch(supabaseClientProvider);
+      final client = ref.watch(publicSupabaseRestClientProvider);
       return client == null
           ? null
-          : SupabasePublicPlayerSource(SupabasePublicPlayerRowsGateway(client));
+          : SupabasePublicPlayerSource(HttpPublicPlayerRowsGateway(client));
     });
 
 final playerDirectoryCacheProvider = Provider<PlayerDirectoryCache?>((ref) {

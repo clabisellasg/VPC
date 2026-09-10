@@ -132,10 +132,11 @@ void main() {
   });
 
   test('retry now bypasses a pending retryable player backoff', () async {
-    final future = DateTime.utc(2026, 9, 8).toIso8601String();
+    final beforeRetry = DateTime.now().toUtc();
+    final future = beforeRetry.add(const Duration(days: 1));
     await database.customStatement(
       "UPDATE sync_outbox_operations SET status='pending',failure_code='retryable',failure_message='The cloud is temporarily unavailable.',next_eligible_at=? WHERE id=?",
-      [future, oldOperation],
+      [future.toIso8601String(), oldOperation],
     );
 
     await store.retryFailures();
@@ -149,10 +150,10 @@ void main() {
     expect(operation.read<String>('status'), 'pending');
     expect(operation.readNullable<String>('failure_code'), isNull);
     expect(operation.readNullable<String>('failure_message'), isNull);
-    expect(
-      DateTime.parse(operation.read<String>('next_eligible_at'))
-          .isBefore(DateTime.utc(2026, 9, 8)),
-      isTrue,
+    final retriedAt = DateTime.parse(
+      operation.read<String>('next_eligible_at'),
     );
+    expect(retriedAt.isBefore(beforeRetry), isFalse);
+    expect(retriedAt.isBefore(future), isTrue);
   });
 }
