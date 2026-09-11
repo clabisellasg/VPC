@@ -213,8 +213,10 @@ GoRouter createAppRouter() {
         ],
       ),
     ],
+    // Query parameters and fragments can carry authentication callback data.
+    // A safe not-found page identifies only the route path.
     errorBuilder: (context, state) =>
-        _UnknownRoutePage(location: state.uri.toString()),
+        _UnknownRoutePage(location: state.uri.path),
   );
 }
 

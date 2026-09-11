@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vpc/src/core/config/supabase_configuration.dart';
 
@@ -62,6 +64,29 @@ void main() {
           ),
         ),
       );
+    });
+
+    test('rejects known privileged keys without echoing them', () {
+      final serviceRoleJwt = [
+        base64Url.encode(utf8.encode('{"alg":"HS256"}')).replaceAll('=', ''),
+        base64Url
+            .encode(utf8.encode('{"role":"service_role"}'))
+            .replaceAll('=', ''),
+        'signature',
+      ].join('.');
+      for (final key in ['sb_secret_private-test-value', serviceRoleJwt]) {
+        Object? failure;
+        try {
+          SupabaseConfiguration.fromValues(
+            url: 'https://project.example.invalid',
+            publishableKey: key,
+          );
+        } on Object catch (error) {
+          failure = error;
+        }
+        expect(failure, isA<FormatException>());
+        expect(failure.toString(), isNot(contains(key)));
+      }
     });
   });
 }

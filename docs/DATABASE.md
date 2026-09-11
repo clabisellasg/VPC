@@ -1,5 +1,19 @@
 # Conceptual Database Model
 
+## M20 migration and security review
+
+M20 changes no PostgreSQL or Drift schema. Every committed Drift snapshot from
+v1 through v10 migrates to the current v11 schema, fresh v11 creation remains
+covered, and a failed migration is proven not to advance `user_version` or
+erase representative data. Generated database source, the v11 JSON snapshot,
+and migration helpers remain deterministic.
+
+All 47 local and hosted migrations agree through `20260907180000`; linked dry
+run has no pending change and linked lint has no errors. All 19 exposed tables
+enable RLS, and all 42 committed `SECURITY DEFINER` functions specify a safe
+search path. Applied migrations remain immutable; any future correction must be
+an append-only forward repair. No production-data dump is part of M20.
+
 ## M18 derived-history boundary
 
 `read_public_player_history(uuid)` derives approved public history from active

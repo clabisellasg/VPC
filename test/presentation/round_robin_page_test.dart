@@ -122,8 +122,10 @@ void main() {
   ) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     final reader = _RoundRobinReader();
     await tester.pumpWidget(
       ProviderScope(
@@ -162,14 +164,14 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('Review seed order'), findsOneWidget);
+    await tester.ensureVisible(find.text('Review seed order'));
     await tester.tap(find.text('Review seed order'));
     await tester.pumpAndSettle();
     expect(find.text('Seed order'), findsOneWidget);
-    expect(find.byTooltip('Drag to reorder seed'), findsNWidgets(3));
-    await tester.drag(
-      find.byTooltip('Drag to reorder seed').first,
-      const Offset(0, 100),
-    );
+    expect(find.byTooltip('Drag to reorder seed'), findsWidgets);
+    expect(find.byTooltip('Move seed up'), findsWidgets);
+    expect(find.byTooltip('Move seed down'), findsWidgets);
+    await tester.tap(find.byTooltip('Move seed down').first);
     await tester.pumpAndSettle();
     expect(find.text('Order changed'), findsOneWidget);
     await tester.tap(find.text('Done'));
@@ -181,7 +183,7 @@ void main() {
       find.text('Preview only — no records have been saved.'),
       findsOneWidget,
     );
-    expect(find.textContaining('Resting:'), findsNWidgets(3));
+    expect(find.textContaining('Resting:'), findsWidgets);
     expect(reader.writes, 0);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());

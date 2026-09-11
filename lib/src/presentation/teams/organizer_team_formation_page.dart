@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../application/accounts/account_models.dart';
 import '../../application/teams/team_formation_models.dart';
 import '../../domain/common/domain_enums.dart';
+import '../../domain/common/domain_failure.dart';
 import '../../domain/common/entity_id.dart';
 import '../../domain/players/player_skill.dart';
 import '../../infrastructure/teams/team_formation_providers.dart';
@@ -85,18 +86,34 @@ class _OrganizerTeamFormationPageState
     );
   }
 
-  void _random() => setState(() {
-    _preview = ref
-        .read(teamFormationServiceProvider)!
-        .randomPreview(_snapshot!);
-    _message = null;
-  });
-  void _balanced() => setState(() {
-    _preview = ref
-        .read(teamFormationServiceProvider)!
-        .balancedPreview(_snapshot!);
-    _message = null;
-  });
+  void _random() => _setPreview(
+    () => ref.read(teamFormationServiceProvider)!.randomPreview(_snapshot!),
+  );
+  void _balanced() => _setPreview(
+    () => ref.read(teamFormationServiceProvider)!.balancedPreview(_snapshot!),
+  );
+
+  void _setPreview(
+    TeamFormationPreview Function() create, {
+    bool clearSelection = false,
+  }) {
+    try {
+      final preview = create();
+      setState(() {
+        _preview = preview;
+        if (clearSelection) _selected.clear();
+        _message = null;
+      });
+    } on DomainFailure catch (failure) {
+      setState(() => _message = failure.message);
+    } on Exception {
+      setState(
+        () => _message =
+            'Team preview is unavailable. Review the players and try again.',
+      );
+    }
+  }
+
   void _manual() {
     if (_selected.length != 2) {
       setState(() => _message = 'Select exactly two unassigned players.');
@@ -105,17 +122,12 @@ class _OrganizerTeamFormationPageState
     final values = _snapshot!.eligiblePlayers
         .where((p) => _selected.contains(p.playerId))
         .toList();
-    try {
-      setState(() {
-        _preview = ref
-            .read(teamFormationServiceProvider)!
-            .manual(_snapshot!, values[0], values[1], currentPreview: _preview);
-        _selected.clear();
-        _message = null;
-      });
-    } catch (error) {
-      setState(() => _message = error.toString());
-    }
+    _setPreview(
+      () => ref
+          .read(teamFormationServiceProvider)!
+          .manual(_snapshot!, values[0], values[1], currentPreview: _preview),
+      clearSelection: true,
+    );
   }
 
   Future<void> _confirm() async {
@@ -169,7 +181,11 @@ class _OrganizerTeamFormationPageState
       );
     }
     if (_loading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(
+          semanticsLabel: 'Loading team formation',
+        ),
+      );
     }
     if (_snapshot == null) {
       return Center(child: Text(_message ?? 'Team formation unavailable.'));
@@ -197,7 +213,7 @@ class _OrganizerTeamFormationPageState
         if (_message != null)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text(_message!),
+            child: Semantics(liveRegion: true, child: Text(_message!)),
           ),
         const SizedBox(height: 12),
         Wrap(

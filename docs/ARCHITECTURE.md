@@ -1,5 +1,19 @@
 # Architecture Baseline
 
+## M20 release-hardening boundary
+
+M20 adds no product or persistence architecture. It strengthens configuration
+validation, error redaction, safe route presentation, migration-path evidence,
+and accessible tournament controls while preserving Android offline-first and
+Web/iPhone online-first composition. PostgreSQL/RLS remains the final authority;
+the Web build still has no Drift/SQLite construction path.
+
+The release candidate rejects HTTP production Supabase origins, modern secret
+keys, and service-role JWTs before initialization. Unknown routes render only a
+safe path, unexpected preview errors are not reflected verbatim, and drag-based
+seed ordering has keyboard/touch controls. See the
+[M20 record](milestones/M20_RELEASE_HARDENING.md) for audit evidence and limits.
+
 ## M19 iPhone Web/PWA parity and deployment
 
 The production Flutter Web client is a static, JavaScript-based Cloudflare

@@ -40,8 +40,9 @@ team or match generation.
 Teams are temporary event/division records rather than permanent identities.
 Version 1 supports manual team formation, random generation, and simple
 balanced generation based on approved player skill information. Balanced
-generation uses simple application logic, not an AI feature. The precise
-skill scale and team-size rule remain open decisions.
+generation uses simple application logic, not an AI feature. Version 1 uses
+complete two-player doubles teams and the organizer-maintained 1–5/null
+community skill scale recorded in the decision register.
 
 Payments happen outside the application. The system records only `Paid` or
 `Unpaid` status and related totals; it does not process money.
@@ -62,7 +63,8 @@ Only these tournament formats are approved for Version 1:
 The single-court workflow must prominently show **Now Playing** and **Up Next**
 and progress the queue across the approved formats. Scores and finalized
 results drive bracket progression, round-robin standings, placements, history,
-and statistics, subject to rules that are still recorded as open decisions.
+and statistics. Scoring, correction, tie-break, grand-final reset, and
+simultaneous-organizer rules are accepted in the decision register.
 
 ## History and statistics
 
@@ -97,5 +99,5 @@ Version 1 does not include:
 ## Cost constraint
 
 The project must remain cost-free in Version 1. It uses free-tier
-infrastructure, a directly distributed Android APK, and a Flutter Web/PWA on a
-free static host. The hosting provider remains an open decision.
+infrastructure, a directly distributed Android APK, and a Flutter Web/PWA on
+the free Cloudflare Pages static-hosting tier.

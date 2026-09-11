@@ -200,12 +200,40 @@ class _RoundRobinPageState extends ConsumerState<RoundRobinPage> {
                     title: Text(
                       data.teamLabels[_order[index]] ?? 'Community team',
                     ),
-                    trailing: ReorderableDragStartListener(
-                      index: index,
-                      child: const Tooltip(
-                        message: 'Drag to reorder seed',
-                        child: Icon(Icons.drag_handle),
-                      ),
+                    trailing: Wrap(
+                      children: [
+                        IconButton(
+                          tooltip: 'Move seed up',
+                          onPressed: index == 0
+                              ? null
+                              : () => updateSheet(() {
+                                  final team = _order.removeAt(index);
+                                  _order.insert(index - 1, team);
+                                  _preview = null;
+                                  _seedOrderChanged = true;
+                                }),
+                          icon: const Icon(Icons.arrow_upward),
+                        ),
+                        IconButton(
+                          tooltip: 'Move seed down',
+                          onPressed: index == _order.length - 1
+                              ? null
+                              : () => updateSheet(() {
+                                  final team = _order.removeAt(index);
+                                  _order.insert(index + 1, team);
+                                  _preview = null;
+                                  _seedOrderChanged = true;
+                                }),
+                          icon: const Icon(Icons.arrow_downward),
+                        ),
+                        ReorderableDragStartListener(
+                          index: index,
+                          child: const Tooltip(
+                            message: 'Drag to reorder seed',
+                            child: Icon(Icons.drag_handle),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -341,99 +369,101 @@ class _RoundRobinPageState extends ConsumerState<RoundRobinPage> {
       length: 2,
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextButton.icon(
-                  onPressed: () => context.canPop()
-                      ? context.pop()
-                      : context.go('/events/${widget.eventId}'),
-                  icon: const Icon(Icons.arrow_back),
-                  label: const Text('Back to event'),
-                ),
-                Text(
-                  '${c?.division.name ?? 'Division'} — ${c?.division.format == TournamentFormat.doubleRoundRobin ? 'Double' : 'Single'} Round Robin',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                Wrap(
-                  spacing: 8,
-                  children: [
-                    OutlinedButton.icon(
-                      onPressed: _busy ? null : _refresh,
-                      icon: const Icon(Icons.refresh),
-                      label: const Text('Refresh'),
-                    ),
-                    if (canGenerate)
-                      FilledButton(
-                        onPressed: _busy || s == null
-                            ? null
-                            : () {
-                                final result = s.preview(
-                                  c!,
-                                  _role,
-                                  seedOrder: _order,
-                                );
-                                setState(
-                                  () => result.when(
-                                    success: (p) {
-                                      _preview = p;
-                                      _message = null;
-                                    },
-                                    failure: (f) => _message = f.message,
-                                  ),
-                                );
-                              },
-                        child: const Text('Preview schedule'),
+          Flexible(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextButton.icon(
+                    onPressed: () => context.canPop()
+                        ? context.pop()
+                        : context.go('/events/${widget.eventId}'),
+                    icon: const Icon(Icons.arrow_back),
+                    label: const Text('Back to event'),
+                  ),
+                  Text(
+                    '${c?.division.name ?? 'Division'} — ${c?.division.format == TournamentFormat.doubleRoundRobin ? 'Double' : 'Single'} Round Robin',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      OutlinedButton.icon(
+                        onPressed: _busy ? null : _refresh,
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Refresh'),
                       ),
-                    if (_preview != null)
-                      OutlinedButton(
-                        onPressed: _busy || s == null
-                            ? null
-                            : () async {
-                                if (await _confirm(
-                                  'Persist this schedule? Any previous unstarted draft is tombstoned, not deleted.',
-                                )) {
-                                  await _mutate(
-                                    () => s.generate(
-                                      c!,
-                                      _role,
-                                      seedOrder: List.of(_order),
-                                      confirmed: true,
+                      if (canGenerate)
+                        FilledButton(
+                          onPressed: _busy || s == null
+                              ? null
+                              : () {
+                                  final result = s.preview(
+                                    c!,
+                                    _role,
+                                    seedOrder: _order,
+                                  );
+                                  setState(
+                                    () => result.when(
+                                      success: (p) {
+                                        _preview = p;
+                                        _message = null;
+                                      },
+                                      failure: (f) => _message = f.message,
                                     ),
                                   );
-                                }
-                              },
-                        child: const Text('Confirm generation'),
-                      ),
-                  ],
-                ),
-                if (_message != null)
-                  Semantics(liveRegion: true, child: Text(_message!)),
-                if (c != null && organizer)
-                  Text('Synchronization: ${c.disposition.name}'),
-                if (_preview != null)
-                  const Text('Preview only — no records have been saved.'),
-                if (plan == null)
-                  const Text('No round-robin schedule has been generated.'),
-                if (canGenerate && c != null && _order.isNotEmpty)
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: _busy ? null : () => _editSeedOrder(c),
-                      icon: const Icon(Icons.reorder),
-                      label: const Text('Review seed order'),
-                    ),
+                                },
+                          child: const Text('Preview schedule'),
+                        ),
+                      if (_preview != null)
+                        OutlinedButton(
+                          onPressed: _busy || s == null
+                              ? null
+                              : () async {
+                                  if (await _confirm(
+                                    'Persist this schedule? Any previous unstarted draft is tombstoned, not deleted.',
+                                  )) {
+                                    await _mutate(
+                                      () => s.generate(
+                                        c!,
+                                        _role,
+                                        seedOrder: List.of(_order),
+                                        confirmed: true,
+                                      ),
+                                    );
+                                  }
+                                },
+                          child: const Text('Confirm generation'),
+                        ),
+                    ],
                   ),
-                const TabBar(
-                  tabs: [
-                    Tab(text: 'Schedule'),
-                    Tab(text: 'Standings'),
-                  ],
-                ),
-              ],
+                  if (_message != null)
+                    Semantics(liveRegion: true, child: Text(_message!)),
+                  if (c != null && organizer)
+                    Text('Synchronization: ${c.disposition.name}'),
+                  if (_preview != null)
+                    const Text('Preview only — no records have been saved.'),
+                  if (plan == null)
+                    const Text('No round-robin schedule has been generated.'),
+                  if (canGenerate && c != null && _order.isNotEmpty)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
+                        onPressed: _busy ? null : () => _editSeedOrder(c),
+                        icon: const Icon(Icons.reorder),
+                        label: const Text('Review seed order'),
+                      ),
+                    ),
+                ],
+              ),
             ),
+          ),
+          const TabBar(
+            tabs: [
+              Tab(text: 'Schedule'),
+              Tab(text: 'Standings'),
+            ],
           ),
           Expanded(
             child: TabBarView(

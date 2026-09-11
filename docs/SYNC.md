@@ -191,8 +191,10 @@ At minimum, synchronization distinguishes:
   intervention.
 
 Failures and conflicts retain the operation, reason, and relevant local/remote
-versions for investigation. The exact simultaneous-organizer policy is an open
-decision. **Silent last-write-wins is prohibited for critical operations.**
+versions for investigation. M17 resolved simultaneous organizers as
+optimistic first-writer-wins with explicit **Use cloud version** and
+**Reapply local change** actions. **Silent last-write-wins is prohibited for
+critical operations.**
 
 For the M5 player slice, a stale base version or incompatible remote pull marks
 the operation `conflicted` and creates an unresolved conflict row with both
@@ -217,8 +219,9 @@ guarantee that cloud permissions have not changed while disconnected.
 Queued operations are re-authorized by the cloud when sent. An offline local
 success is therefore pending shared acceptance; the UI must distinguish local,
 pending, synced, failed, and conflicted states where material. Authentication
-methods and the exact simultaneous-organizer conflict/control policy remain
-open decisions in [DECISIONS.md](DECISIONS.md).
+methods and simultaneous-organizer controls are accepted in
+[DECISIONS.md](DECISIONS.md); queued cloud work still requires a current live
+organizer role.
 
 ## Milestone 5 runtime boundary
 
@@ -275,7 +278,8 @@ operation atomically. Public anonymous refresh is read-only: it creates no
 outbox record, never infers tombstones from partial results, and does not
 overwrite pending, failed, blocked, or conflicted local proposals. A confirmed
 organizer session remains necessary for authoritative tombstone pull and
-upload. Conflicts are displayed honestly and remain unresolved under OPEN-009.
+upload. At the historical M8 boundary conflicts were displayed without
+resolution; M17 later added the accepted explicit resolution actions.
 
 Web never creates SQLite/outbox infrastructure and applies organizer creation
 online through the existing idempotent cloud operation.
@@ -290,7 +294,8 @@ work and preserves pending/blocked/conflicted local intent.
 
 Anonymous M6 refresh detects pending event setup and preserves it. Realtime is
 still a refetch hint. No participant, payment, team, match, queue, placement,
-profile, role, or claim synchronization was added. `OPEN-009` remains open.
+profile, role, or claim synchronization was added. M17 later resolved
+`OPEN-009` without changing this bounded M9 protocol.
 
 ## M10 bounded participation aggregate slice
 
@@ -304,7 +309,8 @@ Checkpointed pull preserves UUIDs, UTC metadata, versions, and tombstones and
 never enqueues a local operation. Pending/blocked/conflicted local intent is not
 overwritten. Existing Realtime publication entries remain refresh hints; M10
 does not trust notification payloads or synchronize teams, matches, queues,
-profiles, roles, or claims. `OPEN-009` remains unresolved.
+profiles, roles, or claims. M17 later resolved `OPEN-009` at the composed
+operational-coordinator boundary.
 
 ## M11 bounded team-formation slice
 

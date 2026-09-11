@@ -6,6 +6,45 @@ import 'package:vpc/src/infrastructure/persistence/local/app_database.dart';
 import '../../../generated_migrations/schema.dart';
 
 void main() {
+  test('every committed schema snapshot upgrades to version 11', () async {
+    final verifier = SchemaVerifier(GeneratedHelper());
+    for (var version = 1; version < 11; version++) {
+      final schema = await verifier.schemaAt(version);
+      final db = AppDatabase(schema.newConnection());
+      await verifier.migrateAndValidate(db, 11);
+      expect(db.schemaVersion, 11, reason: 'migration from v$version');
+      await db.close();
+      schema.close();
+    }
+  });
+
+  test('failed migration preserves the prior schema and data', () async {
+    final verifier = SchemaVerifier(GeneratedHelper());
+    final schema = await verifier.schemaAt(1);
+    schema.rawDatabase.execute('''
+INSERT INTO players(id,display_name,created_at,updated_at,version)
+VALUES('20000000-0000-4000-8000-000000000020','M20 Rollback Fixture',
+'2026-09-11T00:00:00.000Z','2026-09-11T00:00:00.000Z',1);
+CREATE TABLE sync_outbox_operations (invalid_column INTEGER);
+''');
+    final db = AppDatabase(schema.newConnection());
+    await expectLater(verifier.migrateAndValidate(db, 11), throwsA(anything));
+    expect(
+      schema.rawDatabase.select('PRAGMA user_version').single['user_version'],
+      1,
+    );
+    expect(
+      schema.rawDatabase
+          .select(
+            "SELECT display_name FROM players WHERE id='20000000-0000-4000-8000-000000000020'",
+          )
+          .single['display_name'],
+      'M20 Rollback Fixture',
+    );
+    await db.close();
+    schema.close();
+  });
+
   test('v10 to v11 preserves operations and adds resolution audit', () async {
     final verifier = SchemaVerifier(GeneratedHelper());
     final schema = await verifier.schemaAt(10);

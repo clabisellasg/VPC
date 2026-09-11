@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 /// Compile-time Supabase client configuration.
 final class SupabaseConfiguration {
   const SupabaseConfiguration._({
@@ -22,6 +24,12 @@ final class SupabaseConfiguration {
 
     if (!hasUrl) {
       return const SupabaseConfiguration._(url: null, publishableKey: null);
+    }
+
+    if (_isPrivilegedKey(normalizedKey)) {
+      throw const FormatException(
+        'SUPABASE_PUBLISHABLE_KEY must be a public client key.',
+      );
     }
 
     final parsedUrl = Uri.tryParse(normalizedUrl);
@@ -50,4 +58,19 @@ final class SupabaseConfiguration {
   final String? publishableKey;
 
   bool get isConfigured => url != null && publishableKey != null;
+}
+
+bool _isPrivilegedKey(String value) {
+  if (value.toLowerCase().startsWith('sb_secret_')) return true;
+  final segments = value.split('.');
+  if (segments.length != 3) return false;
+  try {
+    final payload = jsonDecode(
+      utf8.decode(base64Url.decode(base64Url.normalize(segments[1]))),
+    );
+    return payload is Map<String, dynamic> &&
+        payload['role']?.toString().toLowerCase() == 'service_role';
+  } on FormatException {
+    return false;
+  }
 }

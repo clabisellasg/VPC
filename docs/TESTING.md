@@ -1,5 +1,21 @@
 # Testing Strategy
 
+## M20 release-candidate hardening
+
+M20 adds high-value regressions for privileged Supabase-key rejection, HTTPS
+production configuration, redacted failures, path-only unknown routes, every
+committed Drift snapshot migration, failed-migration rollback, 200% text on
+queue/round-robin screens, and keyboard-accessible seed ordering. It reuses the
+existing security, synchronization, recovery, all-format, history, PWA, and
+Web-no-SQLite tests rather than duplicating them.
+
+The automated release-candidate run passes strict formatting, analysis, all 387
+Flutter tests, deterministic generated-source/migration-helper checks, the
+configured production Web build, and Android debug APK build. Hosted, deployed,
+and physical-device results are recorded in the
+[M20 milestone record](milestones/M20_RELEASE_HARDENING.md). Local pgTAP/reset
+is reported as skipped when Docker's Linux engine is unavailable.
+
 ## M19 Web/PWA validation
 
 Automated coverage validates release configuration redaction, exact production

@@ -2,12 +2,12 @@
 
 Volta Paddle Club is the Community Pickleball Management System: a cost-free
 application for running casual and formal pickleball events in a local,
-single-court community. It will eventually manage reusable community players,
+single-court community. It manages reusable community players,
 participation, check-in, payment status, temporary teams, approved tournament
 formats, the court queue, history, and statistics.
 
-**Current status:** Milestone 19 — iPhone Web/PWA Parity and Deployment
-(`COMPLETED`). M0–M19 are completed; M20–M21 remain NOT STARTED.
+**Current status:** Milestone 20 — Release Hardening (`COMPLETED`). M0–M20
+are completed; M21 remains NOT STARTED.
 
 ## Version 1 technology stack
 
@@ -60,6 +60,7 @@ scope, replace the stack, or begin a later milestone.
 - [Milestone 17 implementation record](docs/milestones/M17_COMPLETE_OFFLINE_OPERATION_SYNC_HARDENING.md)
 - [Milestone 18 implementation record](docs/milestones/M18_HISTORY_DERIVED_STATISTICS.md)
 - [Milestone 19 implementation record](docs/milestones/M19_IPHONE_WEB_PWA_PARITY_DEPLOYMENT.md)
+- [Milestone 20 hardening record](docs/milestones/M20_RELEASE_HARDENING.md)
 
 ## Development setup
 

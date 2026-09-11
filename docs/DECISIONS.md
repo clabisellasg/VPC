@@ -154,6 +154,10 @@ M19 planner approval (2026-09-08):
 
 ## Open decisions
 
+M20 hardening introduced no new product decision. It confirmed the accepted
+Android offline/Web online boundary, PostgreSQL authorization authority,
+append-only migration policy, and M21 ownership of pilot and release.
+
 The “resolve by” milestone is the latest point at which an explicit accepted
 decision is required before affected implementation proceeds.
 

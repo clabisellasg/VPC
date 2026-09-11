@@ -19,6 +19,11 @@ final class ProductionWebConfiguration {
         'Production Web configuration is missing required values.',
       );
     }
+    if (Uri.parse(configuration.url!).scheme != 'https') {
+      throw const FormatException(
+        'Production Web configuration requires an HTTPS Supabase URL.',
+      );
+    }
     return ProductionWebConfiguration._(
       supabaseUrl: configuration.url!,
       supabasePublishableKey: configuration.publishableKey!,

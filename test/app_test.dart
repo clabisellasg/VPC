@@ -50,10 +50,12 @@ void main() {
       ),
     );
 
-    app.router.go('/not-a-route');
+    app.router.go('/not-a-route?token=must-not-render#private-fragment');
     await tester.pumpAndSettle();
 
     expect(find.text('Page not found'), findsOneWidget);
     expect(find.text('/not-a-route'), findsOneWidget);
+    expect(find.textContaining('must-not-render'), findsNothing);
+    expect(find.textContaining('private-fragment'), findsNothing);
   });
 }

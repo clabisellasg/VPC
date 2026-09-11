@@ -1,5 +1,27 @@
 # Operations Outline
 
+## M20 release-candidate recovery and rollback
+
+- Back up through the managed Supabase platform and preserve the last known-good
+  Cloudflare Pages deployment ID before a production change. Never commit or
+  distribute a database dump containing community records.
+- Treat applied SQL migrations as immutable. Diagnose against linked history,
+  rehearse the smallest append-only forward repair locally when Docker is
+  available, dry-run it against the linked project, then apply and lint. Never
+  reset or restore the hosted project merely to repair migration history.
+- A Drift migration failure must surface without deleting `vpc.sqlite`; preserve
+  the file, capture a value-redacted error, and ship a tested forward migration.
+  Do not silently recreate the local database.
+- For pending synchronization, restore connectivity and live organizer
+  authority, retry bounded work, and inspect scoped conflicts. Use cloud or
+  reapply local intent only through the M17 audited actions; unrelated aggregates
+  must continue.
+- If a Cloudflare deployment fails, keep the known-good production deployment.
+  If a deployed candidate is defective, use Pages deployment rollback to the
+  recorded known-good artifact, then correct and revalidate before redeploying.
+- M20 is a synthetic release-candidate rehearsal. A real community pilot,
+  production release decision, and pilot feedback belong only to M21.
+
 ## M18 history verification
 
 Compare a synthetic completed player's public profile on Android and Web after
@@ -144,9 +166,10 @@ release APK, PWA deployment, backup/restore, full-table sync, or pilot.
 - Regenerate Drift sources, export into `drift_schemas/`, and regenerate
   `test/generated_migrations/` after an approved schema edit. Review every
   artifact and require stable hashes across a second pass before committing.
-- Local schema v1 is the M4 baseline and v2 is the M5 synchronization slice.
-  The v1→v2 migration is validated against the committed v1 snapshot and
-  preserves M4 operational data. Every later increment needs equivalent tests.
+- Local schema v1 is the M4 baseline and v11 is the accepted M17 schema.
+  Release-hardening tests migrate every committed v1–v10 snapshot to v11,
+  preserve representative data, and prove a failed migration leaves the prior
+  user version and rows intact.
 - Foreign keys must remain enabled. Preserve restrictive history, tombstones,
   versions, UUID identities, and UTC precision during future migrations.
 - Web and non-Android native platforms must not open this database. No SQLite
@@ -201,11 +224,11 @@ approved, do not clear or edit the outbox manually.
 - Preserve operation IDs and diagnostic evidence for unresolved items; avoid
   destructive queue clearing.
 
-## Conflict handling — PRELIMINARY / FUTURE
+## Conflict handling
 
-M5 preserves player conflicts with local and remote evidence but intentionally
-does not resolve them. `OPEN-009` remains open; the steps below are still a
-future operational outline, not an approved resolution policy.
+M5 preserved player conflicts without a resolution action. M17 superseded that
+historical limitation with the accepted first-writer-wins policy and explicit
+**Use cloud version** and **Reapply local change** controls.
 
 - Stop progression that depends on a critical conflict, especially match
   results, bracket paths, placements, and court-queue state.
@@ -214,18 +237,22 @@ future operational outline, not an approved resolution policy.
   correction policies.
 - Record the selected resolution and verify downstream matches, standings,
   placements, history, and statistics after reconciliation.
-- Never use silent last-write-wins for a critical operation. Exact controls
-  remain open and must be approved by the synchronization milestone.
+- Never use silent last-write-wins for a critical operation. Reapply creates a
+  new operation ID against current versions and must pass the original domain
+  and cloud rules again.
 
-## Manual backup and restore — PRELIMINARY / FUTURE
+## Backup, forward repair, and restore
 
-- Define supported exports/backups for Supabase PostgreSQL and any necessary
-  device-local recovery data using free-tier capabilities.
+- Use Supabase's available project backup/export controls only from a trusted
+  operator environment; never commit a production dump or credentials.
 - Protect personal and authentication-related data during storage and transfer.
 - Label backups with environment, version, timestamp, and integrity evidence.
-- Test restore into an isolated environment before relying on the procedure.
+- Test restore into an isolated project or local Docker database before relying
+  on it. Never reset or destructively rehearse against the hosted project.
 - Verify identities, history, match dependencies, placements, and operation
-  metadata after restore. No backup or restore method is validated yet.
+  metadata after restore. Correct an applied migration only with a new ordered
+  forward-repair migration after linked history and dry-run review; never edit,
+  rename, or delete applied history.
 
 ## APK distribution — PRELIMINARY / FUTURE
 

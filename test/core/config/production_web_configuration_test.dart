@@ -30,6 +30,21 @@ void main() {
     expect(failure.toString(), isNot(contains(privateValue)));
   });
 
+  test('production rejects non-HTTPS endpoints without exposing them', () {
+    const insecureUrl = 'http://production.example.invalid';
+    Object? failure;
+    try {
+      ProductionWebConfiguration.fromEnvironment(const {
+        'SUPABASE_URL': insecureUrl,
+        'SUPABASE_PUBLISHABLE_KEY': 'publishable-test-value',
+      });
+    } on Object catch (error) {
+      failure = error;
+    }
+    expect(failure, isA<FormatException>());
+    expect(failure.toString(), isNot(contains(insecureUrl)));
+  });
+
   test('creates release defines for complete configuration', () {
     final configuration = ProductionWebConfiguration.fromEnvironment(const {
       'SUPABASE_URL': 'https://project.example.invalid',

@@ -175,7 +175,8 @@ authorized proceeding.
 - **Purpose:** Complete security, migration, accessibility, performance,
   recovery, documentation, and regression review.
 - **Dependencies:** M17 through M19.
-- **Status:** NOT STARTED.
+- **Status:** COMPLETED; automated, hosted, deployed, Android, iPhone PWA, and
+  desktop-Web release-candidate validation passed.
 
 ### M21 — Community Rehearsal, Pilot Tournament, and V1 Release
 

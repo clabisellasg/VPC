@@ -85,8 +85,10 @@ void main() {
     final semantics = tester.ensureSemantics();
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     final repository = _Repository();
     await tester.pumpWidget(
       ProviderScope(
@@ -104,6 +106,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Now Playing'), findsOneWidget);
     expect(find.text('VPC M16 Sample'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Up Next'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('Up Next'), findsOneWidget);
     expect(find.textContaining('Double Round Robin'), findsOneWidget);
     expect(find.text('Start next match'), findsNothing);
